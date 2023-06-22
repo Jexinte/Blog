@@ -1,0 +1,6 @@
+{
+  "name": "dev/blog_professionnel",
+  "require": {
+    "twig/twig": "^3.0"
+  }
+}

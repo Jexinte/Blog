@@ -1,0 +1,72 @@
+{% extends "layout.twig" %}
+
+{% block icon_img %}
+	<link rel="icon" type="image/png" href="../public/assets/images/logo.png"/>
+{% endblock %}
+
+{% block title %}
+	<title>Connexion - Blog professionnel</title>
+{% endblock %}
+
+{% block css_page %}
+	<link rel="stylesheet" href="../public/assets/css/sign_in.css">
+{% endblock %}
+
+
+{% block content %}
+
+	{# HEADER #}
+	<header>
+		<nav class="menu">
+			<a href="?selection=homepage"><img class="logo" src="../public/assets/images/logo.png" height="60" alt=""></a>
+			<ul>
+				<li><a href="?selection=sign_up"><i class="fa-solid fa-user-plus"></i></a></li>
+			</ul>
+		</nav>
+	</header>
+
+	{# FORM CONTAINER  #}
+	<div class="container-fluid  mb-5 form " id="form_container">
+		<div class="row">
+			<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12" id="main-title-box">
+				<h1 class=" text-center mb-5 " id="h1">Connexion</h1>
+				<p id="requirement-field">Tous les champs * sont requis</p>
+			</div>
+		</div>
+
+
+		<!-- FORM -->
+		<div class="row">
+
+
+			<form
+				id="form" action="#" method="post">
+				<!-- MAIL -->
+				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+					<div class="mb-3 mail-box">
+						<label for="mail" class="form-label">Adresse email *</label>
+						<input type="email" class="form-control" name="mail" id="mail" placeholder="johndoe@example.fr" required>
+						<p id="error-mail"></p>
+					</div>
+
+					<!-- PASSWORD -->
+
+					<div class="mb-3 password-box">
+						<label for="password" class="form-label">Mot de passe *</label>
+						<input type="password" class="form-control" name="password" id="password" required>
+
+						<p id="error-password"></p>
+					</div>
+
+
+					<input type="submit" class="btn text-white " name="submit" id="submit" value="Envoyer">
+
+
+				</div>
+
+			</div>
+		</form>
+	</div>
+
+{% endblock %}
+

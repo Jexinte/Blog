@@ -1,0 +1,120 @@
+{% extends "layout.twig" %}
+
+
+{% block icon_img %}
+	<link rel="icon" type="image/png" href="../public/assets/images/logo.png"/>
+{% endblock %}
+{% block title %}
+	<title>Blog - Blog professionnel</title>
+{% endblock %}
+{% block css_page %}
+	<link rel="stylesheet" href="../public/assets/css/blog.css">
+{% endblock %}
+
+{% block content %}
+
+{# HEADER #}
+<header>
+		<nav class="menu">
+			<a href="?selection=homepage"><img class="logo" src="../public/assets/images/logo.png" height="60" alt=""></a>
+			<ul>
+				<li><a href="?selection=sign_up"><i class="fa-solid fa-user-plus"></i></a></li>
+				<li><a href="?selection=sign_in"><i class="fa-solid fa-key"></i></a></li>
+			</ul>
+		</nav>
+	</header>
+
+{# BLOG #}
+  <div class="container-fluid" id="blog">
+
+  {# BANNER #}
+  <div class="container-fluid" id="banner">
+    <img class"banner-img" src="../public/assets/images/blog_banner.jpg" alt="blog banner">
+  </div>
+
+  {# ARTICLES #}
+  <div class="container-fluid pb-5" id="list-article">
+      <h1 class="text-center" id="h1">Derniers articles publiés</h1>
+  <div class="row mt-5">
+  
+  {# ARTICLE 1 #}
+    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+    <a href="#" class="article">
+        <article class="article-box">
+              <div class="col-md-12 col-lg-12 author-box">
+        <img class="artile-img" src="../public/assets/images/author_1.jpg" alt="">
+         <h2 class="author-article" id="h2">John Smith</h2>
+         </div>
+        <h3 class="article-title">Les bases de PHP</h3>
+        <p class="article-short-phrase  ">Découvrez les fondamentaux de PHP pour développer des sites web dynamiques.</p>
+        <p class=" article-content">
+        PHP, acronyme de Hypertext Preprocessor, est un langage de script largement utilisé pour le développement web. Avec PHP, vous pouvez créer des pages web interactives et dynamiques en générant du contenu HTML en temps réel...
+        </p>
+        <div class="dates-tags">
+          <p class="date-article">Lundi 12 juin 2023</p>
+          <ul class="tags" id="tags">
+            <li class="tag-article"> #PHP</li>
+            <li class="tag-article">#DéveloppementWeb</li>
+            <li class="tag-article">#LangageDeScript</li>
+          </ul>
+        </div>
+      </article>
+    </a>
+    </div>
+
+{# ARTICLE 2 #}
+    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+        <a href="#" class="article">
+        <article class="article-box">
+        <div class="col-md-12 col-lg-12 author-box">
+        <img class="artile-img" src="../public/assets/images/author_2.jpg" alt="">
+         <h2 class="author-article">Sarah Johnson</h2>
+        </div>
+        <h3 class="article-title">Les bonnes pratiques en PHP</h3>
+        <p class="article-short-phrase">"Découvrez les meilleures pratiques à suivre lors du développement en PHP pour des codes propres et performants."</p>
+        <p class="article-content">
+       Lorsque vous développez en PHP, il est important de suivre les bonnes pratiques pour garantir la qualité de votre code. En adoptant des conventions de codage cohérentes, en utilisant des noms de variables significatifs et en organisant votre code de manière structurée, vous facilitez la maintenance et la collaboration sur vos projets PHP...
+        </p>
+        <div class="dates-tags">
+          <p class="date-article">Jeudi 15 juin 2023</p>
+          <ul class="tags">
+            <li class="tag-article"> #PHP</li>
+            <li class="tag-article">#BonnesPratiques</li>
+            <li class="tag-article">#DéveloppementWeb</li>
+          </ul>
+        </div>
+      </article>
+    </a>
+    </div>
+
+
+    {# ARTICLE 3 #}
+    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+     <a href="#" class="article">
+        <article class="article-box">
+              <div class="col-md-12 col-lg-12 author-box">
+        <img class="artile-img" src="../public/assets/images/author_3.jpg" alt="">
+         <h2 class="author-article">Michael Thompson</h2>
+         </div>
+        <h3 class="article-title">Les frameworks PHP populaires</h3>
+        <p class="article-short-phrase">Découvrez les frameworks PHP les plus utilisés qui facilitent le développement rapide d'applications web.</p>
+        <p class="article-content">
+       Les frameworks PHP sont des outils puissants qui accélèrent le processus de développement d'applications web en fournissant des structures et des fonctionnalités prêtes à l'emploi...
+        </p>
+        <div class="dates-tags">
+          <p class="date-article">Samedi 15 juin 2023</p>
+          <ul class="tags">
+            <li class="tag-article"> #PHP</li>
+            <li class="tag-article">#Frameworks</li>
+            <li class="tag-article">#DéveloppementWeb</li>
+          </ul>
+        </div>
+      </article>
+      </a>
+    </div>
+
+
+  </div>
+  </div>
+  </div>
+{% endblock %}

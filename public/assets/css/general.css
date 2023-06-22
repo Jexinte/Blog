@@ -1,0 +1,83 @@
+/* LATO REGULAR 400 , BOLD 700 , BLACK 900 */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
+
+:root {
+
+  /* FONTS */
+  --lato: 'Lato', sans-serif;
+
+  /* COLORS  */
+
+  --orange: #F4B512;
+  --black: #000;
+  --white: #fff;
+
+  /* FONT WEIGHT */
+
+  --400: 400;
+  --600: 600;
+  --700: 700;
+  --900: 900;
+
+}
+
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Lato';
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  color: var(--black);
+}
+
+a:visited {
+  color: black;
+}
+
+ul li {
+  list-style-type: none;
+}
+
+.fa-solid {
+  color: var(--black);
+}
+
+footer {
+  display: flex;
+  justify-content: center;
+  gap: .2em;
+}
+
+.footer-paragraph {
+  color: var(--white);
+  font-weight: var(--900);
+}
+
+.administration {
+  color: var(--white);
+  font-weight: var(--900);
+  text-decoration: none;
+  align-self: center;
+}
+
+.administration:visited {
+  color: var(--white);
+}
+
+@media (max-width:576px) {
+
+  footer {
+    display: flex;
+    justify-content: center;
+  }
+
+  footer p,
+  footer a {
+    font-size: .7em;
+
+  }
+}

@@ -1,0 +1,116 @@
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header {
+  padding-inline: 2em;
+  padding-top: 2.5em;
+}
+
+.menu {
+  display: flex;
+  justify-content: space-between;
+}
+
+.menu ul {
+  display: flex;
+  gap: 1em;
+}
+
+.fa-user-plus {
+  font-size: 2em;
+  position: relative;
+  top: 7px;
+}
+
+
+
+
+#form_container {
+  width: 80%;
+  margin: 0 auto;
+  flex: 1;
+  padding-top: 10em;
+}
+
+
+#h1 {
+  font-size: 2.5em;
+  border-bottom: 1px solid;
+  border-bottom-width: 1px;
+  border-color: var(--orange);
+  width: 5.1em;
+  margin: 0 auto;
+  padding-bottom: .5em;
+  border-width: .2em;
+  font-weight: var(--900);
+  color: var(--black);
+  width: 100%;
+}
+
+.form .row>#main-title-box {
+  position: relative;
+}
+
+#requirement-field {
+  position: absolute;
+  right: 15px;
+  bottom: -2px;
+  font-weight: var(--700);
+}
+
+.user-requirements,
+.password-requirements {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 2em;
+}
+
+#form {
+  font-weight: var(--700);
+}
+
+#mail:focus {
+  box-shadow: 0 0 0 .25rem var(--orange);
+  border-color: rgba(0, 0, 0, .2);
+}
+
+#password:focus {
+  box-shadow: 0 0 0 .25rem var(--orange);
+  border-color: rgba(0, 0, 0, .2);
+}
+
+.row .form-control {
+  border-color: var(--black);
+  border-radius: 0;
+}
+
+.col-sm-12,
+.col-md-12,
+.col-lg-12,
+.col-xl-12 {
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+}
+
+.row #profile-image {
+  border-color: none;
+}
+
+.profile-image-box #file-helper {
+  font-weight: var(--700);
+}
+
+.password-box .check-password-box {
+  display: flex;
+  gap: .5em;
+}
+
+#submit {
+  background-color: black;
+  border-radius: 0;
+  font-weight: var(--700);
+}

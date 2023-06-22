@@ -1,0 +1,272 @@
+header {
+  padding-top: 2em;
+  padding-inline: 1em;
+}
+
+.menu ul {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 0;
+}
+
+.fa-solid {
+  font-size: 1.5em;
+}
+
+#h1 {
+  font-weight: var(--900);
+  color: var(--black);
+}
+
+
+
+#title-inner-phrase {
+  display: block;
+  font-size: .8em;
+}
+
+
+
+#h2 {
+  font-weight: var(--900);
+
+  border-bottom: 1px solid;
+  border-bottom-width: 1px;
+
+  width: 5.1em;
+  margin: 0 auto;
+  padding-bottom: .3em;
+  border-width: .2em;
+}
+
+#about-text {
+  font-weight: var(-700);
+  line-height: 2.3em;
+  transition: all 300ms ease-in-out;
+  text-align: center;
+}
+
+#cv {
+  padding-bottom: 5em;
+}
+
+#h2-cv {
+  font-weight: var(--900);
+  color: var(--black);
+  border-bottom: 1px solid;
+  border-bottom-width: 1px;
+  border-color: #FFC107;
+  width: 5.1em;
+  margin: 0 auto;
+  padding-bottom: .3em;
+  border-width: .2em;
+}
+
+#download {
+  font-weight: var(--900);
+  border-radius: 0;
+  padding: .7em 2em;
+  background-color: var(--black);
+}
+
+#submit {
+  font-weight: var(--900);
+  border-radius: 0;
+  padding: .7em 2em;
+  background-color: var(--black);
+  width: 100%;
+}
+
+.fa-download {
+  position: relative;
+  left: -25px;
+}
+
+#contact-title {
+  font-weight: var(--900);
+  border-bottom: 1px solid;
+  border-bottom-width: 1px;
+  border-color: white;
+  width: 7.8em;
+  margin: 0 auto;
+  padding-bottom: .3em;
+  border-width: .2em;
+}
+
+#firstname:focus {
+  box-shadow: 0 0 0 .25rem var(--white);
+  border-color: rgba(0, 0, 0, .1);
+}
+
+#lastname:focus {
+  box-shadow: 0 0 0 .25rem var(--white);
+  border-color: rgba(0, 0, 0, .2);
+}
+
+#mail:focus {
+  box-shadow: 0 0 0 .25rem var(--white);
+  border-color: rgba(0, 0, 0, .2);
+}
+
+.row .form-control {
+
+  border-radius: 0;
+}
+
+.row .form-label {
+  font-weight: var(--900);
+}
+
+#social-media {
+  padding-bottom: 5em;
+}
+
+#social-media-title {
+  font-weight: var(--900);
+  color: black;
+  border-bottom: 1px solid;
+  border-bottom-width: 1px;
+  border-color: #FFC107;
+  width: 7.7em;
+  margin: 0 auto;
+  padding-bottom: .3em;
+  border-width: .2em;
+}
+
+#social-media-content {
+  display: flex;
+
+}
+
+#pictures-box {
+  display: flex;
+
+  gap: 2.5em;
+}
+
+
+
+/* DESKTOP */
+@media (min-width:992px) {
+
+  #starter-block .row{
+    padding-top:8em;
+    transition: all ease-in-out 300ms;
+  } 
+  #form-box {
+    margin: 0 auto;
+  }
+
+  #logo {
+    width: 400px;
+  }
+
+  #about-text{
+    width: 50%;
+    margin: 0 auto;
+    padding-bottom: 2em;
+    transition: all 300ms ease-in-out;
+  }
+
+    #title-inner-phrase{
+      padding-top: .7em;
+      font-size: .7em;
+    }
+  #social-media-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5em;
+  }
+
+  #linkedin,#github{
+    width: 400px;
+  }
+}
+
+/*TABLET */
+@media (min-width:320px) and (max-width:991px) {
+  #starter-block .row{
+    padding-top:2em;
+    transition: all ease-in-out 300ms;
+  } 
+
+  #h1 {
+    font-size: 1.8em;
+    line-height: 1.9em;
+    padding-top: 1em;
+    transition: all 300ms ease-in-out;
+  }
+
+  #title-inner-phrase{
+    /* padding-top: .7em; */
+    font-size: .6em;
+  }
+
+  .introduction img {
+    padding-top: 5em;
+    width: 400px;
+    transition: width 300ms ease-in-out;
+  }
+
+  #form-container .row {
+    display: flex;
+    justify-content: center;
+  }
+
+
+
+  #linkedin,
+  #github {
+    width: 200px;
+  }
+
+  #social-media-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #pictures-box {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5em;
+  }
+
+  #cv {
+    padding-block: 7em;
+    transition: all 300ms ease-in-out;
+  }
+}
+
+/* MOBILE */
+@media (max-width: 576px) {
+
+  #h1 {
+    font-size: 1.2em;
+    line-height: 1.9em;
+  }
+
+  .introduction img {
+    padding-top: 5em;
+    width: 200px;
+    transition: width 300ms ease-out;
+  }
+
+  #linkedin,
+  #github {
+    width: 200px;
+  }
+
+  #social-media-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #pictures-box {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5em;
+  }
+}
