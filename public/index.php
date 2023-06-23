@@ -22,7 +22,7 @@ elseif(isset($_GET['selection']) && !empty($_GET['selection'])) $selection = $_G
 
 
 //! Lorsque l'intégration sera complètement terminé voir ce qu'il en est de la forme des url
-
+//!  Les paramètres seront modifiées plus tard afin d'être adaptés en fonction de la page 
 switch($selection):
   
   case "sign_in":
@@ -41,16 +41,20 @@ switch($selection):
       echo $twig->render("admin_homepage.twig");
     break;
 
-    
+
     case "view_article":
 
-      echo $twig->render("admin_view_article_and_commentary.twig");
+      echo $twig->render("admin_article_and_commentary.twig");
     break;
 
     case "article":
 
       echo $twig->render("article.twig");
     break;
+
+    case "add_article":
+      echo $twig->render("admin_add_article.twig");
+      break;
   default:
     echo $twig->render("homepage.twig");
 endswitch;
