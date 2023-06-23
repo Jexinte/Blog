@@ -40,6 +40,12 @@ switch($selection):
 
       echo $twig->render("admin_homepage.twig");
     break;
+
+    
+    case "view_article":
+
+      echo $twig->render("admin_view_article_and_commentary.twig");
+    break;
   default:
     echo $twig->render("homepage.twig");
 endswitch;

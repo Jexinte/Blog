@@ -1,0 +1,69 @@
+{% extends "layout.twig" %}
+
+
+{% block icon_img %}
+	<link rel="icon" type="image/png" href="../src/admin/assets/images/logo.png"/>
+{% endblock %}
+
+{% block title %}
+	<title>Affichage Article Administration - Blog professionnel
+		{# Il faudra remplacer par le nom de l'article #}
+	</title>
+{% endblock %}
+{% block css_page %}
+	<link rel="stylesheet" href="../src/admin/assets/css/view_article.css">
+{% endblock %}
+
+{% block content %}
+
+	<header>
+		<nav class="menu">
+			<ul>
+				<li><a href="?selection=blog"><i class="fa-solid fa-arrow-left"></i></a></li>
+			</ul>
+		</nav>
+	</header>
+
+
+	<div class="container-fluid" id="article">
+		<img class="article-banner" src="../src/admin/assets/images/article_author_1.jpg" alt="Climbing to the top">
+		<div class="row">
+			<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 article">
+				<article>
+					<div class="author-box">
+						<img class="author-img" src="../src/admin/assets/images/author_1.jpg" alt="avatar author1">
+						<h2 class="author-name">John Doe</h2>
+				</div>
+					<h1 class="article-title" id="h1">Les bases de PHP</h1>
+					<p class="article-content">PHP, acronyme de Hypertext Preprocessor, est un langage de script largement utilisé pour le développement web. Avec PHP, vous pouvez créer des pages web interactives et dynamiques en générant du contenu HTML en temps réel. Que vous souhaitiez créer un site web simple ou une application web complexe, les connaissances de base de PHP sont essentielles. Ce langage polyvalent offre de nombreuses fonctionnalités et facilite l'interaction avec les bases de données, la manipulation de fichiers, la gestion des formulaires et bien plus encore. Plongez dans l'univers de PHP et explorez ses possibilités infinies !</p>
+					<div class="tags">
+						<p class="tag">#PHP</p>
+						<p class="tag">#DéveloppementWeb</p>
+						<p class="tag">#LangageDeScript</p>
+					</div>
+					<p class="article-date">Publié le 12 juin 2023</p>
+					</article>
+			</div>
+		</div>
+	</div>
+
+	<div class="container-fluid" id="comment">
+		<h2 id="comment-main-title">Commentaire</h2>
+		<div class="commentary-box">
+			<h3 class="author-comment">Jane Doe</h3>
+			<p class="date-comment">le 23/06/2023</p>
+			<p class="content-comment">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolorum fuga error unde maxime tenetur, doloribus possimus inventore velit odio cumque sapiente iste! Qui accusantium tempora amet, placeat commodi possimus voluptatem!</p>
+
+	
+		</div>
+				<form action="#">
+				<label for="feedback">Explication (facultatif) :</label>
+				<textarea name="feedback" id="feedback" cols="30" rows="10"></textarea>
+				<div class="commands-admin">
+					<input class="btn btn-success command" type="submit" value="Accepter">
+					<input class="btn btn-danger command" type="submit" value="Rejeter">
+				</div>
+
+			</form>
+	</div>
+{% endblock %}
