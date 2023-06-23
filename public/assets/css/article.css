@@ -57,19 +57,21 @@ header {
   border-width: .2em;
   position: relative;
 }
-.article-title::after{
+
+.article-title::after {
   content: '';
   position: absolute;
   width: 100%;
   border-bottom: 1px solid orange;
-    border-bottom-width: 1px;
+  border-bottom-width: 1px;
   border-width: .2em;
   left: 50%;
   top: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   bottom: -24px;
 }
-.article-content{
+
+.article-content {
 
   line-height: 2em;
   margin-bottom: 2em;
@@ -96,14 +98,22 @@ header {
   margin-inline: 0;
 }
 
-#comment{
+#comment {
   margin-top: 5em;
   margin-bottom: 5em;
   width: 80%;
 }
-#comment-main-title{
+
+#comments {
+  margin-top: 10em;
+  margin-bottom: 5em;
+  width: 80%;
+}
+
+#comment .h2,
+#comments .h2 {
   font-weight: var(--900);
-  color:var(--black);
+  color: var(--black);
   width: 100%;
   border-width: .2em;
   text-align: center;
@@ -112,65 +122,37 @@ header {
   position: relative;
 }
 
-#comment-main-title::after{
+.h2::after {
   content: '';
   position: absolute;
   width: 100%;
   border-bottom: 1px solid orange;
-    border-bottom-width: 1px;
+  border-bottom-width: 1px;
   border-width: .2em;
   left: 50%;
   top: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   bottom: -24px;
-}
-
-.commentary-box{
-  text-align: center;
-}
-
-.author-comment{
-  font-weight: var(--700);
-  color:var(--black);
-}
-
-.content-comment{
-  margin-bottom: 2.5em;
-  text-align: justify;
-}
-
-form{
-  display: flex;
-  flex-direction: column;
-  gap:2em ;
-}
-form label{
-  font-weight: var(--700);
-  padding-bottom: .8em;
 }
 
 form textarea {
   resize: none;
+  width: 100%;
+  margin-bottom: 2em;
 }
 
-#commands-article{
-  margin-top:2em;
-}
-.commands-admin {
-  display: flex;
-  justify-content: center;
-  gap: 3em;
+/* Servira plus tard pour la partie commentaire*/
+.disable-comments {
+  display: none;
 }
 
-#update{
-  text-decoration: none;
-  color:var(--white);
+#comment .command-box .command {
+  width: 100%;
+  background-color: var(--black);
   font-weight: var(--700);
+  padding: 1em;
 }
-.commands-admin .command{
-  font-weight: var(--700);
-  color:var(--white);
-}
+
 @media (max-width:576px) {
 
   #article .article-banner {
@@ -199,7 +181,7 @@ form textarea {
   }
 
   .article-date {
-   
+
     font-size: .9em;
   }
 }

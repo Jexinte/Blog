@@ -15,15 +15,9 @@
 {% endblock %}
 
 {% block content %}
+{% include "menu_admin.twig" %}
 
-	<header>
-		<nav class="menu">
-			<ul>
-				<li><a href="?selection=blog"><i class="fa-solid fa-arrow-left"></i></a></li>
-			</ul>
-		</nav>
-	</header>
-
+	
 
 	<div class="container-fluid" id="article">
 		<img class="article-banner" src="../src/admin/assets/images/article_author_1.jpg" alt="Climbing to the top">
@@ -43,6 +37,13 @@
 					</div>
 					<p class="article-date">Publié le 12 juin 2023</p>
 					</article>
+					{# Il faudra faire apparaître les commandes avec du JS au bon moment#}
+						<div class="commands-admin" id="commands-article">
+					<button class="btn btn-success command" ><a href="#" id="update">Modifier</a></button>
+					<form action="#">
+					<input class="btn btn-danger command" type="submit" value="Supprimer">
+					</form>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -53,8 +54,6 @@
 			<h3 class="author-comment">Jane Doe</h3>
 			<p class="date-comment">le 23/06/2023</p>
 			<p class="content-comment">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolorum fuga error unde maxime tenetur, doloribus possimus inventore velit odio cumque sapiente iste! Qui accusantium tempora amet, placeat commodi possimus voluptatem!</p>
-
-	
 		</div>
 				<form action="#">
 				<label for="feedback">Explication (facultatif) :</label>

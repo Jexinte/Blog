@@ -46,6 +46,11 @@ switch($selection):
 
       echo $twig->render("admin_view_article_and_commentary.twig");
     break;
+
+    case "article":
+
+      echo $twig->render("article.twig");
+    break;
   default:
     echo $twig->render("homepage.twig");
 endswitch;

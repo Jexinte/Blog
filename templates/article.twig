@@ -1,0 +1,90 @@
+{% extends "layout.twig" %}
+
+
+{% block icon_img %}
+	<link rel="icon" type="image/png" href="../public/assets/images/logo.png"/>
+{% endblock %}
+
+{% block title %}
+	<title>
+		Article - Blog professionnel
+		{# Il faudra remplacer par le nom de l'article #}
+	</title>
+{% endblock %}
+{% block css_page %}
+	<link rel="stylesheet" href="../public/assets/css/article.css">
+{% endblock %}
+
+{% block content %}
+	{% include "menu_admin.twig" %}
+
+	<div class="container-fluid" id="article">
+		<img class="article-banner" src="../public/assets/images/article_author_1.jpg" alt="Climbing to the top">
+		<div class="row">
+			<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 article">
+				<article>
+					<div class="author-box">
+						<img class="author-img" src="../public/assets/images/author_1.jpg" alt="avatar author1">
+						<h2 class="author-name">John Doe</h2>
+					</div>
+					<h1 class="article-title" id="h1">Les bases de PHP</h1>
+					<p class="article-content">PHP, acronyme de Hypertext Preprocessor, est un langage de script largement utilisé pour le développement web. Avec PHP, vous pouvez créer des pages web interactives et dynamiques en générant du contenu HTML en temps réel. Que vous souhaitiez créer un site web simple ou une application web complexe, les connaissances de base de PHP sont essentielles. Ce langage polyvalent offre de nombreuses fonctionnalités et facilite l'interaction avec les bases de données, la manipulation de fichiers, la gestion des formulaires et bien plus encore. Plongez dans l'univers de PHP et explorez ses possibilités infinies !</p>
+					<div class="tags">
+						<p class="tag">#PHP</p>
+						<p class="tag">#DéveloppementWeb</p>
+						<p class="tag">#LangageDeScript</p>
+					</div>
+					<p class="article-date">Publié le 12 juin 2023</p>
+				</article>
+			</div>
+		</div>
+	</div>
+
+	<div
+		class="container-fluid" id="comment">
+		{# La logique pour afficher un paragraphe disant qu'il faut être connecté arrivera plus tard #}
+		<h2 class="h2" id="comment-main-title">Ajouter un commentaire</h2>
+
+		<form action="#">
+			<textarea name="comment" id="feedback" cols="30" rows="10"></textarea>
+			<p class="text-success">{# Afficher un message de confirmation d'envoi#}</p>
+			<p class="text-danger">{# Afficher un message de confirmation d'envoi#}</p>
+			<div class="command-box">
+				<input class="btn btn-dark command" name="submit" type="submit" value="Envoyer">
+			</div>
+
+		</form>
+	</div>
+
+	<div class="container-fluid" id="comments">
+		<h2 class="h2">Commentaires</h2>
+		<div class="row">
+			<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 comments">
+				<div class="author-box">
+					<img src="../public/assets/images/author_1.jpg" alt="author comment img">
+					<h3 class="author-name">Test ,
+						<span class="date-comment">le 14 juin 2023</span>
+					</h3>
+					<p class="author-comment">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tenetur natus similique, dolor fugit, neque facilis molestiae error consequatur corporis, a nulla quisquam vero laudantium molestias. Mollitia id autem possimus alias!</p>
+				</div>
+
+				<div class="author-box">
+					<img src="../public/assets/images/author_1.jpg" alt="author comment img">
+					<h3 class="author-name">Test_2 ,
+						<span class="date-comment">le 14 juin 2023</span>
+					</h3>
+					<p class="author-comment">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tenetur natus similique, dolor fugit, neque facilis molestiae error consequatur corporis, a nulla quisquam vero laudantium molestias. Mollitia id autem possimus alias!</p>
+				</div>
+
+
+				<div class="author-box">
+					<img src="../public/assets/images/author_1.jpg" alt="author comment img">
+					<h3 class="author-name">Test_3 ,
+						<span class="date-comment">le 14 juin 2023</span>
+					</h3>
+					<p class="author-comment">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tenetur natus similique, dolor fugit, neque facilis molestiae error consequatur corporis, a nulla quisquam vero laudantium molestias. Mollitia id autem possimus alias!</p>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
