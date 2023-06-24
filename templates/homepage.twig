@@ -12,107 +12,118 @@
 {% endblock %}
 
 {% block content %}
-  
-    {# HOMEPAGE #}
-    <div class="container-fluid mb-5" id="starter-block">
-      <header>
-        <nav class="menu">
-          <ul>
-            <li><a href="?selection=blog"><i class="fa-solid fa-newspaper"></i></a></li>
-            <li><a href="?selection=sign_in"><i class="fa-solid fa-key"></i></a></li>
-          </ul>
-        </nav>
-      </header>
 
-      <div class="row">
+	{# HOMEPAGE #}
+	<div class="container-fluid mb-5" id="starter-block">
+		<header>
+			<nav class="menu">
+				<ul>
+					<li><a href="?selection=blog"><i class="fa-solid fa-newspaper"></i></a></li>
+					<li><a href="?selection=sign_in"><i class="fa-solid fa-key"></i></a></li>
+				</ul>
+			</nav>
+		</header>
 
-        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 introduction text-center">
-          <img class="pb-4" id="logo" src="../public/assets/images/logo.png" alt="">
-          <h1 id="h1" class="text-center">Mamadou Dembélé Diallo<span id="title-inner-phrase" class="text-center pb-3"><strong>Développeur PHP</span></strong></h1>
-          <p id="catch-phrase">Explorez le pouvoir de PHP pour des applications web puissantes</p>
-        </div>
-      </div>
-    </div>
+		<div class="row">
 
-    {# ABOUT #}
-    <div class="container-fluid text-bg-warning pt-4 pb-3" id="about">
-      <div class="row">
-        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 ">
+			<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 introduction text-center">
+				<img class="pb-4" id="logo" src="../public/assets/images/logo.png" alt="">
+				<h1 id="h1" class="text-center">Mamadou Dembélé Diallo<span id="title-inner-phrase" class="text-center pb-3">
+						<strong>Développeur PHP</span>
+					</strong>
+				</h1>
+				<p id="catch-phrase">Explorez le pouvoir de PHP pour des applications web puissantes</p>
+			</div>
+		</div>
+	</div>
 
-          <h2 class="text-center text-light mb-4" id="h2">À propos</h2>
-          <p class="text-center text-light" id="about-text">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur varius justo justo, in cursus sapien dignissim ut. Morbi fermentum, augue id pellentesque porta, ligula metus porttitor mi, at dapibus elit arcu eu ipsum. Mauris quis urna vel lacus suscipit porta ultricies vel nisl. Etiam sollicitudin est sit amet sem condimentum, eget dignissim lectus cursus. Pellentesque ullamcorper, odio ut elementum consectetur, tortor nisi volutpat arcu, nec tempor nisl tellus ut orci. Aliquam erat volutpat. Proin ultricies tristique magna, ut sollicitudin ipsum vestibulum at. Morbi sit amet mauris vel lectus accumsan laoreet non sit amet lectus.
-          </p>
-        </div>
-      </div>
-    </div>
+	{# ABOUT #}
+	<div class="container-fluid text-bg-warning pt-4 pb-3" id="about">
+		<div class="row">
+			<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 ">
 
-    
-    {# CV #}
-    <div class="container-fluid text-center pt-5 " id="cv">
-      <div class="row">
-        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-          <h2 class="mb-5" id="h2-cv">Mon CV</h2>
-          <button class="btn btn-dark text-center" id="download">
-            <i class="fa-solid fa-download text-light"></i>
-            Télécharger
-          </button>
-        </div>
-      </div>
-    </div>
-
-    {# FORM #}
-
-    <div class="container-fluid bg-warning text-light pt-4 pb-5" id="form-container">
-      <div class="row">
-      <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6" id="form-box">
-        <h2 class="text-center" id="contact-title">Contactez-moi</h2>
-      <form action="#" method="post">
+				<h2 class="text-center text-light mb-4" id="h2">À propos</h2>
+				<p class="text-center text-light" id="about-text">
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur varius justo justo, in cursus sapien dignissim ut. Morbi fermentum, augue id pellentesque porta, ligula metus porttitor mi, at dapibus elit arcu eu ipsum. Mauris quis urna vel lacus suscipit porta ultricies vel nisl. Etiam sollicitudin est sit amet sem condimentum, eget dignissim lectus cursus. Pellentesque ullamcorper, odio ut elementum consectetur, tortor nisi volutpat arcu, nec tempor nisl tellus ut orci. Aliquam erat volutpat. Proin ultricies tristique magna, ut sollicitudin ipsum vestibulum at. Morbi sit amet mauris vel lectus accumsan laoreet non sit amet lectus.
+				</p>
+			</div>
+		</div>
+	</div>
 
 
-      {# FIRSTNAME #}
-      <div class="mb-3 first-name-box">
-        <label for="firstname" class="form-label">Prénom</label>
-        <input class="form-control" type="text" name="firstname" id="firstname" placeholder="John">
-        <p id="firstname-error"></p>
-      </div>
+	{# CV #}
+	<div class="container-fluid text-center pt-5 " id="cv">
+		<div class="row">
+			<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+				<h2 class="mb-5" id="h2-cv">Mon CV</h2>
+				<button class="btn btn-dark text-center" id="download">
+					<i class="fa-solid fa-download text-light"></i>
+					Télécharger
+				</button>
+			</div>
+		</div>
+	</div>
 
-    {# LASTNAME #}
-      <div class="mb-3 last-name-box">
-        <label for="lastname" class="form-label">Nom</label>
-        <input class="form-control" type="text" name="lastname" id="lastname" placeholder="Doe">
-        <p id="lastname-error"></p>
-      </div>
+	{# FORM #}
 
-    {# MAIL #}
-      <div class="mb-3 mail-box">
-        <label for="mail" class="form-label">Adresse email</label>
-        <input class="form-control" type="email" name="mail" id="lastname" placeholder="johndoe@live.fr">
-        <p id="mail-error"></p>
-      </div>
-    <input class="btn btn-dark mt-4" id="submit" type="submit" value="Envoyer" >
-        </div>
-      </form>
-      </div>
+	<div class="container-fluid bg-warning text-light pt-4 pb-5" id="form-container">
+		<div class="row">
+			<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6" id="form-box">
+				<h2 class="text-center" id="contact-title">Contactez-moi</h2>
+				<form
+					action="#" method="post">
 
-    </div>
-      {# SOCIAL MEDIA #}
-    <div class="container-fluid pt-5" id="social-media">
-      <div class="row">
-      <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12" id="social-media-content">
-        <h2 class="text-center" id="social-media-title">Réseaux sociaux</h2>
-        <div class="mt-4" id="pictures-box">
-          <div class="github-box">
-          <a href="#"><img id="github" src="../public/assets/images/github.png" alt="github logo"></a>
-          </div>
-          <div class="linkedin-box">
-          <a href="#"><img id="linkedin" src="../public/assets/images/linkedin.png" alt="linkedin logo"></a>
-          </div>
-        </div>
-      </div>
-      
-      </div>
-    </div>
 
-  
-{% endblock %}
+					{# FIRSTNAME #}
+					<div class="mb-3 first-name-box">
+						<label for="firstname" class="form-label">Prénom</label>
+						<input class="form-control" type="text" name="firstname" id="firstname" placeholder="John">
+						<p id="firstname-error"></p>
+					</div>
+
+					{# LASTNAME #}
+					<div class="mb-3 last-name-box">
+						<label for="lastname" class="form-label">Nom</label>
+						<input class="form-control" type="text" name="lastname" id="lastname" placeholder="Doe">
+						<p id="lastname-error"></p>
+					</div>
+
+					{# MAIL #}
+					<div class="mb-3 mail-box">
+						<label for="mail" class="form-label">Adresse email</label>
+						<input class="form-control" type="email" name="mail" id="lastname" placeholder="johndoe@live.fr">
+						<p id="mail-error"></p>
+					</div>
+					{# MESSAGE #}
+					<div class="mb-3 message-box">
+						<label for="message" class="form-label">Message</label>
+						<textarea class="form-control" name="message" id="lastname" placeholder="Votre message"></textarea>
+						<p id="message-error"></p>
+					</div>
+					<input class="btn btn-dark mt-4" id="submit" type="submit" value="Envoyer">
+				</div>
+
+
+			</div>
+		</form>
+	</div>
+
+</div>
+{# SOCIAL MEDIA #}
+<div class="container-fluid pt-5" id="social-media">
+	<div class="row">
+		<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12" id="social-media-content">
+			<h2 class="text-center" id="social-media-title">Réseaux sociaux</h2>
+			<div class="mt-4" id="pictures-box">
+				<div class="github-box">
+					<a href="#"><img id="github" src="../public/assets/images/github.png" alt="github logo"></a>
+				</div>
+				<div class="linkedin-box">
+					<a href="#"><img id="linkedin" src="../public/assets/images/linkedin.png" alt="linkedin logo"></a>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>{% endblock %}
+

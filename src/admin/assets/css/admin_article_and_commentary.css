@@ -69,6 +69,11 @@ header {
   transform: translate(-50%,-50%);
   bottom: -24px;
 }
+
+.article-short-phrase{
+  text-align: center;
+  color: #ada3a3;
+}
 .article-content{
 
   line-height: 2em;
@@ -162,11 +167,7 @@ form textarea {
   gap: 3em;
 }
 
-#update{
-  text-decoration: none;
-  color:var(--white);
-  font-weight: var(--700);
-}
+
 .commands-admin .command{
   font-weight: var(--700);
   color:var(--white);

@@ -58,6 +58,12 @@ header {
   position: relative;
 }
 
+.article-short-phrase {
+  color: #ada3a3;
+  text-align: center;
+  margin-bottom: 2.5em;
+}
+
 .article-title::after {
   content: '';
   position: absolute;

@@ -103,6 +103,9 @@ a {
   text-align: center;
   color: var(--black);
 }
+.short-content{
+  text-align: center;
+}
 
 .commands {
   display: flex;
@@ -110,12 +113,14 @@ a {
   gap: 2em;
 }
 
+
 .commands .commands-admin {
   font-weight: var(--700);
   text-decoration: none;
   color: var(--white);
-  padding: .3em;
+ 
 }
+
 
 @media (max-width:576px) {
 
