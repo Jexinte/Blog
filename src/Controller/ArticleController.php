@@ -6,7 +6,7 @@ use Model\ArticleModel;
 
 class ArticleController
 {
-  public function listOfAllArticles()
+  public function listOfAllArticles() : array
   {
     $articles = new ArticleModel();
     return $articles->getArticles();
