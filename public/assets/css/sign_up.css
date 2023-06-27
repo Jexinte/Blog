@@ -1,4 +1,4 @@
-body{
+body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -19,10 +19,10 @@ header {
   gap: 1em;
 }
 
-.fa-key{
+.fa-key {
   font-size: 2em;
-position: relative;
-top: 7px;
+  position: relative;
+  top: 7px;
 }
 
 
@@ -52,16 +52,18 @@ top: 7px;
   box-shadow: 0 0 0 .25rem var(--orange);
   border-color: rgba(0, 0, 0, .2);
 }
-#password-check:focus{
+
+#password-check:focus {
   box-shadow: 0 0 0 .25rem var(--orange);
-  border-color: rgba(0,0,0,.2);
+  border-color: rgba(0, 0, 0, .2);
 }
+
 #h1 {
   font-size: 2.5em;
   font-weight: var(--900);
   border-bottom: .2em solid var(--orange);
   padding-bottom: .5em;
-  color:var(--black);
+  color: var(--black);
 }
 
 #main-title-box {

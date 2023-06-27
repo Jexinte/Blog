@@ -1,10 +1,8 @@
 <?php
+
 require_once __DIR__ . "/../vendor/autoload.php";
 
 use Controller\ArticleController;
-
-
-
 
 $action = "";
 $selection = "";
@@ -29,7 +27,8 @@ elseif (isset($_GET['selection'])) $selection = $_GET['selection'];
 
 
 //* This part will be change sooner
-switch ($selection):
+//TODO Replace the short syntax by brackets !
+switch ($selection) {
 
   case "sign_in":
     echo $twig->render("sign_in.twig");
@@ -69,4 +68,4 @@ switch ($selection):
     break;
   default:
     echo $twig->render("homepage.twig");
-endswitch;
+}
