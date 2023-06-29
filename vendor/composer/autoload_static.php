@@ -29,6 +29,7 @@ class ComposerStaticInit109fbc80a3a8192711741efed149726e
         array (
             'Controller\\' => 11,
             'Config\\' => 7,
+            'Class\\' => 6,
         ),
     );
 
@@ -56,6 +57,10 @@ class ComposerStaticInit109fbc80a3a8192711741efed149726e
         'Config\\' => 
         array (
             0 => __DIR__ . '/../..' . '/config',
+        ),
+        'Class\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src/Class/Enum',
         ),
     );
 

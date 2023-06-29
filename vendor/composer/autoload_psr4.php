@@ -12,4 +12,5 @@ return array(
     'Model\\' => array($baseDir . '/src/Model'),
     'Controller\\' => array($baseDir . '/src/Controller'),
     'Config\\' => array($baseDir . '/config'),
+    'Class\\' => array($baseDir . '/src/Class/Enum'),
 );
