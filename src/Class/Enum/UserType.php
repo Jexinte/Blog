@@ -1,8 +1,8 @@
 <?php
 
-namespace Class;
+namespace Enum;
 
-enum User:string
+enum UserType:string
 {
   case ADMIN = "admin"; 
   case USER = "user";

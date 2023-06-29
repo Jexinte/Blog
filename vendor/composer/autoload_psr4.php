@@ -10,7 +10,7 @@ return array(
     'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
     'Symfony\\Polyfill\\Ctype\\' => array($vendorDir . '/symfony/polyfill-ctype'),
     'Model\\' => array($baseDir . '/src/Model'),
+    'Enum\\' => array($baseDir . '/src/Class/Enum'),
     'Controller\\' => array($baseDir . '/src/Controller'),
     'Config\\' => array($baseDir . '/config'),
-    'Class\\' => array($baseDir . '/src/Class/Enum'),
 );

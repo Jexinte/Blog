@@ -14,34 +14,38 @@ class SignUpController
   {
     $this->db = new DatabaseConnection("professional_blog", "root", "");
   }
-  public function handleUsernameField()
+  public function handleUsernameField(): ?array
   {
 
     $user = new User($this->db);
-    return $user->checkUsernameInput();
+    if (is_array($user->checkUsernameInput())) return $user->checkUsernameInput();
+    else return null;
+  }
+  public function handleFileField(): ?array
+  {
+    $user = new User($this->db);
+    if (array_key_first($user->checkFileInput()) != "file") return $user->checkFileInput();
+    else return null;
   }
 
-  public function handlePasswordField()
+  public function handleEmailField(): ?array
   {
     $user = new User($this->db);
-    return $user->checkPasswordInput();
+    if (is_array($user->checkEmailInput()))     return $user->checkEmailInput();
+    else return null;
   }
 
-  public function handleFileInput()
+  public function handlePasswordField(): ?array
   {
     $user = new User($this->db);
-    return $user->checkFileInput();
+    if (is_array($user->checkPasswordInput())) return $user->checkPasswordInput();
+    else return null;
   }
 
-  public function handleEmailFileInput()
-  {
-    $user = new User($this->db);
-    return $user->checkEmailInput();
-  }
 
-  public function handleValidationProperty()
+  public function handleInputsValidation()
   {
     $user = new User($this->db);
-    return $user->validateProperty();
+    return $user->inputsValidation();
   }
 }

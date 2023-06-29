@@ -25,11 +25,14 @@ class ComposerStaticInit109fbc80a3a8192711741efed149726e
         array (
             'Model\\' => 6,
         ),
+        'E' => 
+        array (
+            'Enum\\' => 5,
+        ),
         'C' => 
         array (
             'Controller\\' => 11,
             'Config\\' => 7,
-            'Class\\' => 6,
         ),
     );
 
@@ -50,6 +53,10 @@ class ComposerStaticInit109fbc80a3a8192711741efed149726e
         array (
             0 => __DIR__ . '/../..' . '/src/Model',
         ),
+        'Enum\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src/Class/Enum',
+        ),
         'Controller\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src/Controller',
@@ -57,10 +64,6 @@ class ComposerStaticInit109fbc80a3a8192711741efed149726e
         'Config\\' => 
         array (
             0 => __DIR__ . '/../..' . '/config',
-        ),
-        'Class\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/src/Class/Enum',
         ),
     );
 

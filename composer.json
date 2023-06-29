@@ -8,7 +8,7 @@
       "Config\\":"config/",
       "Model\\":"src/Model/",
       "Controller\\":"src/Controller/",
-      "Class\\" : "src/Class/Enum"
+      "Enum\\" : "src/Class/Enum"
     }
   }
 }

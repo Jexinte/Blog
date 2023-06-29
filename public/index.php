@@ -28,12 +28,13 @@ if (isset($_GET['action'])) {
   switch ($action) {
     case "sign_up":
       $user = new SignUpController();
+
       echo $twig->render("sign_up.twig", [
         "username_field" => $user->handleUsernameField(),
+        "file_field" => $user->handleFileField(),
+        "email_field" => $user->handleEmailField(),
         "password_field" => $user->handlePasswordField(),
-        "file_field" => $user->handleFileInput(),
-        "email_field" => $user->handleEmailFileInput(),
-        "test" => $user->handleValidationProperty()
+        "test" => $user->handleInputsValidation()
       ]);
 
       break;
@@ -72,8 +73,6 @@ if (isset($_GET['action'])) {
       echo $twig->render("admin_update_article.twig");
       break;
   }
-}
-
-else{
+} else {
   echo $twig->render("homepage.twig");
 }

@@ -4,7 +4,7 @@
 namespace Model;
 
 
-use Class\User as User;
+use Enum\UserType;
 
 class UserModel
 {
@@ -14,7 +14,7 @@ class UserModel
     protected string $profileImage,
     protected string $email,
     protected string $password,
-    protected User $type,
+    protected UserType $type,
   )
    {
 

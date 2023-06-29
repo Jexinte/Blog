@@ -48,21 +48,22 @@
 							</div>
 						</div>
 						<p class="text-danger" id="error-user">
-							{{username_field.username_message_error_empty is defined ? username_field.username_message_error_empty : ''}}
+							{{username_field.username_message_error_empty
+ is defined ? username_field.username_message_error_empty
+ : ''}}
 						</p>
 						<p class="text-danger" id="error-user">
 							{{username_field.username_message_error_wrong_format is defined ? username_field.username_message_error_wrong_format : ''}}
 						</p>
-						<p class="text-success">
-							{{username_field.username_message_success_available is defined ? username_field.username_message_success_available : ''}}
-						</p>
-						<p class="text-danger">
-							{{username_field.username_message_error_unavailable is defined ? username_field.username_message_error_unavailable : ''}}
-						</p>
 
+						<p class="text-danger">
+							{{username_field.username_message_error_unavailable
+ is defined ? username_field.username_message_error_unavailable
+ : ''}}
+						</p>
 
 						{# FILE #}
-
+						{{test}}
 						<div class="mb-3 profile-image-box">
 							<label for="profile-image" class="form-label">Image de profil *
 							</label>
@@ -72,12 +73,10 @@
 								{{file_field.file_message_error_type is defined ? file_field.file_message_error_type : ''}}
 							</p>
 
-								<p class="text-danger" id="error-file">
+							<p class="text-danger" id="error-file">
 								{{file_field.file_message_error_empty is defined ? file_field.file_message_error_empty : ''}}
 							</p>
-						<p class="text-success">
-							{{file_field.file_message_success is defined ? file_field.file_message_success : ''}}
-						</p>
+
 						</div>
 
 
@@ -86,18 +85,19 @@
 						<div class="mb-3 mail-box">
 							<label for="mail" class="form-label">Adresse email *</label>
 							<input type="email" class="form-control" name="mail" id="mail" placeholder="johndoe@example.fr">
-							<p class="text-danger" id="error-mail">
-							{# Remplacer message par email_field #}
+							<p
+								class="text-danger" id="error-mail">
+								{# Remplacer message par email_field #}
 								{{email_field.email_message_error_already_exist is defined ? email_field.email_message_error_already_exist : ''}}
-								</p>
+							</p>
 
-								<p class="text-danger" id="error-mail">
+							<p class="text-danger" id="error-mail">
 								{{email_field.email_message_error_empty is defined ? email_field.email_message_error_empty : ''}}
-								</p>
+							</p>
 
-								<p class="text-danger" id="error-mail">
+							<p class="text-danger" id="error-mail">
 								{{email_field.email_message_error_wrong_format is defined ? email_field.email_message_error_wrong_format : ''}}
-								</p>
+							</p>
 						</div>
 						{# email_message_error #}
 
