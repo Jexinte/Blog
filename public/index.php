@@ -3,7 +3,7 @@
 require_once __DIR__ . "/../vendor/autoload.php";
 
 use Controller\ArticleController;
-use Controller\SignUpController;
+use Controller\UserController;
 
 $action = "";
 $selection = "";
@@ -27,7 +27,7 @@ if (isset($_GET['action'])) {
 
   switch ($action) {
     case "sign_up":
-      $user = new SignUpController();
+      $user = new UserController();
 
       echo $twig->render("sign_up.twig", [
         "username_field" => $user->handleUsernameField(),

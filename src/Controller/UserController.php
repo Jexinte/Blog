@@ -6,7 +6,7 @@ use Config\DatabaseConnection;
 use Model\User;
 
 
-class SignUpController
+class UserController
 {
   private $db;
 
