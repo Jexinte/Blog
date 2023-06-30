@@ -215,7 +215,7 @@ class User extends UserModel
     }
   }
 
-  public function login($email, $password): array
+  public function login( string $email, string $password): array
   {
 
     $dbConnect = $this->connector->connect();
