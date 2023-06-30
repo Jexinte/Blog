@@ -27,7 +27,7 @@ class ComposerStaticInit109fbc80a3a8192711741efed149726e
         ),
         'E' => 
         array (
-            'Enum\\' => 5,
+            'Enumeration\\' => 12,
         ),
         'C' => 
         array (
@@ -53,9 +53,9 @@ class ComposerStaticInit109fbc80a3a8192711741efed149726e
         array (
             0 => __DIR__ . '/../..' . '/src/Model',
         ),
-        'Enum\\' => 
+        'Enumeration\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/src/Class/Enum',
+            0 => __DIR__ . '/../..' . '/src/Class/Enumeration',
         ),
         'Controller\\' => 
         array (

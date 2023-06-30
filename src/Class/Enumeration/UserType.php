@@ -1,6 +1,6 @@
 <?php
 
-namespace Enum;
+namespace Enumeration;
 
 enum UserType: string
 {

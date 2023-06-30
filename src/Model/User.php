@@ -4,7 +4,7 @@ namespace Model;
 
 use Config\DatabaseConnection;
 use Model\UserModel;
-use Enum\UserType;
+use Enumeration\UserType;
 
 
 

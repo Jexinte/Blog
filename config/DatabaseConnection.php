@@ -19,7 +19,7 @@ class DatabaseConnection
 
 
 
-  //TODO Retirer les paramètres de la fonction et mettre les valeurs directement dans les propriétés correspondantes
+
   public function connect()
   {
 

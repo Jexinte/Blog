@@ -3,7 +3,7 @@
 namespace Model;
 
 
-use Enum\UserType;
+use Enumeration\UserType;
 
 class UserModel
 {
