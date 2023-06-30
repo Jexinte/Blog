@@ -40,6 +40,20 @@
 						<div class="mb-3 user-box">
 							<label for="username" class="form-label">Utilisateur *</label>
 							<input class="form-control" type="text" name="username" id="username" aria-describedby="user-helper user-helper-2 user-helper-3 user-helper-4" placeholder="Lu7841">
+							<p class="text-danger" id="error-user">
+								{{username_field.username_message_error_empty
+ is defined ? username_field.username_message_error_empty
+ : ''}}
+							</p>
+							<p class="text-danger" id="error-user">
+								{{username_field.username_message_error_wrong_format is defined ? username_field.username_message_error_wrong_format : ''}}
+							</p>
+
+							<p class="text-danger">
+								{{username_field.username_message_error_unavailable
+ is defined ? username_field.username_message_error_unavailable
+ : ''}}
+							</p>
 							<p id="user-helper" class="form-text text-dark pt-3">Le nom d'utilisateur doit suivre le format suivant :</p>
 							<div class="user-requirements">
 								<p id="user-helper-2" class="form-text text-dark">- Le premier caractère doit être une lettre majuscule</p>
@@ -48,20 +62,7 @@
 								<p id="user-helper-4" class="form-text text-dark">- Les chiffres ne sont autorisés qu'à partir du 3ème caractère précédé de la lettre majuscule et une lettre minuscule</p>
 							</div>
 						</div>
-						<p class="text-danger" id="error-user">
-							{{username_field.username_message_error_empty
- is defined ? username_field.username_message_error_empty
- : ''}}
-						</p>
-						<p class="text-danger" id="error-user">
-							{{username_field.username_message_error_wrong_format is defined ? username_field.username_message_error_wrong_format : ''}}
-						</p>
 
-						<p class="text-danger">
-							{{username_field.username_message_error_unavailable
- is defined ? username_field.username_message_error_unavailable
- : ''}}
-						</p>
 
 						{# FILE #}
 						{{test}}
@@ -86,9 +87,7 @@
 						<div class="mb-3 mail-box">
 							<label for="mail" class="form-label">Adresse email *</label>
 							<input type="email" class="form-control" name="mail" id="mail" placeholder="johndoe@example.fr">
-							<p
-								class="text-danger" id="error-mail">
-								{# Remplacer message par email_field #}
+							<p class="text-danger" id="error-mail">
 								{{email_field.email_message_error_already_exist is defined ? email_field.email_message_error_already_exist : ''}}
 							</p>
 

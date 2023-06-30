@@ -41,7 +41,7 @@ class User extends UserModel
 
 
 
-  public function checkUsernameInput()
+  public function checkUsernameInput(): string|array
   {
     $dbConnect = $this->connector->connect();
     $user_regex =  "/^[A-Z][A-Za-z\d]{2,10}$/";
@@ -77,7 +77,7 @@ class User extends UserModel
     }
   }
 
-  public function checkFileInput()
+  public function checkFileInput(): array
   {
 
     if (isset($_POST['submit'])) {
@@ -121,7 +121,7 @@ class User extends UserModel
   }
 
 
-  public function checkEmailInput()
+  public function checkEmailInput(): string|array
   {
     $dbConnect = $this->connector->connect();
     $email_regex = "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/";
@@ -154,7 +154,7 @@ class User extends UserModel
       }
     }
   }
-  public function checkPasswordInput()
+  public function checkPasswordInput(): string|array
   {
 
     $password_regex =  "/^(?=.*[A-Z])(?=.*\d).{8,}$/";
@@ -178,7 +178,7 @@ class User extends UserModel
     }
   }
 
-  public function inputsValidation()
+  public function inputsValidation(): void
   {
     $dbConnect = $this->connector->connect();
 
