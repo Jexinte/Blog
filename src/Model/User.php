@@ -5,7 +5,7 @@ namespace Model;
 use Config\DatabaseConnection;
 use Model\UserModel;
 use Enum\UserType;
-//use Enum\ErrorUser;
+
 
 
 
@@ -44,7 +44,7 @@ class User extends UserModel
   public function checkUsernameInput()
   {
     $dbConnect = $this->connector->connect();
-    $user_regex =  "/^[A-Z][A-Za-z0-9]{0,9}$/";
+    $user_regex =  "/^[A-Z][A-Za-z\d]{2,10}$/";
 
     if (isset($_POST['submit'])) {
       $username = $_POST['username'];
@@ -59,18 +59,18 @@ class User extends UserModel
             return $username;
           } else {
 
-            header('Location?action=sign_up', true, 400);
+            header('HTTP/1.1 400');
             $this->error_messages["username_message_error_unavailable"] = "Le nom d'utilisateur : " . $username . " est déjà pris";
             return $this->error_messages;
           }
         } else {
-          header('Location?action=sign_up', true, 404);
-          $this->error_messages["username_message_error_wrong_format"] = "Oops ! Merci de définir un nom d'utilisateur en suivant le format requis";
+          header('HTTP/1.1 400');
+          $this->error_messages["username_message_error_wrong_format"] = "Oops ! Merci de définir un nom d'utilisateur en suivant le format ci-dessous :";
           return $this->error_messages;
         }
       } else {
 
-        header('Location?action=sign_up', true, 404);
+        header('HTTP/1.1 400');
         $this->error_messages["username_message_error_empty"] = "Ce champ ne peut être vide !";
         return $this->error_messages;
       }
@@ -107,13 +107,13 @@ class User extends UserModel
             ];
             return $file_settings;
           } else {
-            header('Location?action=sign_up', true, 400);
+            header('HTTP/1.1 400');
             $this->error_messages["file_message_error_type"] = "Seuls les fichiers de type : jpg, jpeg , png et webp sont acceptés !";
             return $this->error_messages;
           }
         }
       } else {
-        header('Location?action=sign_up', true, 404);
+        header('HTTP/1.1 400');
         $this->error_messages["file_message_error_empty"] = "Veuillez sélectionner un fichier !";
         return $this->error_messages;
       }
@@ -138,17 +138,17 @@ class User extends UserModel
           if (!$result) {
             return $email;
           } else {
-            header('Location?action=sign_up', true, 400);
+            header('HTTP/1.1 400');
             $this->error_messages["email_message_error_already_exist"] = "L'adresse email suivante : " . $email . " est déjà prise";
             return $this->error_messages;
           }
         } else {
-          header('Location?action=sign_up', true, 404);
+          header('HTTP/1.1 400');
           $this->error_messages["email_message_error_wrong_format"] = "Oops ! Le format de votre saisie est incorrect. Merci de suivre le format requis : johndoe@gmail.com";
           return $this->error_messages;
         }
       } else {
-        header('Location?action=sign_up', true, 404);
+        header('HTTP/1.1 400');
         $this->error_messages["email_message_error_empty"] = "Ce champ ne peut-être vide !";
         return $this->error_messages;
       }
@@ -166,21 +166,18 @@ class User extends UserModel
           $hash_password = password_hash($password, PASSWORD_DEFAULT);
           return $hash_password;
         } else {
-          header('Location?action=sign_up', true, 404);
-          $this->error_messages["password_message_error_wrong_format"] = "Oops ! Le format de votre mot de passe est incorrect. Merci de suivre le format requis";
+          header('HTTP/1.1 400');
+          $this->error_messages["password_message_error_wrong_format"] = "Oops ! Le format de votre mot de passe est incorrect. Merci de suivre le format ci-dessus";
           return $this->error_messages;
         }
       } else {
-        header('HTTP/1.1 404 Not Found');
-        header('Location:?action=sign_up');
-
+        header('HTTP/1.1 400');
         $this->error_messages["password_message_error_empty"] = "Ce champ ne peut être vide !";
         return $this->error_messages;
       }
     }
   }
 
-  // TODO Check why redirection doesn't work
   public function inputsValidation()
   {
     $dbConnect = $this->connector->connect();
@@ -189,8 +186,7 @@ class User extends UserModel
     $file_value = $this->checkFileInput();
     $email_value = $this->checkEmailInput();
     $password_value = $this->checkPasswordInput();
-    $url = "public/";
-    echo realpath($url);
+
 
 
     if (is_string($username_value) && array_key_first($file_value) === "file" &&  is_string($email_value) && is_string($password_value)) {
@@ -209,14 +205,12 @@ class User extends UserModel
           $this->password,
           $this->type->value
         ];
+        header('HTTP/1.1 302');
+        header("Location: ?selection=sign_in");
         $statement->execute($data_values);
         move_uploaded_file($file_value["file"]["tmp"], $file_value["file"]["directory"] . "/" . $file_value["file"]["name"]);
-        header('HTTP/1.1 201 Created');
-        header("Location:$url?selection=sign_in");
-        //exit;
       } else {
-        //header("Location ?action=sign_up", true, 500);
-        header('Location:?selection=sign_in');
+        header('HTTP/1.1 500');
       }
     }
   }

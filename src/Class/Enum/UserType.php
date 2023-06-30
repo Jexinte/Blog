@@ -2,8 +2,8 @@
 
 namespace Enum;
 
-enum UserType:string
+enum UserType: string
 {
-  case ADMIN = "admin"; 
+  case ADMIN = "admin";
   case USER = "user";
 }

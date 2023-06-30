@@ -39,12 +39,13 @@
 					<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
 						<div class="mb-3 user-box">
 							<label for="username" class="form-label">Utilisateur *</label>
-							<input class="form-control" type="text" name="username" id="username" aria-describedby="user-helper user-helper-2 user-helper-3 user-helper-4" placeholder="Lovelace">
-							<p id="user-helper" class="form-text text-dark pt-3">Le nom d'utilisateur doit commencer par :</p>
+							<input class="form-control" type="text" name="username" id="username" aria-describedby="user-helper user-helper-2 user-helper-3 user-helper-4" placeholder="Lu7841">
+							<p id="user-helper" class="form-text text-dark pt-3">Le nom d'utilisateur doit suivre le format suivant :</p>
 							<div class="user-requirements">
-								<p id="user-helper-2" class="form-text text-dark">- Une lettre majuscule</p>
+								<p id="user-helper-2" class="form-text text-dark">- Le premier caractère doit être une lettre majuscule</p>
 								<p id="user-helper-3" class="form-text text-dark">- Ne doit pas contenir de symboles</p>
 								<p id="user-helper-4" class="form-text text-dark">- Ne doit pas excéder plus de 10 caractères</p>
+								<p id="user-helper-4" class="form-text text-dark">- Les chiffres ne sont autorisés qu'à partir du 3ème caractère précédé de la lettre majuscule et une lettre minuscule</p>
 							</div>
 						</div>
 						<p class="text-danger" id="error-user">
@@ -128,7 +129,6 @@
 							</p>
 
 						</div>
-
 						<input type="submit" class="btn text-white " name="submit" id="submit" value="Envoyer">
 					</div>
 				</div>

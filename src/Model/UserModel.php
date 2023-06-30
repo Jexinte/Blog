@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Model;
 
 
@@ -15,8 +14,6 @@ class UserModel
     protected string $email,
     protected string $password,
     protected UserType $type,
-  )
-   {
-
+  ) {
   }
 }

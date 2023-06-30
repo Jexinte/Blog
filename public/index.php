@@ -34,7 +34,7 @@ if (isset($_GET['action'])) {
         "file_field" => $user->handleFileField(),
         "email_field" => $user->handleEmailField(),
         "password_field" => $user->handlePasswordField(),
-        "test" => $user->handleInputsValidation()
+        "validation" => $user->handleInputsValidation()
       ]);
 
       break;

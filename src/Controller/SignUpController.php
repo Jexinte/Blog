@@ -31,7 +31,7 @@ class SignUpController
   public function handleEmailField(): ?array
   {
     $user = new User($this->db);
-    if (is_array($user->checkEmailInput()))     return $user->checkEmailInput();
+    if (is_array($user->checkEmailInput())) return $user->checkEmailInput();
     else return null;
   }
 
@@ -43,9 +43,9 @@ class SignUpController
   }
 
 
-  public function handleInputsValidation()
+  public function handleInputsValidation(): void
   {
     $user = new User($this->db);
-    return $user->inputsValidation();
+    $user->inputsValidation();
   }
 }
