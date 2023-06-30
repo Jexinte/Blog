@@ -38,6 +38,11 @@ if (isset($_GET['action'])) {
       ]);
 
       break;
+
+      case "sign_in":
+        $user = new UserController();
+        echo $twig->render("sign_in.twig",["message" => $user->handleLoginField()]);
+        break;
   }
 } elseif (isset($_GET['selection'])) {
 

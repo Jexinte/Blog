@@ -31,11 +31,13 @@ class User extends UserModel
     "email_message_error_already_exist" => "",
     "email_message_error_empty" => "",
     "email_message_error_wrong_format" => "",
+    "email_message_error_doesnt_exist" => "",
 
 
     // PASSWORD
     "password_message_error_empty" => "",
     "password_message_error_wrong_format" => "",
+    "password_message_error_incorrect" => "",
 
   ];
 
@@ -212,6 +214,42 @@ class User extends UserModel
       } else {
         header('HTTP/1.1 500');
       }
+    }
+  }
+
+  public function login($email, $password): array
+  {
+
+    $dbConnect = $this->connector->connect();
+    if (isset($_POST['submit'])) {
+
+      if (empty($email)) {
+        header('HTTP/1.1 400');
+        $this->error_messages["email_message_error_empty"] = "Ce champ ne peut-être vide !";
+      }
+      if (empty($password)) {
+        header('HTTP/1.1 400');
+        $this->error_messages["password_message_error_empty"] = "Ce champ ne peut-être vide !";
+      } else {
+        $statement = $dbConnect->prepare("SELECT email,password FROM users WHERE email = :email");
+        $this->email = $email;
+        $this->password = $password;
+        $statement->bindParam(":email", $this->email);
+        $statement->execute();
+        $user = $statement->fetch();
+        if ($user) {
+          if (password_verify($this->password, $user['password'])) {
+            // TODO This part will be define later
+          } else {
+            header('HTTP/1.1 400');
+            $this->error_messages["password_message_error_incorrect"] = "Oups ! Le mot de passe saisi est incorrect !";
+          }
+        } else {
+          header('HTTP/1.1 400');
+          $this->error_messages["email_message_error_doesnt_exist"] = "Oups ! Nous n'avons trouvé aucun compte associé à cette adresse e-mail. Assurez-vous que vous avez saisi correctement votre adresse e-mail et réessayez";
+        }
+      }
+      return $this->error_messages;
     }
   }
 }

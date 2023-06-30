@@ -48,4 +48,10 @@ class UserController
     $user = new User($this->db);
     $user->inputsValidation();
   }
+
+  public function handleLoginField(): array
+  {
+    $user = new User($this->db);
+    return $user->login($_POST['mail'], $_POST['password']);
+  }
 }
