@@ -91,8 +91,6 @@ class User extends UserModel
         $authorized_extensions = array("jpg", "jpeg", "png", "webp");
 
         if ($filename_code_error == UPLOAD_ERR_OK) {
-
-          //* Get the extension of the downloaded file
           $extension_of_the_uploaded_file = explode('.', $filename);
           if (in_array($extension_of_the_uploaded_file[1], $authorized_extensions)) {
             $generate_bytes = random_bytes(9);
@@ -239,7 +237,6 @@ class User extends UserModel
         $user = $statement->fetch();
         if ($user) {
           if (password_verify($this->password, $user['password'])) {
-            // TODO This part will be define later
           } else {
             header('HTTP/1.1 400');
             $this->error_messages["password_message_error_incorrect"] = "Oups ! Le mot de passe saisi est incorrect !";
