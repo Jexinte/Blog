@@ -11,7 +11,7 @@ class UserSignUpException extends Exception
 {
   const USERNAME_MESSAGE_ERROR_EMPTY = "Ce champ ne peut-être vide !";
   const USERNAME_MESSAGE_ERROR_WRONG_FORMAT = "Oops ! Merci de suivre le format ci-dessous pour votre nom d'utilisateur !";
-  const USERNAME_MESSAGE_ERROR_UNAVAILABLE = "Ce nom d'utilisateur est déja pris !";
+  const USERNAME_MESSAGE_ERROR_UNAVAILABLE = "Le nom d'utilisateur ";
 
   const FILE_MESSAGE_ERROR_TYPE_FILE = "Seuls les fichiers de type : jpg, jpeg , png et webp sont acceptés !";
   const FILE_MESSAGE_ERROR_NO_FILE_SELECTED = "Veuillez sélectionner un fichier !";
@@ -51,7 +51,7 @@ class User extends UserModel
             if (!$result) {
               return $username;
             } else {
-              throw new UserSignUpException(UserSignUpException::USERNAME_MESSAGE_ERROR_UNAVAILABLE);
+              throw new UserSignUpException(UserSignUpException::USERNAME_MESSAGE_ERROR_UNAVAILABLE . $username . " est déjà pris !");
             }
           } else {
             throw new UserSignUpException(UserSignUpException::USERNAME_MESSAGE_ERROR_WRONG_FORMAT);
@@ -163,10 +163,10 @@ class User extends UserModel
           throw new UserSignUpException(UserSignUpException::PASSWORD_MESSAGE_ERROR_EMPTY);
         }
       }
-      return null;
     } catch (UserSignUpException $e) {
       throw $e;
     }
+    return null;
   }
 
 
@@ -174,13 +174,14 @@ class User extends UserModel
   {
     $dbConnect = $this->connector->connect();
 
-    $username_value = $this->checkUsernameInput();
-    $file_value = $this->checkFileInput();
-    $email_value = $this->checkEmailInput();
-    $password_value = $this->checkPasswordInput();
 
     try {
+      $file_value = $this->checkFileInput();
+      $email_value = $this->checkEmailInput();
+      $password_value = $this->checkPasswordInput();
+      $username_value = $this->checkUsernameInput();
 
+      echo '<p style="color=green">Model Value :   Le nom de l\'utilisateur suivant : $username_value a bien été récupérér</p>' . PHP_EOL;
       if (is_string($username_value) && is_array($file_value) &&  is_string($email_value) && is_string($password_value)) {
         $this->username = $username_value;
         $this->profileImage = "http:localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/src/admin/assets/images/" . $file_value["file"]["name"];
@@ -200,16 +201,17 @@ class User extends UserModel
           ];
           $statement->execute($data_values);
           move_uploaded_file($file_value["file"]["tmp"], $file_value["file"]["directory"] . "/" . $file_value["file"]["name"]);
+          header('HTTP/1.1 302');
+          header("Location: ?selection=sign_in");
         }
       }
-    } finally {
-      header('HTTP/1.1 302');
-      header("Location: ?selection=sign_in");
+    } catch (UserSignUpException $e) {
+      throw $e;
     }
   }
 
 
-  public function login(string $email, string $password): string|array
+  public function login(string $email, string $password): array
   {
 
 
@@ -242,13 +244,13 @@ class User extends UserModel
         $user = $statement->fetch();
         if ($user) {
           if (password_verify($this->password, $user['password'])) {
-            echo "<h1>Bienvenue ".$user["username"]." ! </h1>";
+            echo "<h1>Bienvenue " . $user["username"] . " ! </h1>";
           } else {
-            header('HTTP/1.1 400');
+            header('HTTP/1.1 401');
             $error_messages["password_message_error_incorrect"] = "Oups ! Le mot de passe saisi est incorrect !";
           }
         } else {
-          header('HTTP/1.1 400');
+          header('HTTP/1.1 401');
           $error_messages["email_message_error_doesnt_exist"] = "Oups ! Nous n'avons trouvé aucun compte associé à cette adresse e-mail. Assurez-vous que vous avez saisi correctement votre adresse e-mail et réessayez";
         }
       }

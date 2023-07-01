@@ -65,10 +65,15 @@ class UserController
   }
 
 
-  public function handleInputsValidation(): void
+  public function handleInputsValidation(): ?string
   {
     $user = new User($this->db);
-    $user->inputsValidation();
+    try {
+      $user->inputsValidation();
+    } catch (UserSignUpException $e) {
+      return $e->getMessage();
+    }
+    return null;
   }
 
   public function handleLoginField(): array
