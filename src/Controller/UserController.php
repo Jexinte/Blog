@@ -4,7 +4,8 @@ namespace Controller;
 
 use Config\DatabaseConnection;
 use Model\User;
-use Model\UserException;
+use Model\UserSignUpException;
+
 
 class UserController
 {
@@ -21,7 +22,7 @@ class UserController
 
     try {
       $user->checkUsernameInput();
-    } catch (UserException $e) {
+    } catch (UserSignUpException $e) {
       return $e->getMessage();
     }
 
@@ -32,7 +33,7 @@ class UserController
     $user = new User($this->db);
     try {
       $user->checkFileInput();
-    } catch (UserException $e) {
+    } catch (UserSignUpException $e) {
       return $e->getMessage();
     }
 
@@ -45,7 +46,7 @@ class UserController
     $user = new User($this->db);
     try {
       $user->checkEmailInput();
-    } catch (UserException $e) {
+    } catch (UserSignUpException $e) {
       return $e->getMessage();
     }
 
@@ -57,26 +58,22 @@ class UserController
     $user = new User($this->db);
     try {
       $user->checkPasswordInput();
-    } catch (UserException $e) {
+    } catch (UserSignUpException $e) {
       return $e->getMessage();
     }
     return null;
   }
 
 
-  public function handleInputsValidation(): null
+  public function handleInputsValidation(): void
   {
     $user = new User($this->db);
-    try {
-      $user->inputsValidation();
-    } finally {
-      return null;
-    }
+    $user->inputsValidation();
   }
 
-  // public function handleLoginField(): array
-  // {
-  //   $user = new User($this->db);
-  //   return $user->login($_POST['mail'], $_POST['password']);
-  // }
+  public function handleLoginField(): array
+  {
+    $user = new User($this->db);
+    return $user->login($_POST['mail'], $_POST['password']);
+  }
 }
