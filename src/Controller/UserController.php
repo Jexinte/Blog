@@ -4,7 +4,7 @@ namespace Controller;
 
 use Config\DatabaseConnection;
 use Model\User;
-
+use Model\UserException;
 
 class UserController
 {
@@ -14,44 +14,69 @@ class UserController
   {
     $this->db = new DatabaseConnection("professional_blog", "root", "");
   }
-  public function handleUsernameField(): ?array
+  public function handleUsernameField(): ?string
   {
 
     $user = new User($this->db);
-    if (is_array($user->checkUsernameInput())) return $user->checkUsernameInput();
-    else return null;
-  }
-  public function handleFileField(): ?array
-  {
-    $user = new User($this->db);
-    if (array_key_first($user->checkFileInput()) != "file") return $user->checkFileInput();
-    else return null;
-  }
 
-  public function handleEmailField(): ?array
-  {
-    $user = new User($this->db);
-    if (is_array($user->checkEmailInput())) return $user->checkEmailInput();
-    else return null;
-  }
+    try {
+      $user->checkUsernameInput();
+    } catch (UserException $e) {
+      return $e->getMessage();
+    }
 
-  public function handlePasswordField(): ?array
+    return null;
+  }
+  public function handleFileField(): ?string
   {
     $user = new User($this->db);
-    if (is_array($user->checkPasswordInput())) return $user->checkPasswordInput();
-    else return null;
+    try {
+      $user->checkFileInput();
+    } catch (UserException $e) {
+      return $e->getMessage();
+    }
+
+    return null;
   }
 
 
-  public function handleInputsValidation(): void
+  public function handleEmailField(): ?string
   {
     $user = new User($this->db);
-    $user->inputsValidation();
+    try {
+      $user->checkEmailInput();
+    } catch (UserException $e) {
+      return $e->getMessage();
+    }
+
+    return null;
   }
 
-  public function handleLoginField(): array
+  public function handlePasswordField(): ?string
   {
     $user = new User($this->db);
-    return $user->login($_POST['mail'], $_POST['password']);
+    try {
+      $user->checkPasswordInput();
+    } catch (UserException $e) {
+      return $e->getMessage();
+    }
+    return null;
   }
+
+
+  public function handleInputsValidation(): null
+  {
+    $user = new User($this->db);
+    try {
+      $user->inputsValidation();
+    } finally {
+      return null;
+    }
+  }
+
+  // public function handleLoginField(): array
+  // {
+  //   $user = new User($this->db);
+  //   return $user->login($_POST['mail'], $_POST['password']);
+  // }
 }

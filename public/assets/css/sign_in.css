@@ -115,6 +115,7 @@ header {
   font-weight: var(--700);
 }
 
-.error-mail,.error-password {
+.error-mail,
+.error-password {
   margin-top: 1em;
 }
