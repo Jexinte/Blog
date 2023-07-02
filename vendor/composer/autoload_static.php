@@ -27,6 +27,7 @@ class ComposerStaticInit109fbc80a3a8192711741efed149726e
         ),
         'E' => 
         array (
+            'Exceptions\\' => 11,
             'Enumeration\\' => 12,
         ),
         'C' => 
@@ -52,6 +53,10 @@ class ComposerStaticInit109fbc80a3a8192711741efed149726e
         'Model\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src/Model',
+        ),
+        'Exceptions\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src/Class/Exceptions',
         ),
         'Enumeration\\' => 
         array (

@@ -5,25 +5,9 @@ namespace Model;
 use Config\DatabaseConnection;
 use Model\UserModel;
 use Enumeration\UserType;
+use Exceptions\UserException;
 use Exception;
 
-class UserSignUpException extends Exception
-{
-  const USERNAME_MESSAGE_ERROR_EMPTY = "Ce champ ne peut-être vide !";
-  const USERNAME_MESSAGE_ERROR_WRONG_FORMAT = "Oops ! Merci de suivre le format ci-dessous pour votre nom d'utilisateur !";
-  const USERNAME_MESSAGE_ERROR_UNAVAILABLE = "Le nom d'utilisateur ";
-
-  const FILE_MESSAGE_ERROR_TYPE_FILE = "Seuls les fichiers de type : jpg, jpeg , png et webp sont acceptés !";
-  const FILE_MESSAGE_ERROR_NO_FILE_SELECTED = "Veuillez sélectionner un fichier !";
-
-  const EMAIL_MESSAGE_ERROR_ALREADY_EXIST = "L'adresse email suivante ";
-  const EMAIL_MESSAGE_ERROR_EMPTY = "Ce champ ne peut-être vide !";
-  const EMAIL_MESSAGE_ERROR_WRONG_FORMAT = "Oops ! Le format de votre saisie est incorrect. Merci de suivre le format requis : nomadressemail@domaine.extension";
-
-
-  const PASSWORD_MESSAGE_ERROR_EMPTY = "Ce champ ne peut être vide !";
-  const PASSWORD_MESSAGE_ERROR_WRONG_FORMAT = "Oops ! Le format de votre mot de passe est incorrect. Merci de suivre le format ci-dessous";
-}
 
 
 
@@ -51,16 +35,16 @@ class User extends UserModel
             if (!$result) {
               return $username;
             } else {
-              throw new UserSignUpException(UserSignUpException::USERNAME_MESSAGE_ERROR_UNAVAILABLE . $username . " est déjà pris !");
+              throw new UserException(UserException::USERNAME_MESSAGE_ERROR_UNAVAILABLE . $username . " est déjà pris !");
             }
           } else {
-            throw new UserSignUpException(UserSignUpException::USERNAME_MESSAGE_ERROR_WRONG_FORMAT);
+            throw new UserException(UserException::USERNAME_MESSAGE_ERROR_WRONG_FORMAT);
           }
         } else {
-          throw new UserSignUpException(UserSignUpException::USERNAME_MESSAGE_ERROR_EMPTY);
+          throw new UserException(UserException::USERNAME_MESSAGE_ERROR_EMPTY);
         }
       }
-    } catch (UserSignUpException $e) {
+    } catch (UserException $e) {
       throw $e;
     }
     return null;
@@ -93,15 +77,15 @@ class User extends UserModel
               return $file_settings;
             } else {
               header('HTTP/1.1 400');
-              throw new UserSignUpException(UserSignUpException::FILE_MESSAGE_ERROR_TYPE_FILE);
+              throw new UserException(UserException::FILE_MESSAGE_ERROR_TYPE_FILE);
             }
           }
         } else {
           header('HTTP/1.1 400');
-          throw new UserSignUpException(UserSignUpException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED);
+          throw new UserException(UserException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED);
         }
       }
-    } catch (UserSignUpException $e) {
+    } catch (UserException $e) {
       throw $e;
     }
     return null;
@@ -126,18 +110,18 @@ class User extends UserModel
               return $email;
             } else {
               header('HTTP/1.1 400');
-              throw new UserSignUpException(UserSignUpException::EMAIL_MESSAGE_ERROR_ALREADY_EXIST . $email . " est déjà prise !");
+              throw new UserException(UserException::EMAIL_MESSAGE_ERROR_ALREADY_EXIST . $email . " est déjà prise !");
             }
           } else {
             header('HTTP/1.1 400');
-            throw new UserSignUpException(UserSignUpException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT);
+            throw new UserException(UserException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT);
           }
         } else {
           header('HTTP/1.1 400');
-          throw new UserSignUpException(UserSignUpException::EMAIL_MESSAGE_ERROR_EMPTY);
+          throw new UserException(UserException::EMAIL_MESSAGE_ERROR_EMPTY);
         }
       }
-    } catch (UserSignUpException $e) {
+    } catch (UserException $e) {
       throw $e;
     }
     return null;
@@ -156,14 +140,14 @@ class User extends UserModel
             return $hash_password;
           } else {
             header('HTTP/1.1 400');
-            throw new UserSignUpException(UserSignUpException::PASSWORD_MESSAGE_ERROR_WRONG_FORMAT);
+            throw new UserException(UserException::PASSWORD_MESSAGE_ERROR_WRONG_FORMAT);
           }
         } else {
           header('HTTP/1.1 400');
-          throw new UserSignUpException(UserSignUpException::PASSWORD_MESSAGE_ERROR_EMPTY);
+          throw new UserException(UserException::PASSWORD_MESSAGE_ERROR_EMPTY);
         }
       }
-    } catch (UserSignUpException $e) {
+    } catch (UserException $e) {
       throw $e;
     }
     return null;
@@ -205,7 +189,7 @@ class User extends UserModel
           header("Location: ?selection=sign_in");
         }
       }
-    } catch (UserSignUpException $e) {
+    } catch (UserException $e) {
       throw $e;
     }
   }

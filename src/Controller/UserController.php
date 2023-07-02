@@ -4,7 +4,7 @@ namespace Controller;
 
 use Config\DatabaseConnection;
 use Model\User;
-use Model\UserSignUpException;
+use Exceptions\UserException;
 
 
 class UserController
@@ -22,7 +22,7 @@ class UserController
 
     try {
       $user->checkUsernameInput();
-    } catch (UserSignUpException $e) {
+    } catch (UserException $e) {
       return $e->getMessage();
     }
 
@@ -33,7 +33,7 @@ class UserController
     $user = new User($this->db);
     try {
       $user->checkFileInput();
-    } catch (UserSignUpException $e) {
+    } catch (UserException $e) {
       return $e->getMessage();
     }
 
@@ -46,7 +46,7 @@ class UserController
     $user = new User($this->db);
     try {
       $user->checkEmailInput();
-    } catch (UserSignUpException $e) {
+    } catch (UserException $e) {
       return $e->getMessage();
     }
 
@@ -58,7 +58,7 @@ class UserController
     $user = new User($this->db);
     try {
       $user->checkPasswordInput();
-    } catch (UserSignUpException $e) {
+    } catch (UserException $e) {
       return $e->getMessage();
     }
     return null;
@@ -70,7 +70,7 @@ class UserController
     $user = new User($this->db);
     try {
       $user->inputsValidation();
-    } catch (UserSignUpException $e) {
+    } catch (UserException $e) {
       return $e->getMessage();
     }
     return null;
