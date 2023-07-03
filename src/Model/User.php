@@ -6,7 +6,7 @@ use Config\DatabaseConnection;
 use Model\UserModel;
 use Enumeration\UserType;
 use Exceptions\UserException;
-use Exception;
+
 
 
 

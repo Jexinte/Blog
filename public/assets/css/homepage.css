@@ -25,6 +25,13 @@ header {
   font-size: .8em;
 }
 
+#cv #dowload{
+  color:white;
+}
+
+#cv #download:visited{
+  color:white;
+}
 
 
 #h2 {
@@ -202,7 +209,6 @@ header {
   }
 
   #title-inner-phrase {
-    /* padding-top: .7em; */
     font-size: .6em;
   }
 

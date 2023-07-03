@@ -4,6 +4,8 @@ require_once __DIR__ . "/../vendor/autoload.php";
 
 use Controller\ArticleController;
 use Controller\UserController;
+use Controller\DownloadController;
+
 
 $action = "";
 $selection = "";
@@ -43,6 +45,16 @@ if (isset($_GET['action'])) {
       $user = new UserController();
       echo $twig->render("sign_in.twig", ["message" => $user->handleLoginField()]);
       break;
+
+    case "download_file":
+      $download = new DownloadController();
+      echo $twig->render("homepage.twig",["file" => $download->handleDownloadFile()]);
+      break; 
+
+    case "error":
+      if(isset($_GET["code"]) && !empty($_GET["code"])) echo $twig->render("error.twig",["code" => $_GET["code"]]);
+      break;
+      
   }
 } elseif (isset($_GET['selection'])) {
 
