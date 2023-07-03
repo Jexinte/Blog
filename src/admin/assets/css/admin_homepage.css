@@ -103,7 +103,8 @@ a {
   text-align: center;
   color: var(--black);
 }
-.short-content{
+
+.short-content {
   text-align: center;
 }
 
@@ -118,7 +119,7 @@ a {
   font-weight: var(--700);
   text-decoration: none;
   color: var(--white);
- 
+
 }
 
 

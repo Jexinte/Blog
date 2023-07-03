@@ -1,16 +1,17 @@
 <?php
-//! Des modifications arriveront pour cette partie
-$root = dirname(__DIR__);
 
-require_once $root . "/vendor/autoload.php";
+require_once __DIR__ . "/../vendor/autoload.php";
+
+use Controller\ArticleController;
 
 $action = "";
 $selection = "";
 
+
 $paths = [
-  $root . "/templates",
-  $root . "/src/inc",
-  $root . "/src/admin/templates"
+  __DIR__ . "/../templates",
+  __DIR__ . "/../src/inc",
+  __DIR__ . "/../src/admin/templates"
 ];
 $loader = new \Twig\Loader\FilesystemLoader($paths);
 $twig = new \Twig\Environment(
@@ -20,13 +21,14 @@ $twig = new \Twig\Environment(
   ]
 );
 
-if (isset($_GET['action']) && !empty($_GET['action'])) $action = $_GET['action'];
-elseif (isset($_GET['selection']) && !empty($_GET['selection'])) $selection = $_GET['selection'];
+if (isset($_GET['action'])) $action = $_GET['action'];
+elseif (isset($_GET['selection'])) $selection = $_GET['selection'];
 
 
-//! Lorsque l'intégration sera complètement terminé voir ce qu'il en est de la forme des url
-//!  Les paramètres seront modifiées plus tard afin d'être adaptés en fonction de la page 
-switch ($selection):
+
+//* This part will be change sooner
+//TODO Replace the short syntax by brackets !
+switch ($selection) {
 
   case "sign_in":
     echo $twig->render("sign_in.twig");
@@ -36,8 +38,10 @@ switch ($selection):
     echo $twig->render("sign_up.twig");
     break;
   case "blog":
-    echo $twig->render("blog.twig");
+    $articles = new ArticleController();
+    echo $twig->render("blog.twig", ["articles" => $articles->listOfAllArticles()]);
     break;
+
 
   case "admin_panel":
 
@@ -64,4 +68,4 @@ switch ($selection):
     break;
   default:
     echo $twig->render("homepage.twig");
-endswitch;
+}

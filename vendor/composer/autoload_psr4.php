@@ -9,4 +9,7 @@ return array(
     'Twig\\' => array($vendorDir . '/twig/twig/src'),
     'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
     'Symfony\\Polyfill\\Ctype\\' => array($vendorDir . '/symfony/polyfill-ctype'),
+    'Model\\' => array($baseDir . '/src/Model'),
+    'Controller\\' => array($baseDir . '/src/Controller'),
+    'Config\\' => array($baseDir . '/config'),
 );
