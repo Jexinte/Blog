@@ -25,6 +25,11 @@ class ComposerStaticInit109fbc80a3a8192711741efed149726e
         array (
             'Model\\' => 6,
         ),
+        'E' => 
+        array (
+            'Exceptions\\' => 11,
+            'Enumeration\\' => 12,
+        ),
         'C' => 
         array (
             'Controller\\' => 11,
@@ -48,6 +53,14 @@ class ComposerStaticInit109fbc80a3a8192711741efed149726e
         'Model\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src/Model',
+        ),
+        'Exceptions\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src/Class/Exceptions',
+        ),
+        'Enumeration\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src/Class/Enumeration',
         ),
         'Controller\\' => 
         array (

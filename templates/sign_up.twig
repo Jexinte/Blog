@@ -31,23 +31,27 @@
 			</div>
 
 			{# FORM #}
-			<form id="form" class="pt-3" action="#" method="post">
+			<form id="form" class="pt-3" action="?action=sign_up" method="post" enctype="multipart/form-data">
 				<div
 					class="row">
 
 					{# USER #}
 					<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
 						<div class="mb-3 user-box">
-							<label for="user" class="form-label">Utilisateur *</label>
-							<input class="form-control" type="text" name="user" id="user" aria-describedby="user-helper user-helper-2 user-helper-3 user-helper-4" placeholder="Lovelace">
-							<p id="user-helper" class="form-text text-dark pt-3" required>Le nom d'utilisateur doit commencer par :</p>
+							<label for="username" class="form-label">Utilisateur *</label>
+							<input class="form-control" type="text" name="username" id="username" aria-describedby="user-helper user-helper-2 user-helper-3 user-helper-4" placeholder="Lu7841">
+
+							<p class="text-danger">
+								{{username_field}}
+							</p>
+							<p id="user-helper" class="form-text text-dark pt-3">Le nom d'utilisateur doit suivre le format suivant :</p>
 							<div class="user-requirements">
-								<p id="user-helper-2" class="form-text text-dark">- Une lettre majuscule</p>
+								<p id="user-helper-2" class="form-text text-dark">- Le premier caractère doit être une lettre majuscule</p>
 								<p id="user-helper-3" class="form-text text-dark">- Ne doit pas contenir de symboles</p>
 								<p id="user-helper-4" class="form-text text-dark">- Ne doit pas excéder plus de 10 caractères</p>
+								<p id="user-helper-4" class="form-text text-dark">- Les chiffres ne sont autorisés qu'à partir du 3ème caractère précédé de la lettre majuscule et une lettre minuscule</p>
 							</div>
 						</div>
-						<p id="error-user"></p>
 
 
 						{# FILE #}
@@ -55,9 +59,11 @@
 						<div class="mb-3 profile-image-box">
 							<label for="profile-image" class="form-label">Image de profil *
 							</label>
-							<input type="file" class="form-control" name="profile_image" id="profile-image" aria-describedby="file-helper" required>
-							<p id="file-helper" class="text-danger pt-3">Seuls les fichiers de type : jpg, jpeg , png et web sont acceptés</p>
-							<p id="error-file"><?= $error_profile_image ?? null ?></p>
+							<input type="file" class="form-control" name="profile_image" id="profile-image" aria-describedby="file-helper">
+							<p id="file-helper" class="text-danger pt-3"></p>
+							<p class="text-danger" id="error-file">
+								{{file_field}}
+							</p>
 
 						</div>
 
@@ -66,8 +72,10 @@
 
 						<div class="mb-3 mail-box">
 							<label for="mail" class="form-label">Adresse email *</label>
-							<input type="email" class="form-control" name="mail" id="mail" placeholder="johndoe@example.fr" required>
-							<p id="error-mail"><?= $error_mail ?? null ?></p>
+							<input type="email" class="form-control" name="mail" id="mail" placeholder="johndoe@example.fr">
+							<p class="text-danger" id="error-mail">
+								{{email_field}}
+							</p>
 						</div>
 
 
@@ -75,7 +83,10 @@
 
 						<div class="mb-3 password-box">
 							<label for="password" class="form-label">Mot de passe *</label>
-							<input type="password" class="form-control" name="password" id="password" aria-describedby="password-helper password-helper-2 password-helper-3 password-helper-4" required>
+							<input type="password" class="form-control" name="password" id="password" aria-describedby="password-helper password-helper-2 password-helper-3 password-helper-4">
+							<p class="text-danger" id="error-password">
+								{{password_field}}
+							</p>
 							<div class="check-password-box pt-3">
 
 								<label class="form-check-label" for="password-check">
@@ -89,10 +100,8 @@
 								<p id="password-helper-3" class="form-text text-dark">- Un chiffre</p>
 								<p id="password-helper-3" class="form-text text-dark">- 8 caractères minimum</p>
 							</div>
-							<p id="error-password"><?= $error_password ?? null ?></p>
 
 						</div>
-
 						<input type="submit" class="btn text-white " name="submit" id="submit" value="Envoyer">
 					</div>
 				</div>
@@ -101,3 +110,4 @@
 	</div>
 	<script src="../public/assets/js/seePassword.js"></script>
 {% endblock %}
+

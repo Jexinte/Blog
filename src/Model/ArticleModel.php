@@ -2,8 +2,6 @@
 
 namespace Model;
 
-//use Config\DatabaseConnection;
-
 class ArticleModel
 {
 

@@ -73,10 +73,12 @@ footer {
   footer {
     display: flex;
     justify-content: center;
+    transition:all ease 300ms;
   }
 
   footer p,
   footer a {
     font-size: .7em;
+    transition:all ease 300ms;
   }
 }

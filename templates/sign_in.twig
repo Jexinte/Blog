@@ -40,22 +40,29 @@
 
 
 			<form
-				id="form" action="#" method="post">
+				id="form" action="?action=sign_in" method="post">
 				<!-- MAIL -->
 				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
 					<div class="mb-3 mail-box">
 						<label for="mail" class="form-label">Adresse email *</label>
-						<input type="email" class="form-control" name="mail" id="mail" placeholder="johndoe@example.fr" required>
-						<p id="error-mail"></p>
+						<input type="email" class="form-control" name="mail" id="mail" placeholder="johndoe@example.fr">
+
+						<p class="text-danger error-mail">{{message.email_message_error_empty is defined  ? message.email_message_error_empty : ''}}</p>
+						<p class="text-danger error-mail">{{message.email_message_error_doesnt_exist is defined  ? message.email_message_error_doesnt_exist : ''}}</p>
+
+
 					</div>
 
 					<!-- PASSWORD -->
 
 					<div class="mb-3 password-box">
 						<label for="password" class="form-label">Mot de passe *</label>
-						<input type="password" class="form-control" name="password" id="password" required>
+						<input type="password" class="form-control" name="password" id="password">
 
-						<p id="error-password"></p>
+						<p class="text-danger error-password">{{message.password_message_error_empty}}</p>
+
+						<p class="text-danger error-password">{{message.password_message_error_incorrect}}</p>
+
 					</div>
 
 
@@ -69,3 +76,4 @@
 	</div>
 
 {% endblock %}
+

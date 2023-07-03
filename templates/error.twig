@@ -1,0 +1,46 @@
+{% extends "layout.twig" %}
+
+{% block name %}{% endblock %}
+{% block icon_img %}
+	<link rel="icon" type="image/png" href="../public/favicon.ico"/>
+{% endblock %}
+{% block title %}
+	<title>Erreur
+		{{code is defined ? code : ''}}
+		- Blog professionnel</title>
+{% endblock %}
+
+{% block css_page %}
+	<link rel="stylesheet" href="../public/assets/css/error.css">
+{% endblock %}
+
+{% block content %}
+
+	<header>
+		<nav class="menu">
+			<a href="?selection=homepage"><img class="logo" src="../public/assets/images/logo.png" height="60" alt=""></a>
+
+		</nav>
+	</header>
+	<div class="container-fluid" id="error">
+		<div class="row">
+			<div class="col-xs-12 col-md-12 col-lg-12">
+				{% if code is defined %}
+
+					<div class="error-box">
+						{% if code == 500 %}
+
+							{# <h1>Une erreur interne du serveur s'est produite. Veuillez réessayer ultérieurement ou contacter l'administrateur du site pour obtenir de l'aide. Nous nous excusons pour les désagréments occasionnés.</h1> #}
+
+							<img src="https://img.freepik.com/vecteurs-libre/500-illustration-concept-erreur-serveur-interne_114360-5572.jpg?w=826&t=st=1688392971~exp=1688393571~hmac=866eda9e499d2b9719ce8934f31cabf40e7a6d9e25467c9da51ef935669d748d" alt="">
+							<a href="#">Retour vers la page d'accueil
+							</a>
+						{% endif %}
+
+					{% endif %}
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>{% endblock %}
