@@ -10,7 +10,6 @@ use Exceptions\UserException;
 
 
 
-
 class User extends UserModel
 {
 

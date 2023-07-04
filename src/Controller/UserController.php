@@ -2,26 +2,24 @@
 
 namespace Controller;
 
-use Config\DatabaseConnection;
+
 use Model\User;
 use Exceptions\UserException;
 
 
 class UserController
 {
-  private $db;
 
-  public function __construct()
+
+  public function __construct(private readonly User $user)
   {
-    $this->db = new DatabaseConnection("professional_blog", "root", "");
+
   }
   public function handleUsernameField(): ?string
   {
 
-    $user = new User($this->db);
-
     try {
-      $user->checkUsernameInput();
+      $this->user->checkUsernameInput();
     } catch (UserException $e) {
       return $e->getMessage();
     }
@@ -30,9 +28,9 @@ class UserController
   }
   public function handleFileField(): ?string
   {
-    $user = new User($this->db);
+  
     try {
-      $user->checkFileInput();
+      $this->user->checkFileInput();
     } catch (UserException $e) {
       return $e->getMessage();
     }
@@ -43,9 +41,9 @@ class UserController
 
   public function handleEmailField(): ?string
   {
-    $user = new User($this->db);
+
     try {
-      $user->checkEmailInput();
+      $this->user->checkEmailInput();
     } catch (UserException $e) {
       return $e->getMessage();
     }
@@ -55,9 +53,9 @@ class UserController
 
   public function handlePasswordField(): ?string
   {
-    $user = new User($this->db);
+
     try {
-      $user->checkPasswordInput();
+      $this->user->checkPasswordInput();
     } catch (UserException $e) {
       return $e->getMessage();
     }
@@ -67,9 +65,9 @@ class UserController
 
   public function handleInputsValidation(): ?string
   {
-    $user = new User($this->db);
+
     try {
-      $user->inputsValidation();
+      $this->user->inputsValidation();
     } catch (UserException $e) {
       return $e->getMessage();
     }
@@ -78,7 +76,7 @@ class UserController
 
   public function handleLoginField(): array
   {
-    $user = new User($this->db);
-    return $user->login($_POST['mail'], $_POST['password']);
+//TODO Ne pas se servir des superglobales ?
+    return $this->user->login($_POST['mail'], $_POST['password']);
   }
 }

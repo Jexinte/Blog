@@ -2,9 +2,12 @@
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
+use Config\DatabaseConnection;
 use Controller\ArticleController;
 use Controller\UserController;
 use Controller\DownloadController;
+use Model\Article;
+use Model\User;
 
 
 $action = "";
@@ -22,6 +25,16 @@ $twig = new \Twig\Environment(
     'cache' => false
   ]
 );
+$db = new DatabaseConnection("professional_blog", "root", "");
+
+
+$userRepository = new User($db);
+$userController = new UserController($userRepository);
+
+$articleRepository = new Article($db);
+$articleController = new ArticleController($articleRepository);
+$download = new DownloadController();
+
 
 if (isset($_GET['action'])) {
 
@@ -29,32 +42,29 @@ if (isset($_GET['action'])) {
 
   switch ($action) {
     case "sign_up":
-      $user = new UserController();
+
 
       echo $twig->render("sign_up.twig", [
-        "username_field" => $user->handleUsernameField(),
-        "file_field" => $user->handleFileField(),
-        "email_field" => $user->handleEmailField(),
-        "password_field" => $user->handlePasswordField(),
-        "validation" => $user->handleInputsValidation()
+        "username_field" => $userController->handleUsernameField(),
+        "file_field" => $userController->handleFileField(),
+        "email_field" => $userController->handleEmailField(),
+        "password_field" => $userController->handlePasswordField(),
+        "validation" => $userController->handleInputsValidation()
       ]);
 
       break;
 
     case "sign_in":
-      $user = new UserController();
-      echo $twig->render("sign_in.twig", ["message" => $user->handleLoginField()]);
+      echo $twig->render("sign_in.twig", ["message" => $userController->handleLoginField()]);
       break;
 
     case "download_file":
-      $download = new DownloadController();
-      echo $twig->render("homepage.twig",["file" => $download->handleDownloadFile()]);
-      break; 
+      echo $twig->render("homepage.twig", ["file" => $download->handleDownloadFile()]);
+      break;
 
     case "error":
-      if(isset($_GET["code"]) && !empty($_GET["code"])) echo $twig->render("error.twig",["code" => $_GET["code"]]);
+      if (isset($_GET["code"]) && !empty($_GET["code"])) echo $twig->render("error.twig", ["code" => $_GET["code"]]);
       break;
-      
   }
 } elseif (isset($_GET['selection'])) {
 
@@ -71,8 +81,8 @@ if (isset($_GET['action'])) {
       echo $twig->render("sign_up.twig");
       break;
     case "blog":
-      $articles = new ArticleController();
-      echo $twig->render("blog.twig", ["articles" => $articles->listOfAllArticles()]);
+
+      echo $twig->render("blog.twig", ["articles" => $articleController->listOfAllArticles()]);
       break;
     case "admin_panel":
       echo $twig->render("admin_homepage.twig");
