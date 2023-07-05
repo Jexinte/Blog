@@ -13,7 +13,7 @@ class User
   }
 
 
-  public function createUser($user): ?array
+  public function createUser(object $user): ?array
   {
     $dbConnect = $this->connector->connect();
     $username = $user->getProperties()["username"];
@@ -66,7 +66,7 @@ class User
     }
   }
 
-  public function loginUser($logs): array
+  public function loginUser(array $logs): array
   {
 
     $dbConnect = $this->connector->connect();

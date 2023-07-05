@@ -14,7 +14,7 @@ class UserController
   {
   }
 
-  public function signUpHandler($username, $file, $email, $password): array
+  public function signUpHandler(string $username, array $file, string $email, string $password): array
   {
 
     $userRepository = $this->user;
@@ -133,7 +133,7 @@ class UserController
     return  $errors;
   }
 
-  public function loginHandler($email, $password): array
+  public function loginHandler(string $email, string $password): array
   {
     $userRepository = $this->user;
     $email_regex = "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/";
