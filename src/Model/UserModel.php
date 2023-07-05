@@ -16,4 +16,8 @@ class UserModel
     protected UserType $type,
   ) {
   }
+
+  public function getProperties(){
+    return ["username" => $this->username,"profileImage" => $this->profileImage,"email" => $this->email , "password" => $this->password];
+  }
 }

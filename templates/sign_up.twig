@@ -42,7 +42,10 @@
 							<input class="form-control" type="text" name="username" id="username" aria-describedby="user-helper user-helper-2 user-helper-3 user-helper-4" placeholder="Lu7841">
 
 							<p class="text-danger">
-								{{username_field}}
+								{# {{username_field}} #}
+								{{message.username_error_empty is defined ? message.username_error_empty : '' }}
+								{{message.username_error_wrong_format is defined ? message.username_error_wrong_format : '' }}
+								{{message.username_unavailable is defined ? message.username_unavailable : '' }}
 							</p>
 							<p id="user-helper" class="form-text text-dark pt-3">Le nom d'utilisateur doit suivre le format suivant :</p>
 							<div class="user-requirements">
@@ -62,7 +65,8 @@
 							<input type="file" class="form-control" name="profile_image" id="profile-image" aria-describedby="file-helper">
 							<p id="file-helper" class="text-danger pt-3"></p>
 							<p class="text-danger" id="error-file">
-								{{file_field}}
+									{{message.file_error_empty is defined ? message.file_error_empty : '' }}
+									{{message.file_error_type_file is defined ? message.file_error_type_file : '' }}
 							</p>
 
 						</div>
@@ -74,7 +78,9 @@
 							<label for="mail" class="form-label">Adresse email *</label>
 							<input type="email" class="form-control" name="mail" id="mail" placeholder="johndoe@example.fr">
 							<p class="text-danger" id="error-mail">
-								{{email_field}}
+										{{message.email_error_empty is defined ? message.email_error_empty : '' }}
+										{{message.email_error_wrong_format is defined ? message.email_error_wrong_format : '' }}
+										{{message.email_unavailable is defined ? message.email_unavailable : '' }}
 							</p>
 						</div>
 
@@ -85,7 +91,8 @@
 							<label for="password" class="form-label">Mot de passe *</label>
 							<input type="password" class="form-control" name="password" id="password" aria-describedby="password-helper password-helper-2 password-helper-3 password-helper-4">
 							<p class="text-danger" id="error-password">
-								{{password_field}}
+								{{message.password_error_empty is defined ? message.password_error_empty : '' }}
+								{{message.password_error_wrong_format is defined ? message.password_error_wrong_format : '' }}
 							</p>
 							<div class="check-password-box pt-3">
 

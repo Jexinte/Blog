@@ -47,8 +47,10 @@
 						<label for="mail" class="form-label">Adresse email *</label>
 						<input type="email" class="form-control" name="mail" id="mail" placeholder="johndoe@example.fr">
 
-						<p class="text-danger error-mail">{{message.email_message_error_empty is defined  ? message.email_message_error_empty : ''}}</p>
-						<p class="text-danger error-mail">{{message.email_message_error_doesnt_exist is defined  ? message.email_message_error_doesnt_exist : ''}}</p>
+						<p class="text-danger error-mail">{{message.email_error_empty is defined  ? message.email_error_empty : ''}}</p>
+						<p class="text-danger error-mail">{{message.email_error_wrong_format is defined  ? message.email_error_wrong_format : ''}}</p>
+						<p class="text-danger error-mail">{{message.email_unexist is defined  ? message.email_unexist : ''}}</p>
+						{# <p class="text-danger error-mail">{{message.success_login is defined  ? message.success_login : ''}}</p> #}
 
 
 					</div>
@@ -59,9 +61,9 @@
 						<label for="password" class="form-label">Mot de passe *</label>
 						<input type="password" class="form-control" name="password" id="password">
 
-						<p class="text-danger error-password">{{message.password_message_error_empty}}</p>
+						<p class="text-danger error-password">{{message.password_error_empty}}</p>
 
-						<p class="text-danger error-password">{{message.password_message_error_incorrect}}</p>
+						<p class="text-danger error-password">{{message.password_error_incorrect}}</p>
 
 					</div>
 
