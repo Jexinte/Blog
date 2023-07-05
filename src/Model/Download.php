@@ -32,7 +32,7 @@ class Download
       $this->error_code = 500;
       header("HTTP/1.1 302");
       header("Location:?action=error&code=" . $this->error_code);
-      exit;
+    
     }
   }
 }
