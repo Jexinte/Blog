@@ -29,8 +29,8 @@ $twig = new \Twig\Environment(
 $db = new DatabaseConnection("professional_blog", "root", "");
 
 
- $userRepository = new User($db);
- $userController = new UserController($userRepository);
+$userRepository = new User($db);
+$userController = new UserController($userRepository);
 
 $articleRepository = new Article($db);
 $articleController = new ArticleController($articleRepository);
@@ -43,14 +43,18 @@ if (isset($_GET['action'])) {
 
   switch ($action) {
     case "sign_up":
-          echo $twig->render("sign_up.twig", [
-            "message" => $userController->signUpHandler($_POST['username'],$_FILES["profile_image"],$_POST['mail'],$_POST["password"]),
-          ]);
-     
+      echo $twig->render("sign_up.twig", [
+        "username_field" => $userController->handleUsernameField($_POST['username']),
+        "file_field" => $userController->handleFileField($_FILES['profile_image']),
+        "email_field" => $userController->handleEmailField($_POST["mail"]),
+        "password_field" => $userController->handlePasswordField($_POST["password"]),
+        "message" => $userController->signUpHandler()
+      ]);
+
       break;
 
     case "sign_in":
-       echo $twig->render("sign_in.twig", ["message" => $userController->loginHandler($_POST['mail'],$_POST['password'])]);
+      echo $twig->render("sign_in.twig", ["message" => $userController->loginHandler($_POST['mail'], $_POST['password'])]);
       break;
 
     case "download_file":

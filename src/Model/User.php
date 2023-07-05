@@ -5,6 +5,7 @@ namespace Model;
 use Config\DatabaseConnection;
 use Enumeration\UserType;
 
+
 class User
 {
 
@@ -15,6 +16,8 @@ class User
 
   public function createUser(object $user): ?array
   {
+
+
     $dbConnect = $this->connector->connect();
     $username = $user->getProperties()["username"];
     $file = $user->getProperties()["profileImage"];
@@ -47,26 +50,24 @@ class User
       header("HTTP/1.1 302");
       header("Location: ?selection=sign_in");
     } else {
-
       switch (true) {
         case $result["username"] == $username && $result["email"] == $email:
-          header("HTTP/1.1 400");
-          return [
-            "username_failed" => "Le nom d'utilisateur " . $result["username"] . " n'est pas disponible",
-            "email_failed" => "L'adresse email " . $result["email"] . " est déjà prise !"
-          ];
+          header('HTTP/1.1 400');
+          return ["username_taken" => 1, "email_taken" => 1];
         case $result["username"] == $username:
           header("HTTP/1.1 400");
-          return ["username_failed" => "Le nom d'utilisateur " . $result["username"] . " n'est pas disponible"];
+          return ["username_taken" => 1];
 
         case $result["email"] == $email:
           header("HTTP/1.1 400");
-          return ["email_failed" => "L'adresse email " . $result["email"] . " est déjà prise !"];
+          return ["email_taken" => 1];
       }
     }
+
+    return null;
   }
 
-  public function loginUser(array $logs): array
+  public function loginUser(array $logs): ?array
   {
 
     $dbConnect = $this->connector->connect();
@@ -79,15 +80,16 @@ class User
       switch (true) {
         case password_verify($logs["password"], $user['password']):
           header('HTTP/1.1 200');
-          return ["success_login" => "<h1>Bienvenue " . $user["username"] . " ! </h1>"];
+          header("Location: ?selection=blog");
+          return ["success_login" => 1];
 
         default:
           header('HTTP/1.1 401');
-          return ["password_failed" => "Oups ! Le mot de passe saisi est incorrect !"];
+          return ["password_failed" => 1];
       }
     } else {
       header('HTTP/1.1 400');
-      return ["email_failed" => "Oups ! Nous n'avons trouvé aucun compte associé à cette adresse e-mail. Assurez-vous que vous avez saisi correctement votre adresse e-mail et réessayez"];
+      return ["email_unexist" => 1];
     }
   }
 }
