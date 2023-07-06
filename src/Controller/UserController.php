@@ -16,8 +16,6 @@ class UserController
   {
   }
 
-  // public function validator(){  
-  // }
 
 
 

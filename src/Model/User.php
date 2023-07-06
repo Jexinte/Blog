@@ -19,10 +19,10 @@ class User
 
 
     $dbConnect = $this->connector->connect();
-    $username = $user->getProperties()["username"];
-    $file = $user->getProperties()["profileImage"];
-    $email = $user->getProperties()["email"];
-    $password = $user->getProperties()["password"];
+    $username = $user->getData()["username"];
+    $file = $user->getData()["profileImage"];
+    $email = $user->getData()["email"];
+    $password = $user->getData()["password"];
 
     $statement = $dbConnect->prepare('SELECT username,email FROM users WHERE username = :username OR  email = :email');
     $statement->bindParam("username", $username);
