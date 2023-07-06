@@ -124,12 +124,11 @@ class HomepageFormController
 
 
 
-  public function homepageFormHandler()
+  public function homepageFormHandler():?array
   {
 
 
     $formRepository = $this->homepageForm;
-    //TODO Find a way to get rid off the cyclomaticity
     if (isset($this->data_form)) {
       if (count($this->data_form) == 5) {
         $user_data_from_form = new HomepageFormModel(null, $this->data_form["firstname"], $this->data_form["lastname"], $this->data_form["email"], $this->data_form["subject"], $this->data_form["message"]);
@@ -148,6 +147,6 @@ class HomepageFormController
       }
     }
   }
-  // Message form "Merci pour votre intérêt et votre soutien continu !"
+
 
 }

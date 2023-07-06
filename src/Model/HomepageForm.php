@@ -3,8 +3,6 @@
 namespace Model;
 
 use Config\DatabaseConnection;
-use Exceptions\UserException;
-use Model\HomepageFormModel;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -62,7 +60,7 @@ class HomepageForm
     }
   }
 
-  public function sendMailAdmin(array $data)
+  public function sendMailAdmin(array $data):?array
   {
 
     try {
