@@ -72,8 +72,8 @@ class HomepageForm
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'mdembelepro@gmail.com'; // Name of the owner application password
-        $mail->Password = "limnghagjmzbtkzo"; // Gmail Password Application
+        $mail->Username = ''; // Name of the owner application password
+        $mail->Password = ""; // Gmail Password Application
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;;
         $mail->Port = 465;
         $mail->SMTPOptions = array(
