@@ -17,7 +17,7 @@ class User
   public function createUser(object $user): ?array
   {
 
-
+// Il faudra réecrire l'accès aux valeur du modèle en se basant sur celle du formulaire de la page d'accueil
     $dbConnect = $this->connector->connect();
     $username = $user->getData()["username"];
     $file = $user->getData()["profileImage"];

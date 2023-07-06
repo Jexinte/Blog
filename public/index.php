@@ -6,10 +6,10 @@ use Config\DatabaseConnection;
 use Controller\ArticleController;
 use Controller\UserController;
 use Controller\DownloadController;
-use Exceptions\UserException;
+use Controller\HomepageFormController;
 use Model\Article;
 use Model\User;
-
+use Model\HomepageForm;
 
 $action = "";
 $selection = "";
@@ -34,8 +34,11 @@ $userController = new UserController($userRepository);
 
 $articleRepository = new Article($db);
 $articleController = new ArticleController($articleRepository);
-$download = new DownloadController();
 
+$downloadController = new DownloadController();
+
+$formRepository = new HomepageForm($db);
+$formController = new HomepageFormController($formRepository);
 
 if (isset($_GET['action'])) {
 
@@ -58,8 +61,18 @@ if (isset($_GET['action'])) {
       break;
 
     case "download_file":
-      echo $twig->render("homepage.twig", ["file" => $download->handleDownloadFile()]);
+      echo $twig->render("homepage.twig", ["file" => $downloadController->handleDownloadFile()]);
       break;
+
+    case "contact":
+      echo $twig->render("homepage.twig",[
+        "firstname_field" => $formController->handleFirstNameField($_POST["firstname"]),
+        "lastname_field" => $formController->handleLastNameField($_POST["lastname"]),
+        "email_field" => $formController->handleEmailField($_POST["mail"]),
+        "subject_field" => $formController->handleSubjectField($_POST["subject"]),
+        "message_field" => $formController->handleMessageField($_POST["message"]),
+        "validation" => $formController->homepageFormHandler()
+      ]);
 
     case "error":
       if (isset($_GET["code"]) && !empty($_GET["code"])) echo $twig->render("error.twig", ["code" => $_GET["code"]]);

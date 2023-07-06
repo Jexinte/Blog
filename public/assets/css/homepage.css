@@ -114,10 +114,30 @@ header {
   box-shadow: 0 0 0 .25rem var(--white);
   border-color: rgba(0, 0, 0, .2);
 }
+#subject:focus{
+  box-shadow: 0 0 0 .25rem var(--white);
+  border-color: rgba(0, 0, 0, .2);
+}
 
 .row .form-control {
 
   border-radius: 0;
+  margin-bottom: .5em;
+}
+
+#form-box .error-message{
+  font-weight: var(--900);
+  color:red;
+}
+
+#message-sent{
+  font-weight: var(--700);
+  color:var(--white);
+  margin-top: 1.3em;
+}
+
+#message-failed{
+  font-weight: var(--900);
 }
 
 .row .form-label {

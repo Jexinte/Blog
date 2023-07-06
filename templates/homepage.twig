@@ -70,37 +70,44 @@
 		<div class="row">
 			<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6" id="form-box">
 				<h2 class="text-center" id="contact-title">Contactez-moi</h2>
-				<form
-					action="#" method="post">
+				<form action="?action=contact" method="post">
 
 
-					{# FIRSTNAME #}
+
 					<div class="mb-3 first-name-box">
 						<label for="firstname" class="form-label">Prénom</label>
 						<input class="form-control" type="text" name="firstname" id="firstname" placeholder="John">
-						<p id="firstname-error"></p>
+						<p id="firstname-error" class="error-message">{{firstname_field}}</p>
 					</div>
 
-					{# LASTNAME #}
+
 					<div class="mb-3 last-name-box">
 						<label for="lastname" class="form-label">Nom</label>
 						<input class="form-control" type="text" name="lastname" id="lastname" placeholder="Doe">
-						<p id="lastname-error"></p>
+						<p id="lastname-error" class="error-message">{{lastname_field}}</p>
 					</div>
 
-					{# MAIL #}
+		
 					<div class="mb-3 mail-box">
 						<label for="mail" class="form-label">Adresse email</label>
 						<input class="form-control" type="email" name="mail" id="lastname" placeholder="johndoe@live.fr">
-						<p id="mail-error"></p>
+						<p id="mail-error" class="error-message">{{email_field}}</p>
 					</div>
-					{# MESSAGE #}
+
+						<div class="mb-3 subject-box">
+						<label for="mail" class="form-label">Objet</label>
+						<input class="form-control" type="text" name="subject" id="subject" placeholder="Collaboration">
+						<p id="subject-error" class="error-message">{{subject_field is defined ? subject_field : '' }}</p>
+					</div>
+
 					<div class="mb-3 message-box">
 						<label for="message" class="form-label">Message</label>
 						<textarea class="form-control" name="message" id="lastname" placeholder="Votre message"></textarea>
-						<p id="message-error"></p>
+						<p id="message-error" class="error-message">{{message_field}}</p>
 					</div>
 					<input class="btn btn-dark mt-4" id="submit" type="submit" value="Envoyer">
+				<p class="text-center" id="message-sent">{{validation.message_sent is defined ? validation.message_sent : ''}}</p>
+				<p class="text-danger text-center" id="message-failed">{{validation.message_failed is defined ? validation.message_failed : ''}}</p>
 				</div>
 
 
