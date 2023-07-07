@@ -15,7 +15,7 @@ class Download
   public function downloadPdfFile(): void
   {
 
-     $this->file = "../public/uploads/test.pdf";
+    $this->file = "../public/uploads/test.pdf";
 
     if (!empty($this->file) && file_exists($this->file)) {
 
@@ -32,7 +32,6 @@ class Download
       $this->error_code = 500;
       header("HTTP/1.1 302");
       header("Location:?action=error&code=" . $this->error_code);
-    
     }
   }
 }

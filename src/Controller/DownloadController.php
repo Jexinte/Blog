@@ -7,9 +7,9 @@ use Model\Download;
 class DownloadController
 {
 
-  public function handleDownloadFile():void
+  public function handleDownloadFile(): void
   {
-  $download = new Download();
-  $download->downloadPdfFile(); 
+    $download = new Download();
+    $download->downloadPdfFile();
   }
 }

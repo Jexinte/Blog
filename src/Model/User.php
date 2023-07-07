@@ -14,15 +14,16 @@ class User
   }
 
 
-  public function createUser(object $user): ?array
+  public function createUser(object $user): array
   {
 
-// Il faudra réecrire l'accès aux valeur du modèle en se basant sur celle du formulaire de la page d'accueil
     $dbConnect = $this->connector->connect();
-    $username = $user->getData()["username"];
-    $file = $user->getData()["profileImage"];
-    $email = $user->getData()["email"];
-    $password = $user->getData()["password"];
+
+    $user_data = $user->getData();
+    $username = $user_data["username"];
+    $file = $user_data["profileImage"];
+    $email = $user_data["email"];
+    $password = $user_data["password"];
 
     $statement = $dbConnect->prepare('SELECT username,email FROM users WHERE username = :username OR  email = :email');
     $statement->bindParam("username", $username);
@@ -49,22 +50,12 @@ class User
       move_uploaded_file($file_settings["tmp_name"], $file_settings["directory"] . "/" . $file_settings["file_name"]);
       header("HTTP/1.1 302");
       header("Location: ?selection=sign_in");
-    } else {
-      switch (true) {
-        case $result["username"] == $username && $result["email"] == $email:
-          header('HTTP/1.1 400');
-          return ["username_taken" => 1, "email_taken" => 1];
-        case $result["username"] == $username:
-          header("HTTP/1.1 400");
-          return ["username_taken" => 1];
-
-        case $result["email"] == $email:
-          header("HTTP/1.1 400");
-          return ["email_taken" => 1];
-      }
     }
 
-    return null;
+
+
+
+    return $result;
   }
 
   public function loginUser(array $logs): ?array
@@ -79,17 +70,14 @@ class User
     if ($user) {
       switch (true) {
         case password_verify($logs["password"], $user['password']):
-          header('HTTP/1.1 200');
+          header('HTTP/1.1 302');
           header("Location: ?selection=blog");
           return ["success_login" => 1];
-
-        default:
-          header('HTTP/1.1 401');
-          return ["password_failed" => 1];
       }
-    } else {
-      header('HTTP/1.1 400');
-      return ["email_unexist" => 1];
+      header('HTTP/1.1 401');
+      return ["password_failed" => 1];
     }
+    header('HTTP/1.1 400');
+    return ["email_failed" => 1];
   }
 }

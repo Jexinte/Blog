@@ -127,7 +127,7 @@ header {
 
 #form-box .error-message{
   font-weight: var(--900);
-  color:red;
+  color:rgb(227, 77, 77);
 }
 
 #message-sent{

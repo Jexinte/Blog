@@ -57,7 +57,11 @@ if (isset($_GET['action'])) {
       break;
 
     case "sign_in":
-      echo $twig->render("sign_in.twig", ["message" => $userController->loginHandler($_POST['mail'], $_POST['password'])]);
+      echo $twig->render("sign_in.twig", [
+        "email_field" => $userController->verifyAddressEmailOnLogin($_POST['mail']),
+        "empty_password" => $userController->verifyPasswordOnLogin($_POST["password"]),
+        "message" => $userController->verifyLogsWithDatabase()
+      ]);
       break;
 
     case "download_file":
@@ -65,7 +69,7 @@ if (isset($_GET['action'])) {
       break;
 
     case "contact":
-      echo $twig->render("homepage.twig",[
+      echo $twig->render("homepage.twig", [
         "firstname_field" => $formController->handleFirstNameField($_POST["firstname"]),
         "lastname_field" => $formController->handleLastNameField($_POST["lastname"]),
         "email_field" => $formController->handleEmailField($_POST["mail"]),

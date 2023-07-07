@@ -15,7 +15,7 @@ class HomepageFormModel
   ) {
   }
 
-  public function getData():array
+  public function getData(): array
   {
     return [
       "idUser" => $this->idUser,
