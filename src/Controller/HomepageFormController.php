@@ -45,7 +45,7 @@ class HomepageFormController
       $lastname_regex = "/^[A-Z][a-zA-ZÀ-ÖØ-öø-ſ\s'-]*$/";
       if (!empty($lastname)) {
         switch (true) {
-          case preg_match($lastname_regex, $lastname) == 1:
+          case preg_match($lastname_regex, $lastname):
             $this->data_form["lastname"] = $lastname;
             return null;
         }
@@ -67,7 +67,7 @@ class HomepageFormController
 
       if (!empty($email)) {
         switch (true) {
-          case preg_match($email_regex, $email) == 1:
+          case preg_match($email_regex, $email):
             $this->data_form["email"] = $email;
             return null;
         }
