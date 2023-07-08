@@ -49,7 +49,7 @@ class Article
     return $articles;
   }
 
-  public function getArticle($id):array
+  public function getArticle(int $id):array
   {
     $dbConnect = $this->connector->connect();
     $statement = $dbConnect->prepare("SELECT id, image,title,chapô,content,tags,author,DATE_FORMAT(date_creation,'%d %M %Y') AS date_article FROM articles WHERE id = :id");
