@@ -17,7 +17,7 @@ class ArticleController
     return $this->article->getArticles();
   }
 
-  public function handleOneArticle($id):?array
+  public function handleOneArticle(int $id):?array
   {
     $result = !empty($id);
 
