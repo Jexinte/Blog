@@ -78,9 +78,10 @@ header {
 }
 
 .article-content {
-
+  text-align: center;
   line-height: 2em;
   margin-bottom: 2em;
+  max-width: 1440px;
 }
 
 .article-date {
@@ -172,8 +173,6 @@ form textarea {
   }
 
   .article-content {
-    text-align: justify;
-
     font-size: .9em;
   }
 

@@ -107,7 +107,7 @@ if (isset($_GET['action'])) {
       echo $twig->render("admin_article_and_commentary.twig");
       break;
     case "article":
-      echo $twig->render("article.twig");
+      echo $twig->render("article.twig",["article" => $articleController->handleOneArticle($_GET['id'])]);
       break;
     case "add_article":
       echo $twig->render("admin_add_article.twig");

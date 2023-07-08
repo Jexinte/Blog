@@ -16,4 +16,11 @@ class ArticleController
 
     return $this->article->getArticles();
   }
+
+  public function handleOneArticle($id)
+  {
+    $result = !empty($id);
+
+     return $result ? $this->article->getArticle($id) : null;
+  }
 }

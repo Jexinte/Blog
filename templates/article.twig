@@ -19,25 +19,26 @@
 	{% include "menu_admin.twig" %}
 
 	<div class="container-fluid" id="article">
-		<img class="article-banner" src="../public/assets/images/article_author_1.jpg" alt="Climbing to the top">
+					{% for data in article %}
+		<img class="article-banner" src="{{data.image}}" alt="Climbing to the top">
 		<div class="row">
 			<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 article">
 				<article>
 					<div class="author-box">
-						<img class="author-img" src="../public/assets/images/author_1.jpg" alt="avatar author1">
-						<h2 class="author-name">John Doe</h2>
+							<img class="author-img" src="{{data.author_image}}" alt="avatar author1">
+						<h2 class="author-name">{{data.author}}</h2>
 					</div>
 
-					<h1 class="article-title" id="h1">Les bases de PHP</h1>
-					<p class="article-short-phrase">Découvrez les fondamentaux de PHP pour développer des sites web dynamiques.</p>
-					<p class="article-content">PHP, acronyme de Hypertext Preprocessor, est un langage de script largement utilisé pour le développement web. Avec PHP, vous pouvez créer des pages web interactives et dynamiques en générant du contenu HTML en temps réel. Que vous souhaitiez créer un site web simple ou une application web complexe, les connaissances de base de PHP sont essentielles. Ce langage polyvalent offre de nombreuses fonctionnalités et facilite l'interaction avec les bases de données, la manipulation de fichiers, la gestion des formulaires et bien plus encore. Plongez dans l'univers de PHP et explorez ses possibilités infinies !</p>
-					<div class="tags">
-						<p class="tag">#PHP</p>
-						<p class="tag">#DéveloppementWeb</p>
-						<p class="tag">#LangageDeScript</p>
-					</div>
-					<p class="article-date">Publié le 12 juin 2023</p>
+					<h1 class="article-title" id="h1">{{data.title}}</h1>
+					<p class="article-short-phrase">{{data.short_phrase}}</p>
+					<p class="article-content">{{data.content|nl2br }}</p>
+					<ul class="tags">
+						<li class="tag">{{data.tags}}</li>
+					</ul>
+					<p class="article-date">{{data.date_of_publication}}</p>
 				</article>
+					{% endfor %}
+					
 			</div>
 		</div>
 	</div>
