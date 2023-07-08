@@ -16,20 +16,21 @@ class UserController
   public array $data_form_from_sign_in = [];
 
 
+
   public function __construct(private readonly User $user)
   {
   }
 
 
-  public function handleUsernameField(string $username): ?string
+  public function handleUsernameField(string $username): array |string
   {
     try {
       $user_regex =  "/^[A-Z][A-Za-z\d]{2,10}$/";
       if (!empty($username)) {
         switch (true) {
           case preg_match($user_regex, $username):
-            $this->data_form_from_sign_up["username"] = $username;
-            return null;
+
+            return ["username" => $username];
         }
         header("HTTP/1.1 400");
         throw new InvalidFieldException(InvalidFieldException::USERNAME_MESSAGE_ERROR_WRONG_FORMAT);
@@ -42,7 +43,7 @@ class UserController
       return $e->getMessage();
     }
   }
-  public function handleFileField(array $file): ?string
+  public function handleFileField(array $file): array|string
   {
     try {
       if (!empty($file["name"]) && $file["error"] == UPLOAD_ERR_OK) {
@@ -57,8 +58,8 @@ class UserController
           $bytes_to_str = str_replace("/", "", base64_encode(random_bytes(9)));
           $filename_and_extension = explode('.', $filename);
           $filename_generated = $bytes_to_str . "." . $filename_and_extension[1];
-          $this->data_form_from_sign_up["file_settings"] = "$filename_generated;$filename_tmp;$dir_images";
-          return null;
+
+          return ["file" => "$filename_generated;$filename_tmp;$dir_images"];
         }
         header("HTTP/1.1 400");
         throw new InvalidFieldException(InvalidFieldException::FILE_MESSAGE_ERROR_TYPE_FILE);
@@ -73,15 +74,15 @@ class UserController
   }
 
 
-  public function handleEmailField(string $email): ?string
+  public function handleEmailField(string $email): array|string
   {
     try {
       $email_regex = "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/";
       if (!empty($email)) {
         switch (true) {
           case preg_match($email_regex, $email);
-            $this->data_form_from_sign_up["email"] = $email;
-            return null;
+
+            return ["email" => $email];
         }
         header("HTTP/1.1 400");
         throw new InvalidFieldException(InvalidFieldException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT);
@@ -94,7 +95,7 @@ class UserController
       return $e->getMessage();
     }
   }
-  public function handlePasswordField(string $password): ?string
+  public function handlePasswordField(string $password): array|string
   {
     try {
       $password_regex = "/^(?=.*[A-Z])(?=.*\d).{8,}$/";
@@ -102,8 +103,8 @@ class UserController
         switch (true) {
           case preg_match($password_regex, $password):
             $hash_password = password_hash($password, PASSWORD_DEFAULT);
-            $this->data_form_from_sign_up["password"] = $hash_password;
-            return null;
+
+            return ["password" => $hash_password];
         }
         header("HTTP/1.1 400");
         throw new InvalidFieldException(InvalidFieldException::PASSWORD_MESSAGE_ERROR_WRONG_FORMAT);
@@ -118,29 +119,55 @@ class UserController
   }
 
 
-  public function signUpHandler(): ?array
+  public function signUpValidator($username, $file, $email, $password): ?array
   {
 
-    $userRepository = $this->user;
+    $username_result = $this->handleUsernameField($username);
+    $email_result = $this->handleEmailField($email);
+    $password_result = $this->handlePasswordField($password);
+    $file_result = $this->handleFileField($file);
+    $counter = 0;
 
-    if (count($this->data_form_from_sign_up) == 4) {
-      $username = $this->data_form_from_sign_up["username"];
-      $file_settings = $this->data_form_from_sign_up["file_settings"];
-      $email = $this->data_form_from_sign_up["email"];
-      $password = $this->data_form_from_sign_up["password"];
-      $user_type = UserType::USER;
-      $user_data = new UserModel($username, $file_settings, $email, $password, $user_type);
+    $fields = [
+      "username" => $username_result,
+      "email" => $email_result,
+      "password" => $password_result,
+      "file" => $file_result
+    ];
+    $errors = [];
 
-      $user = $userRepository->createUser($user_data);
-
-      $result = match (true) {
-        $user["username"] === $username && $user["email"] === $email => ["username_taken" => "Le nom d'utilisateur $username n'est pas disponible !", "email_taken" => "L'adresse email $email n'est pas disponible !"],
-        $user["username"] === $username => ["username_taken" => "Le nom d'utilisateur $username n'est pas disponible !"],
-        $user["email"] === $email => ["email_taken" => "L'adresse email $email n'est pas disponible !"]
-      };
-      return $result;
+    foreach ($fields as $key => $v) {
+      if (gettype($v) === "string") $errors[$key . "_error"] = $v;
     }
-    return null;
+
+
+    foreach ($fields as $v) {
+      if (is_array($v)) $counter++;
+    }
+    if ($counter == 4) {
+      $userRepository = $this->user;
+      $username = $fields["username"];
+      $file_settings = $fields["file"];
+      $email = $fields["email"];
+      $password = $fields["password"];
+      $user_type = UserType::USER;
+      $user_data = new UserModel($username["username"], $file_settings["file"], $email["email"], $password["password"], $user_type);
+
+      $user_db = $userRepository->createUser($user_data);
+      
+      switch(true){
+        case  $user_db["username"] === $username["username"] && $user_db["email"] === $email["email"]:
+          return ["username_error" => "Le nom d'utilisateur ".$username["username"]." n'est pas disponible !", "email_error" => "L'adresse email ".$email["email"]." n'est pas disponible !"];
+
+        case $user_db["username"] === $username["username"] :
+          return ["username_error" => "Le nom d'utilisateur ".$username["username"]." n'est pas disponible !"];
+        
+        case $user_db["email"] === $email["username"]:
+          return ["email_error" => "L'adresse email ".$email["email"]." n'est pas disponible !"];
+      }
+
+    }
+    return !empty($errors) ? $errors : null;
   }
 
 
