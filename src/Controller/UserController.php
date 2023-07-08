@@ -119,7 +119,7 @@ class UserController
   }
 
 
-  public function signUpValidator($username, $file, $email, $password): ?array
+  public function signUpValidator(string $username, array $file, string $email, string $password): ?array
   {
 
     $username_result = $this->handleUsernameField($username);

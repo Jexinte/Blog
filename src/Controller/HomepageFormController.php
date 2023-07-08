@@ -122,7 +122,7 @@ class HomepageFormController
   }
 
 
-  public function homepageFormValidator($firstname, $lastname, $email, $subject, $message): ?array
+  public function homepageFormValidator(string $firstname, string $lastname, string $email, string $subject, string $message): ?array
   {
     $firstname_result = $this->handleFirstNameField($firstname);
     $lastname_result = $this->handleLastNameField($lastname);
