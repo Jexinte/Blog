@@ -46,6 +46,7 @@ if (isset($_GET['action'])) {
 
   switch ($action) {
     case "sign_up":
+      //TODO Refactoriser cette partie de manière à ce qu'une seule fonction récupère les superglobales et distribue ces dernières dans les variables qui en ont besoin ainsi la gestion sera centralisée
       echo $twig->render("sign_up.twig", [
         "username_field" => $userController->handleUsernameField($_POST['username']),
         "file_field" => $userController->handleFileField($_FILES['profile_image']),
@@ -107,7 +108,7 @@ if (isset($_GET['action'])) {
       echo $twig->render("admin_article_and_commentary.twig");
       break;
     case "article":
-      echo $twig->render("article.twig",["article" => $articleController->handleOneArticle($_GET['id'])]);
+      echo $twig->render("article.twig", ["article" => $articleController->handleOneArticle($_GET['id'])]);
       break;
     case "add_article":
       echo $twig->render("admin_add_article.twig");

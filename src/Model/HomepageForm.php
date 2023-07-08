@@ -56,7 +56,7 @@ class HomepageForm
       header("HTTP/1.1 200");
       return [
         "data_retrieved" => 1,
-        "db_data" =>  $res_req
+        "user" =>  $res_req
       ];
     }
   }
@@ -86,8 +86,8 @@ class HomepageForm
         $mail->addAddress("mdembelepro@gmail.com");
         $mail->isHTML(true);
 
-        $mail->Subject = $data["db_data"]["subject"]; 
-        $mail->Body = "Le message suivant a été envoyé par <strong>" . $data["db_data"]["firstname"] . " " . $data["db_data"]["lastname"] . "</strong> via le formulaire de contact  : <br><br><br>" . $data["db_data"]["message"];
+        $mail->Subject = $data["user"]["subject"]; 
+        $mail->Body = "Le message suivant a été envoyé par <strong>" . $data["user"]["firstname"] . " " . $data["user"]["lastname"] . "</strong> via le formulaire de contact  : <br><br><br>" . $data["user"]["message"];
 
         $mail->send();
         header("HTTP/1.1 200");

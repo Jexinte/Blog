@@ -9,7 +9,7 @@ use Enumeration\UserType;
 class User
 {
 
-  public function __construct(private DatabaseConnection $connector)
+  public function __construct(private readonly DatabaseConnection $connector)
   {
   }
 

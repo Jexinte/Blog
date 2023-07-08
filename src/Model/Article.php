@@ -17,7 +17,7 @@ class Article
 
     $dbConnect = $this->connector->connect();
 
-    $statement = $dbConnect->prepare("SELECT id,title,chapô,content,tags,author,DATE_FORMAT(date_creation,'%d %M %Y') AS date_article FROM articles");
+    $statement = $dbConnect->prepare("SELECT id,title,chapô,content,tags,author,DATE_FORMAT(date_creation,'%d %M %Y') AS date_article  FROM articles ORDER BY date_article DESC");
     $statement->execute();
 
     $articles = [];
