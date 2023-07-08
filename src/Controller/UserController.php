@@ -206,7 +206,7 @@ class UserController
   }
 
 
-  public function loginValidator($email,$password): ?array
+  public function loginValidator(string $email,string $password): ?array
   {
     $userRepository = $this->user;
     $email_result = $this->verifyEmailOnLogin($email);
