@@ -46,12 +46,14 @@ if (isset($_GET['action'])) {
 
   switch ($action) {
     case "sign_up":
-      //TODO Refactoriser cette partie de manière à ce qu'une seule fonction récupère les superglobales et distribue ces dernières dans les variables qui en ont besoin ainsi la gestion sera centralisée
+
       echo $twig->render("sign_up.twig", [
-      "message" => $userController->signUpValidator($_POST['username'],
-        $_FILES['profile_image'],
-        $_POST["mail"],
-        $_POST["password"])
+        "message" => $userController->signUpValidator(
+          $_POST['username'],
+          $_FILES['profile_image'],
+          $_POST["mail"],
+          $_POST["password"]
+        )
       ]);
 
       break;
@@ -70,12 +72,13 @@ if (isset($_GET['action'])) {
 
     case "contact":
       echo $twig->render("homepage.twig", [
-        "firstname_field" => $formController->handleFirstNameField($_POST["firstname"]),
-        "lastname_field" => $formController->handleLastNameField($_POST["lastname"]),
-        "email_field" => $formController->handleEmailField($_POST["mail"]),
-        "subject_field" => $formController->handleSubjectField($_POST["subject"]),
-        "message_field" => $formController->handleMessageField($_POST["message"]),
-        "validation" => $formController->homepageFormHandler()
+        "message" => $formController->homepageFormValidator(
+          $_POST["firstname"],
+          $_POST["lastname"],
+          $_POST["mail"],
+          $_POST["subject"],
+          $_POST["message"]
+        )
       ]);
 
     case "error":

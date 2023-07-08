@@ -47,9 +47,9 @@ class HomepageForm
   {
 
     $dbConnect = $this->connector->connect();
-    $result = in_array(1, $arr);
+    $result =  array_key_exists("data_saved", $arr) && in_array(1, $arr) ? $arr : false;
 
-    if ($result) {
+    if (is_array($result)) {
       $statement = $dbConnect->prepare("SELECT * FROM form_messages ORDER BY id DESC LIMIT 1");
       $statement->execute();
       $res_req = $statement->fetch();
@@ -61,13 +61,13 @@ class HomepageForm
     }
   }
 
-  public function sendMailAdmin(array $data):?array
+  public function sendMailAdmin(array $data): ?array
   {
 
     try {
       $mail = new PHPMailer(true);
-
-      if (!empty($data)) {
+      $result = !empty($data);
+      if ($result) {
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
@@ -86,14 +86,13 @@ class HomepageForm
         $mail->addAddress("mdembelepro@gmail.com");
         $mail->isHTML(true);
 
-        $mail->Subject = $data["user"]["subject"]; 
+        $mail->Subject = $data["user"]["subject"];
         $mail->Body = "Le message suivant a été envoyé par <strong>" . $data["user"]["firstname"] . " " . $data["user"]["lastname"] . "</strong> via le formulaire de contact  : <br><br><br>" . $data["user"]["message"];
 
         $mail->send();
         header("HTTP/1.1 200");
         return ["message_sent" => "Votre message a bien été envoyé !"];
       }
-
     } catch (Exception $e) {
       header("HTTP/1.1 500");
       return  ["message_sent_failed" => "Votre message n'a pu être envoyé , veuillez réessayez plus tard !"];
