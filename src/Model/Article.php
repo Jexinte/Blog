@@ -16,7 +16,7 @@ class Article
   {
 
     $dbConnect = $this->connector->connect();
-    $statement = $dbConnect->prepare("SELECT image,title,chapô,content,tags,author,DATE_FORMAT(date_creation,'%d %M %Y') AS date_article FROM articles");
+    $statement = $dbConnect->prepare("SELECT id, image,title,chapô,content,tags,author,DATE_FORMAT(date_creation,'%d %M %Y') AS date_article FROM articles");
     $statement->execute();
     $articles = [];
 
@@ -26,6 +26,7 @@ class Article
 
 
       $data = [
+        "id" => $row["id"],
         "image" => $row['image'],
         "title" => $row['title'],
         "short_phrase" => $row['chapô'],
