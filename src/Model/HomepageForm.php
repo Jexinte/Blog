@@ -65,14 +65,19 @@ class HomepageForm
   {
 
     try {
+      $key = file_get_contents("../config/stmp_credentials.json");
+      $key_2 = file_get_contents("../config/stmp_credentials.json");
+      $username = json_decode($key,true);
+      $password = json_decode($key_2,true);
+      
       $mail = new PHPMailer(true);
       $result = !empty($data);
       if ($result) {
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = ''; // Name of the owner application password
-        $mail->Password = ""; // Gmail Password Application
+        $mail->Username = $username["username"]; // Name of the owner application password
+        $mail->Password = $password["password"]; // Gmail Password Application
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;;
         $mail->Port = 465;
         $mail->SMTPOptions = array(

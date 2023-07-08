@@ -47,10 +47,7 @@
 						<label for="mail" class="form-label">Adresse email *</label>
 						<input type="email" class="form-control" name="mail" id="mail" placeholder="johndoe@example.fr">
 
-						<p class="text-danger error-mail">{{email_field is defined ? email_field : ''}}</p>
-						<p class="text-danger error-mail">{{message.email_failed is defined ? message.email_failed : ''}}</p>
-
-
+						<p class="text-danger error-mail">{{message.email_error is defined ? message.email_error : ''}}</p>
 					</div>
 
 
@@ -58,10 +55,7 @@
 						<label for="password" class="form-label">Mot de passe *</label>
 						<input type="password" class="form-control" name="password" id="password">
 
-						<p class="text-danger error-password">{{empty_password is defined ? empty_password : '' }}</p>
-
-						<p class="text-danger error-password">{{message.password_failed}}</p>
-
+						<p class="text-danger error-password">{{message.password_error is defined ? message.password_error : ''}}</p>
 					</div>
 
 

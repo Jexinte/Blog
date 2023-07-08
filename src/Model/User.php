@@ -58,26 +58,25 @@ class User
     return $result;
   }
 
-  public function loginUser(array $logs): ?array
+  public function loginUser(string $email, string $password): ?array
   {
 
     $dbConnect = $this->connector->connect();
     $statement = $dbConnect->prepare("SELECT username,email,password FROM users WHERE email = :email  ");
-
-    $statement->bindParam(":email", $logs["email"]);
+    $statement->bindParam(":email", $email);
     $statement->execute();
     $user = $statement->fetch();
     if ($user) {
       switch (true) {
-        case password_verify($logs["password"], $user['password']):
+        case password_verify($password, $user['password']):
           header('HTTP/1.1 302');
           header("Location: ?selection=blog");
           return ["success_login" => 1];
       }
       header('HTTP/1.1 401');
-      return ["password_failed" => 1];
+      return ["password_error" => 1];
     }
     header('HTTP/1.1 400');
-    return ["email_failed" => 1];
+    return ["email_error" => 1];
   }
 }

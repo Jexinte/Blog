@@ -12,10 +12,6 @@ use Exceptions\EmptyFieldException;
 class UserController
 {
 
-  public array $data_form_from_sign_up = [];
-  public array $data_form_from_sign_in = [];
-
-
 
   public function __construct(private readonly User $user)
   {
@@ -171,7 +167,7 @@ class UserController
   }
 
 
-  public function verifyAddressEmailOnLogin(string $email): ?string
+  public function verifyEmailOnLogin(string $email): array|string
   {
     try {
 
@@ -180,8 +176,7 @@ class UserController
       if (!empty($email)) {
         switch (true) {
           case preg_match($email_regex, $email):
-            $this->data_form_from_sign_in["email"] = $email;
-            return null;
+            return ["email" => $email];
         }
         header("HTTP/1.1 400");
         throw new InvalidFieldException(InvalidFieldException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT);
@@ -195,14 +190,13 @@ class UserController
     }
   }
 
-  public function verifyPasswordOnLogin(string $password): ?string
+  public function verifyPasswordOnLogin(string $password): array|string
   {
 
     try {
 
       if (!empty($password)) {
-        $this->data_form_from_sign_in["password"] = $password;
-        return null;
+        return ["password" => $password];
       }
       header("HTTP/1.1 400");
       throw new EmptyFieldException(EmptyFieldException::PASSWORD_MESSAGE_ERROR_EMPTY);
@@ -212,20 +206,37 @@ class UserController
   }
 
 
-  public function verifyLogsWithDatabase(): ?array
+  public function loginValidator($email,$password): ?array
   {
     $userRepository = $this->user;
-    $datas = $this->data_form_from_sign_in;
+    $email_result = $this->verifyEmailOnLogin($email);
+    $password_result = $this->verifyPasswordOnLogin($password);
+    $counter = 0;
 
+    $fields = [
+      "email" => $email_result,
+      "password" => $password_result
+    ];
 
-    if (count($datas) == 2) {
-      $login = $userRepository->loginUser($datas);
+    $errors = [];
+
+    foreach($fields as $key => $v){
+      if(gettype($v) === "string") $errors[$key."_error"] = $v;
+    }
+
+    foreach($fields as $v){
+      if(is_array($v)) $counter++;
+    }
+    if ($counter == 2) {
+      $email_field = $fields["email"]["email"];
+      $password_field = $fields["password"]["password"];
+      $login = $userRepository->loginUser($email_field,$password_field);
       $login_result = match (true) {
-        array_key_exists("password_failed", $login) => ["password_failed" => "Le mot de passe est incorrect !"],
-        array_key_exists("email_failed", $login) => ["email_failed" => "Oups ! Nous n'avons trouvé aucun compte associé à cette adresse e-mail. Assurez-vous que vous avez saisi correctement votre adresse e-mail et réessayez"],
+        array_key_exists("password_error", $login) => ["password_error" => "Le mot de passe est incorrect !"],
+        array_key_exists("email_error", $login) => ["email_error" => "Oups ! Nous n'avons trouvé aucun compte associé à cette adresse e-mail. Assurez-vous que vous avez saisi correctement votre adresse e-mail et réessayez"],
       };
       return $login_result;
     }
-    return null;
+    return !empty($errors) ? $errors:null;
   }
 }

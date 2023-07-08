@@ -60,9 +60,10 @@ if (isset($_GET['action'])) {
 
     case "sign_in":
       echo $twig->render("sign_in.twig", [
-        "email_field" => $userController->verifyAddressEmailOnLogin($_POST['mail']),
-        "empty_password" => $userController->verifyPasswordOnLogin($_POST["password"]),
-        "message" => $userController->verifyLogsWithDatabase()
+        "message" => $userController->loginValidator(
+          $_POST['mail'],
+          $_POST["password"]
+        )
       ]);
       break;
 

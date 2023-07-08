@@ -3,3 +3,4 @@ config/config.json
 .idea
 vendor
 uploads
+stmp_credentials.json
