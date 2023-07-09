@@ -101,8 +101,9 @@ class HomepageFormController
   }
   public function handleMessageField(string $message): array|string
   {
+
     try {
-      $message_regex = "/^.{50,500}$/";
+      $message_regex = "/^.{20,500}$/";
 
       if (!empty($message)) {
         switch (true) {
@@ -110,7 +111,7 @@ class HomepageFormController
             return ["message" => $message];
         }
         header('HTTP/1.1 400');
-        throw new InvalidFieldException(InvalidFieldException::CONTENT_MESSAGE_ERROR_MIN_50_CHARS_MAX_500_CHARS);
+        throw new InvalidFieldException(InvalidFieldException::CONTENT_MESSAGE_ERROR_MIN_20_CHARS_MAX_500_CHARS);
       }
       header('HTTP/1.1 400');
       throw new EmptyFieldException(EmptyFieldException::CONTENT_MESSAGE_ERROR_EMPTY);
@@ -122,9 +123,9 @@ class HomepageFormController
   }
 
 
-  public function homepageFormValidator( int $id_user = null,string $firstname, string $lastname, string $email, string $subject, string $message): ?array
+  public function homepageFormValidator(string $firstname, string $lastname, string $email, string $subject, string $message): ?array
   {
-    $id_user_result = !is_null($id_user);
+
     $firstname_result = $this->handleFirstNameField($firstname);
     $lastname_result = $this->handleLastNameField($lastname);
     $email_result = $this->handleEmailField($email);
@@ -150,10 +151,15 @@ class HomepageFormController
     $formRepository = $this->homepageForm;
 
     foreach ($fields as $key => $v) {
-      if (is_array($v)) $counter++;
+      if (is_array($v)) {
+        $counter++;
+      }
     }
+
+    
     if ($counter == 5) {
-      $user_data_from_form = new HomepageFormModel($id_user_result ?? null, $firstname_result["firstname"], $lastname_result["lastname"], $email_result["email"], $subject_result["subject"], $message_result["message"]);
+      $user_data_from_form = new HomepageFormModel(null, $firstname_result["firstname"], $lastname_result["lastname"], $email_result["email"], $subject_result["subject"], $message_result["message"]);
+
       $insert_data_db = $formRepository->insertDataInDatabase($user_data_from_form);
       $get_data_from_db = $formRepository->getDataFromDatabase($insert_data_db);
       return array_key_exists("data_retrieved", $get_data_from_db) && $get_data_from_db["data_retrieved"] == 1 ? $formRepository->sendMailAdmin($get_data_from_db) : null;

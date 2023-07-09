@@ -102,7 +102,7 @@
 					<div class="mb-3 message-box">
 						<label for="message" class="form-label">Message</label>
 						<textarea class="form-control" name="message" id="lastname" placeholder="Votre message"></textarea>
-						<p id="message-error" class="error-message">{{message.firstname_error is defined ? message.firstname_error : ''}}</p>
+						<p id="message-error" class="error-message">{{message.message_error is defined ? message.message_error : ''}}</p>
 					</div>
 					<input class="btn btn-dark mt-4" id="submit" type="submit" value="Envoyer">
 					<p class="text-center" id="message-sent">{{message.message_sent is defined ? message.message_sent : ''}}</p>

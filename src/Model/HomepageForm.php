@@ -72,14 +72,15 @@ class HomepageForm
       
       $mail = new PHPMailer(true);
       $result = !empty($data);
+
       if ($result) {
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
         $mail->Username = $username["username"]; // Name of the owner application password
         $mail->Password = $password["password"]; // Gmail Password Application
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;;
-        $mail->Port = 465;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
         $mail->SMTPOptions = array(
           'ssl' => array(
             'verify_peer' => false,
@@ -87,7 +88,8 @@ class HomepageForm
             'allow_self_signed' => true
           )
         );
-        $mail->setFrom("mdembelepro@gmail.com");
+
+        $mail->setFrom($data["user"]["email"],'Message du formulaire de contact');
         $mail->addAddress("mdembelepro@gmail.com");
         $mail->isHTML(true);
 
