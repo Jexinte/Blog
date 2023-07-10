@@ -9,6 +9,7 @@ use Enumeration\UserType;
 use Exceptions\InvalidFieldException;
 use Exceptions\EmptyFieldException;
 
+
 class UserController
 {
 
@@ -152,13 +153,13 @@ class UserController
       $user_db = $userRepository->createUser($user_data);
 
       switch(true){
-        case  $user_db["username"] <=> $username["username"] && $user_db["email"] === $email["email"]:
+        case  $user_db["username"] === $username["username"] && $user_db["email"] === $email["email"]:
           return ["username_error" => "Le nom d'utilisateur ".$username["username"]." n'est pas disponible !", "email_error" => "L'adresse email ".$email["email"]." n'est pas disponible !"];
 
         case $user_db["username"] === $username["username"] :
           return ["username_error" => "Le nom d'utilisateur ".$username["username"]." n'est pas disponible !"];
         
-        case $user_db["email"] === $email["username"]:
+        case $user_db["email"] === $email["email"]:
           return ["email_error" => "L'adresse email ".$email["email"]." n'est pas disponible !"];
       }
 

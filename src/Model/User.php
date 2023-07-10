@@ -6,10 +6,10 @@ use Config\DatabaseConnection;
 use Enumeration\UserType;
 
 
-class User
+readonly class User
 {
 
-  public function __construct(private readonly DatabaseConnection $connector)
+  public function __construct(private DatabaseConnection $connector)
   {
   }
 
@@ -19,11 +19,11 @@ class User
 
     $dbConnect = $this->connector->connect();
 
-    $user_data = $user->getData();
-    $username = $user_data["username"];
-    $file = $user_data["profileImage"];
-    $email = $user_data["email"];
-    $password = $user_data["password"];
+    $userData = $user->getData();
+    $username = $userData["username"];
+    $file = $userData["profileImage"];
+    $email = $userData["email"];
+    $password = $userData["password"];
 
     $statement = $dbConnect->prepare('SELECT username,email FROM users WHERE username = :username OR  email = :email');
     $statement->bindParam("username", $username);
@@ -67,12 +67,11 @@ class User
     $statement->execute();
     $user = $statement->fetch();
     if ($user) {
-      switch (true) {
-        case password_verify($password, $user['password']):
-          header('HTTP/1.1 302');
-          header("Location: ?selection=blog");
-          return ["success_login" => 1];
-      }
+        if (password_verify($password, $user['password'])) {
+            header('HTTP/1.1 302');
+            header("Location: ?selection=blog");
+            return ["success_login" => 1];
+        }
       header('HTTP/1.1 401');
       return ["password_error" => 1];
     }

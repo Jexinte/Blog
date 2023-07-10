@@ -11,6 +11,14 @@ use Model\Article;
 use Model\User;
 use Model\HomepageForm;
 
+// TODO URGENT  : Faire en sorte qu'il n'y ait qu'une instance de twig avecrender de manière à ensuite l'appeler pour chaque case puis faire un echo de l'instance un peu plus bas dans le if
+//TODO URGENT : Renommer l'ensemble des variable en camelCase et non snake_case avec PHPSTORM
+//TODO URGENT : Configurer les namespace pour qu'il soient en rapport avec la nouvelle structure du projet
+//TODO URGENT  : Mettre en place la création d'article pour les administrateurs avec les sessions ainsi il faudra avoir une class SessionManager qui sera la seule à créer des session_start() , session_destroy etc...
+//TODO URGENT : Centraliser la levée des exceptions et des en-têtes de requêtes 400 dans index.php , faire des recherches
+//TODO URGENT : Maintenant que l'utilisation des sessions est confirmée il faudra faire en sorte de cacher l'accès au panel d'administration lorsque nécessaire
+//TODO IMPORTANT : Les credentials de mail étant une dépendance extérieure il faut faire quelquechose avec mais je ne sais plus donc je regardais ça plus tard
+//TODO BONUS : Si la partie avec l'administrateur est terminé alors s'occuper de la partie commentaire !
 $action = "";
 $selection = "";
 
