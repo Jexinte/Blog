@@ -47,22 +47,15 @@
 						<label for="mail" class="form-label">Adresse email *</label>
 						<input type="email" class="form-control" name="mail" id="mail" placeholder="johndoe@example.fr">
 
-						<p class="text-danger error-mail">{{message.email_message_error_empty is defined  ? message.email_message_error_empty : ''}}</p>
-						<p class="text-danger error-mail">{{message.email_message_error_doesnt_exist is defined  ? message.email_message_error_doesnt_exist : ''}}</p>
-
-
+						<p class="text-danger error-mail">{{message.email_error is defined ? message.email_error : ''}}</p>
 					</div>
 
-					<!-- PASSWORD -->
 
 					<div class="mb-3 password-box">
 						<label for="password" class="form-label">Mot de passe *</label>
 						<input type="password" class="form-control" name="password" id="password">
 
-						<p class="text-danger error-password">{{message.password_message_error_empty}}</p>
-
-						<p class="text-danger error-password">{{message.password_message_error_incorrect}}</p>
-
+						<p class="text-danger error-password">{{message.password_error is defined ? message.password_error : ''}}</p>
 					</div>
 
 

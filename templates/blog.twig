@@ -43,7 +43,7 @@
 				{# ARTICLE 1 #}
 				{% for article in articles %}
 					<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-						<a href="?selection=article" class="article">
+						<a href="?selection=article&amp;id={{article.id}}" class="article">
 							<article class="article-box">
 								<div class="col-md-12 col-lg-12 author-box">
 									<img class="article-img" src="{{article.image}}" alt="">

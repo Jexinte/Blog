@@ -1,6 +1,6 @@
 public/assets/images
-src/admin/assets/images
 config/config.json
 .idea
 vendor
-Uploads
+uploads
+stmp_credentials.json

@@ -2,16 +2,25 @@
 
 namespace Controller;
 
-use Config\DatabaseConnection;
 use Model\Article;
 
 
 class ArticleController
 {
+
+  public function __construct(private readonly Article $article)
+  {
+  }
   public function listOfAllArticles(): array
   {
-    $db = new DatabaseConnection("professional_blog", "root", "");
-    $articles = new Article($db);
-    return $articles->getArticles();
+
+    return $this->article->getArticles();
+  }
+
+  public function handleOneArticle(int $id):?array
+  {
+    $result = !empty($id);
+
+     return $result ? $this->article->getArticle($id) : null;
   }
 }

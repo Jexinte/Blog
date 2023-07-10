@@ -70,37 +70,43 @@
 		<div class="row">
 			<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6" id="form-box">
 				<h2 class="text-center" id="contact-title">Contactez-moi</h2>
-				<form
-					action="#" method="post">
+				<form action="?action=contact" method="post">
 
 
-					{# FIRSTNAME #}
 					<div class="mb-3 first-name-box">
 						<label for="firstname" class="form-label">Prénom</label>
 						<input class="form-control" type="text" name="firstname" id="firstname" placeholder="John">
-						<p id="firstname-error"></p>
+						<p id="firstname-error" class="error-message">{{message.firstname_error is defined ? message.firstname_error : ''}}</p>
 					</div>
 
-					{# LASTNAME #}
+
 					<div class="mb-3 last-name-box">
 						<label for="lastname" class="form-label">Nom</label>
 						<input class="form-control" type="text" name="lastname" id="lastname" placeholder="Doe">
-						<p id="lastname-error"></p>
+						<p id="lastname-error" class="error-message">{{message.lastname_error is defined ? message.lastname_error : ''}}</p>
 					</div>
 
-					{# MAIL #}
+
 					<div class="mb-3 mail-box">
 						<label for="mail" class="form-label">Adresse email</label>
 						<input class="form-control" type="email" name="mail" id="lastname" placeholder="johndoe@live.fr">
-						<p id="mail-error"></p>
+						<p id="mail-error" class="error-message">{{message.email_error is defined ? message.email_error : ''}}</p>
 					</div>
-					{# MESSAGE #}
+
+					<div class="mb-3 subject-box">
+						<label for="mail" class="form-label">Objet</label>
+						<input class="form-control" type="text" name="subject" id="subject" placeholder="Collaboration">
+						<p id="subject-error" class="error-message">{{message.subject_error is defined ? message.subject_error : ''}}</p>
+					</div>
+
 					<div class="mb-3 message-box">
 						<label for="message" class="form-label">Message</label>
 						<textarea class="form-control" name="message" id="lastname" placeholder="Votre message"></textarea>
-						<p id="message-error"></p>
+						<p id="message-error" class="error-message">{{message.message_error is defined ? message.message_error : ''}}</p>
 					</div>
 					<input class="btn btn-dark mt-4" id="submit" type="submit" value="Envoyer">
+					<p class="text-center" id="message-sent">{{message.message_sent is defined ? message.message_sent : ''}}</p>
+					<p class="text-danger text-center" id="message-failed">{{message.message_sent_failed is defined ? message.message_sent_failed : ''}}</p>
 				</div>
 
 
