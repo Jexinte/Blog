@@ -7,10 +7,10 @@ use DateTime;
 use Exception;
 use IntlDateFormatter;
 
-readonly class Article
+ class Article
 {
 
-  public function __construct(private DatabaseConnection  $connector)
+  public function __construct(private readonly DatabaseConnection   $connector)
   {
   }
 

@@ -10,7 +10,7 @@ use Exceptions\InvalidFieldException;
 use Exceptions\EmptyFieldException;
 
 
- readonly class UserController
+readonly class UserController
 {
 
 
@@ -24,15 +24,15 @@ use Exceptions\EmptyFieldException;
     try {
       $userRegex =  "/^[A-Z][A-Za-z\d]{2,10}$/";
       if (!empty($username)) {
-          if (preg_match($userRegex, $username)) {
-              return ["username" => $username];
-          }
+        if (preg_match($userRegex, $username)) {
+          return ["username" => $username];
+        }
         header("HTTP/1.1 400");
         throw new InvalidFieldException(InvalidFieldException::USERNAME_MESSAGE_ERROR_WRONG_FORMAT);
       }
       header("HTTP/1.1 400");
       throw new EmptyFieldException(EmptyFieldException::USERNAME_MESSAGE_ERROR_EMPTY);
-    } catch (InvalidFieldException|EmptyFieldException $e) {
+    } catch (InvalidFieldException | EmptyFieldException $e) {
       return $e->getMessage();
     }
   }
@@ -59,7 +59,7 @@ use Exceptions\EmptyFieldException;
       }
       header("HTTP/1.1 400");
       throw new EmptyFieldException(EmptyFieldException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED);
-    } catch (InvalidFieldException|EmptyFieldException $e) {
+    } catch (InvalidFieldException | EmptyFieldException $e) {
       return $e->getMessage();
     }
   }
@@ -70,15 +70,15 @@ use Exceptions\EmptyFieldException;
     try {
       $emailRegex = "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/";
       if (!empty($email)) {
-          if (preg_match($emailRegex, $email)) {
-              return ["email" => $email];
-          }
+        if (preg_match($emailRegex, $email)) {
+          return ["email" => $email];
+        }
         header("HTTP/1.1 400");
         throw new InvalidFieldException(InvalidFieldException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT);
       }
       header("HTTP/1.1 400");
       throw new EmptyFieldException(EmptyFieldException::EMAIL_MESSAGE_ERROR_EMPTY);
-    } catch (InvalidFieldException|EmptyFieldException $e) {
+    } catch (InvalidFieldException | EmptyFieldException $e) {
       return $e->getMessage();
     }
   }
@@ -87,17 +87,17 @@ use Exceptions\EmptyFieldException;
     try {
       $passwordRegex = "/^(?=.*[A-Z])(?=.*\d).{8,}$/";
       if (!empty($password)) {
-          if (preg_match($passwordRegex, $password)) {
-              $hashPassword = password_hash($password, PASSWORD_DEFAULT);
+        if (preg_match($passwordRegex, $password)) {
+          $hashPassword = password_hash($password, PASSWORD_DEFAULT);
 
-              return ["password" => $hashPassword];
-          }
+          return ["password" => $hashPassword];
+        }
         header("HTTP/1.1 400");
         throw new InvalidFieldException(InvalidFieldException::PASSWORD_MESSAGE_ERROR_WRONG_FORMAT);
       }
       header("HTTP/1.1 400");
       throw new EmptyFieldException(EmptyFieldException::PASSWORD_MESSAGE_ERROR_EMPTY);
-    } catch (InvalidFieldException|EmptyFieldException $e) {
+    } catch (InvalidFieldException | EmptyFieldException $e) {
       return $e->getMessage();
     }
   }
@@ -139,17 +139,16 @@ use Exceptions\EmptyFieldException;
 
       $userDb = $userRepository->createUser($userData);
 
-      switch(true){
+      switch (true) {
         case  $userDb["username"] === $username["username"] && $userDb["email"] === $email["email"]:
-          return ["username_error" => "Le nom d'utilisateur ".$username["username"]." n'est pas disponible !", "email_error" => "L'adresse email ".$email["email"]." n'est pas disponible !"];
+          return ["username_error" => "Le nom d'utilisateur " . $username["username"] . " n'est pas disponible !", "email_error" => "L'adresse email " . $email["email"] . " n'est pas disponible !"];
 
-        case $userDb["username"] === $username["username"] :
-          return ["username_error" => "Le nom d'utilisateur ".$username["username"]." n'est pas disponible !"];
-        
+        case $userDb["username"] === $username["username"]:
+          return ["username_error" => "Le nom d'utilisateur " . $username["username"] . " n'est pas disponible !"];
+
         case $userDb["email"] === $email["email"]:
-          return ["email_error" => "L'adresse email ".$email["email"]." n'est pas disponible !"];
+          return ["email_error" => "L'adresse email " . $email["email"] . " n'est pas disponible !"];
       }
-
     }
     return !empty($errors) ? $errors : null;
   }
@@ -162,15 +161,16 @@ use Exceptions\EmptyFieldException;
       $emailRegex = "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/";
 
       if (!empty($email)) {
-          if (preg_match($emailRegex, $email)) {
-              return ["email" => $email];
-          }
+        if (preg_match($emailRegex, $email)) {
+          return ["email" => $email];
+        }
         header("HTTP/1.1 400");
+ 
         throw new InvalidFieldException(InvalidFieldException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT);
       }
       header("HTTP/1.1 400");
       throw new EmptyFieldException(EmptyFieldException::EMAIL_MESSAGE_ERROR_EMPTY);
-    } catch (InvalidFieldException|EmptyFieldException $e) {
+    } catch (InvalidFieldException | EmptyFieldException $e) {
       return $e->getMessage();
     }
   }
@@ -191,7 +191,7 @@ use Exceptions\EmptyFieldException;
   }
 
 
-  public function loginValidator(string $email,string $password): ?array
+  public function loginValidator(string $email, string $password): ?array
   {
     $userRepository = $this->user;
     $emailResult = $this->verifyEmailOnLogin($email);
@@ -205,23 +205,23 @@ use Exceptions\EmptyFieldException;
 
     $errors = [];
 
-    foreach($fields as $key => $v){
-      if(gettype($v) === "string") $errors[$key."_error"] = $v;
+    foreach ($fields as $key => $v) {
+      if (gettype($v) === "string") $errors[$key . "_error"] = $v;
     }
 
-    foreach($fields as $v){
-      if(is_array($v)) $counter++;
+    foreach ($fields as $v) {
+      if (is_array($v)) $counter++;
     }
     if ($counter == 2) {
       $emailField = $fields["email"]["email"];
       $passwordField = $fields["password"]["password"];
-      $login = $userRepository->loginUser($emailField,$passwordField);
+      $login = $userRepository->loginUser($emailField, $passwordField);
       return match (true) {
         array_key_exists("password_error", $login) => ["password_error" => "Le mot de passe est incorrect !"],
-        array_key_exists("email_error", $login) => ["email_error" => "Oups ! Nous n'avons trouvé aucun compte associé à cette adresse e-mail. Assurez-vous que vous avez saisi correctement votre adresse e-mail et réessayez"],
+        array_key_exists('email_error', $login) => ["email_error" => "Oups ! Nous n'avons trouvé aucun compte associé à cette adresse e-mail. Assurez-vous que vous avez saisi correctement votre adresse e-mail et réessayez"]
       };
-
     }
-    return !empty($errors) ? $errors:null;
+
+    return !empty($errors) ? $errors : null;
   }
 }

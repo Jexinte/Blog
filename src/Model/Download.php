@@ -17,11 +17,11 @@ class Download
 
     $this->file = "../public/uploads/test.pdf";
 
-    if (!readfile($this->file)) {
+    if (!file_exists($this->file)) {
         $this->error_code = 500;
         header("HTTP/1.1 302");
         header("Location:?action=error&code=" . $this->error_code);
-    } else {
+    }
 
         $this->file_size = filesize($this->file);
 
@@ -32,6 +32,6 @@ class Download
         header("Content-Disposition:attachment;filename=cv.pdf");
         header("HTTP/1.1 200");
         readfile($this->file);
-    }
+
   }
 }

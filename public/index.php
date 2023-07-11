@@ -11,21 +11,19 @@ use Model\Article;
 use Model\User;
 use Model\HomepageForm;
 
-// URGENT  : Faire en sorte qu'il n'y ait qu'une instance de twig avecrender de manière à ensuite l'appeler pour chaque case puis faire un echo de l'instance un peu plus bas dans le if
-// URGENT : Renommer l'ensemble des variable en camelCase et non snake_case avec PHPSTORM
-// URGENT : Configurer les namespace pour qu'il soient en rapport avec la nouvelle structure du projet
-// URGENT  : Mettre en place la création d'article pour les administrateurs avec les sessions ainsi il faudra avoir une class SessionManager qui sera la seule à créer des session_start() , session_destroy etc...
-// URGENT : Centraliser la levée des exceptions et des en-têtes de requêtes 400 dans index.php , faire des recherches
-// URGENT : Maintenant que l'utilisation des sessions est confirmée il faudra faire en sorte de cacher l'accès au panel d'administration lorsque nécessaire
-// IMPORTANT : Les credentials de mail étant une dépendance extérieure il faut faire quelquechose avec mais je ne sais plus donc je regardais ça plus tard
-// BONUS : Si la partie avec l'administrateur est terminé alors s'occuper de la partie commentaire !
+
+//TODO URGENT : Centraliser la levée des exceptions et des en-têtes de requêtes 400 dans index.php , faire des recherches
+//TODO  URGENT  : Mettre en place la création d'article pour les administrateurs avec les sessions ainsi il faudra avoir une class SessionManager qui sera la seule à créer des session_start() , session_destroy etc...
+//TODO URGENT : Maintenant que l'utilisation des sessions est confirmée il faudra faire en sorte de cacher l'accès au panel d'administration lorsque nécessaire
+//* IMPORTANT : Les credentials de mail étant une dépendance extérieure il faut faire quelquechose avec mais je ne sais plus donc je regardais ça plus tard
+//TODO  BONUS : Si la partie avec l'administrateur est terminé alors s'occuper de la partie commentaire !
 
 $action = "";
 $selection = "";
-
+echo realpath("../../templates");
 $paths = [
-    __DIR__ . "../../templates/",
-    __DIR__ . '../../templates/admin'
+    __DIR__."/../templates",
+    //__DIR__.'/../templates/admin'
 ];
 $loader = new \Twig\Loader\FilesystemLoader($paths);
 $twig = new \Twig\Environment(
@@ -36,7 +34,9 @@ $twig = new \Twig\Environment(
 );
 $db = new DatabaseConnection("professional_blog", "root", "");
 
-
+// catch (InvalidFieldException | EmptyFieldException $e) {
+//     return $e->getMessage();
+//   }
 $userRepository = new User($db);
 $userController = new UserController($userRepository);
 
@@ -47,7 +47,7 @@ $downloadController = new DownloadController();
 
 $formRepository = new HomepageForm($db);
 $formController = new HomepageFormController($formRepository);
-$template = "";
+$template = "homepage.twig";
 $paramaters = [];
 if (isset($_GET['action'])) {
 
@@ -72,7 +72,7 @@ if (isset($_GET['action'])) {
 
         case "download_file":
             $template = "homepage.twig";
-            $paramaters["file"] = $downloadController->handleDownloadFile();
+            $downloadController->handleDownloadFile();
             break;
 
         case "contact":
@@ -81,13 +81,13 @@ if (isset($_GET['action'])) {
             break;
 
         case "error":
-            if (isset($_GET["code"]) && !empty($_GET["code"])) {
+            if (isset($_GET["code"])) {
                 $template = "error.twig";
                 $paramaters["code"] = $_GET["code"];
             }
             break;
     }
-    echo $twig->render($template, $paramaters);
+
 
 
 } elseif ((isset($_GET['selection']))) {

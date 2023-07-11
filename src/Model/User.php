@@ -14,7 +14,7 @@ readonly class User
   }
 
 
-  public function createUser(object $user): array
+  public function createUser(object $user): ?array
   {
 
     $dbConnect = $this->connector->connect();
@@ -52,10 +52,7 @@ readonly class User
       header("Location: ?selection=sign_in");
     }
 
-
-
-
-    return $result;
+    return !empty($result) ? $result: null ;
   }
 
   public function loginUser(string $email, string $password): ?array
@@ -67,15 +64,17 @@ readonly class User
     $statement->execute();
     $user = $statement->fetch();
     if ($user) {
-        if (password_verify($password, $user['password'])) {
-            header('HTTP/1.1 302');
-            header("Location: ?selection=blog");
-            return ["success_login" => 1];
+      $check_password = password_verify($password, $user['password']);
+        if (!$check_password) {
+          header('HTTP/1.1 401');
+          return ["password_error" => 1];
         }
-      header('HTTP/1.1 401');
-      return ["password_error" => 1];
+        header("Location: index.php?selection=blog",true,302);
     }
-    header('HTTP/1.1 400');
-    return ["email_error" => 1];
+    else{
+      header('HTTP/1.1 400');
+      return ["email_error" => 1];
+    }
+    
   }
 }
