@@ -33,21 +33,21 @@ readonly class User
 
 
     if (!$result) {
-      $file_requirements = explode(';', $file);
-      $file_settings["file_name"] = $file_requirements[0];
-      $file_settings["tmp_name"] = $file_requirements[1];
-      $file_settings["directory"] = $file_requirements[2];
-      $file_path = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/" . $file_settings["file_name"];
+      $fileRequirements = explode(';', $file);
+      $fileSettings["file_name"] = $fileRequirements[0];
+      $fileSettings["tmp_name"] = $fileRequirements[1];
+      $fileSettings["directory"] = $fileRequirements[2];
+      $filePath = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/" . $fileSettings["file_name"];
       $statement2 = $dbConnect->prepare("INSERT INTO users (username,profile_image,email,password,type) VALUES(?,?,?,?,?)");
       $values = [
         $username,
-        $file_path,
+        $filePath,
         $email,
         $password,
         UserType::USER->value
       ];
       $statement2->execute($values);
-      move_uploaded_file($file_settings["tmp_name"], $file_settings["directory"] . "/" . $file_settings["file_name"]);
+      move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
       header("HTTP/1.1 302");
       header("Location: ?selection=sign_in");
     }

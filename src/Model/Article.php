@@ -4,15 +4,20 @@ namespace Model;
 
 use Config\DatabaseConnection;
 use DateTime;
+use Exception;
 use IntlDateFormatter;
 
-class Article
+readonly class Article
 {
 
-  public function __construct(private DatabaseConnection $connector)
+  public function __construct(private DatabaseConnection  $connector)
   {
   }
-  public function getArticles(): array
+
+    /**
+     * @throws Exception
+     */
+    public function getArticles(): array
   {
 
     $dbConnect = $this->connector->connect();
@@ -24,12 +29,13 @@ class Article
 
 
     while ($row = $statement->fetch()) {
-      $french_date_format = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
-      $date = $french_date_format->format(new DateTime($row["date_article"]));
-      $statement_2 = $dbConnect->prepare("SELECT profile_image AS image, username FROM users WHERE username = :author");
-      $statement_2->bindParam("author", $row["author"]);
-      $statement_2->execute();
-      while ($row2 = $statement_2->fetch()) {
+      $frenchDateFormat = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
+        /** @var string $date */
+        $date = $frenchDateFormat->format(new DateTime($row["date_article"]));
+      $statement2 = $dbConnect->prepare("SELECT profile_image AS image, username FROM users WHERE username = :author");
+      $statement2->bindParam("author", $row["author"]);
+      $statement2->execute();
+      while ($row2 = $statement2->fetch()) {
         $data = [
           "id" => $row["id"],
           "image" => $row2['image'],
@@ -49,7 +55,10 @@ class Article
     return $articles;
   }
 
-  public function getArticle(int $id):array
+    /**
+     * @throws Exception
+     */
+    public function getArticle(int $id):array
   {
     $dbConnect = $this->connector->connect();
     $statement = $dbConnect->prepare("SELECT id, image,title,chapô,content,tags,author,DATE_FORMAT(date_creation,'%d %M %Y') AS date_article FROM articles WHERE id = :id");
@@ -58,11 +67,12 @@ class Article
     $article = [];
     while ($row = $statement->fetch()) {
       $french_date_format = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
+        /** @var string $date */
       $date = $french_date_format->format(new DateTime($row["date_article"]));
-      $statement_2 = $dbConnect->prepare("SELECT profile_image, username FROM users WHERE username = :author");
-      $statement_2->bindParam("author", $row["author"]);
-      $statement_2->execute();
-      while ($row2 = $statement_2->fetch()) {
+      $statement2 = $dbConnect->prepare("SELECT profile_image, username FROM users WHERE username = :author");
+      $statement2->bindParam("author", $row["author"]);
+      $statement2->execute();
+      while ($row2 = $statement2->fetch()) {
 
         $data = [
           "id" => $row["id"],

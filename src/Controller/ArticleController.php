@@ -5,10 +5,10 @@ namespace Controller;
 use Model\Article;
 
 
-class ArticleController
+readonly class ArticleController
 {
 
-  public function __construct(private readonly Article $article)
+  public function __construct(private  Article $article)
   {
   }
   public function listOfAllArticles(): array

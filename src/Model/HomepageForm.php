@@ -8,8 +8,8 @@ use PHPMailer\PHPMailer\Exception;
 
 
 
-//TODO : Les credentials de mail étant une dépendance extérieure il faut faire quelquechose avec mais je ne sais plus donc je regardais ça plus tard
-class HomepageForm
+//Les credentials de mail étant une dépendance extérieure il faut faire quelquechose avec mais je ne sais plus donc je regardais ça plus tard
+readonly class HomepageForm
 {
 
   public function __construct(private DatabaseConnection $connector)
@@ -50,19 +50,22 @@ class HomepageForm
     if (is_array($result)) {
       $statement = $dbConnect->prepare("SELECT * FROM form_messages ORDER BY id DESC LIMIT 1");
       $statement->execute();
-      $res_req = $statement->fetch();
+      $resReq = $statement->fetch();
       header("HTTP/1.1 200");
       return [
         "data_retrieved" => 1,
-        "user" =>  $res_req
+        "user" =>  $resReq
       ];
     }
   }
 
-  public function sendMailAdmin(array $data): ?array
+    /**
+     * @throws Exception
+     */
+    public function sendMailAdmin(array $data): ?array
   {
 
-    try {
+
       $key = file_get_contents("../config/stmp_credentials.json");
       $key_2 = file_get_contents("../config/stmp_credentials.json");
       $username = json_decode($key,true);
@@ -71,36 +74,39 @@ class HomepageForm
       $mail = new PHPMailer(true);
       $result = !empty($data);
 
-      if ($result) {
-        $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = $username["username"]; // Name of the owner application password
-        $mail->Password = $password["password"]; // Gmail Password Application
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
-        $mail->SMTPOptions = array(
-          'ssl' => array(
-            'verify_peer' => false,
-            'verify_peer_name' => false,
-            'allow_self_signed' => true
-          )
-        );
-
-        $mail->setFrom($data["user"]["email"],'Message du formulaire de contact');
-        $mail->addAddress("mdembelepro@gmail.com");
-        $mail->isHTML(true);
-
-        $mail->Subject = $data["user"]["subject"];
-        $mail->Body = "Le message suivant a été envoyé par <strong>" . $data["user"]["firstname"] . " " . $data["user"]["lastname"] . "</strong> via le formulaire de contact  : <br><br><br>" . $data["user"]["message"];
-
-        $mail->send();
-        header("HTTP/1.1 200");
-        return ["message_sent" => "Votre message a bien été envoyé !"];
+      if (!$result) {
+          header("HTTP/1.1 500");
+          return  ["message_sent_failed" => "Votre message n'a pu être envoyé , veuillez réessayez plus tard !"];
       }
-    } catch (Exception $e) {
-      header("HTTP/1.1 500");
-      return  ["message_sent_failed" => "Votre message n'a pu être envoyé , veuillez réessayez plus tard !"];
-    }
+        else{
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = $username["username"]; // Name of the owner application password
+            $mail->Password = $password["password"]; // Gmail Password Application
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+            $mail->SMTPOptions = array(
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                )
+            );
+
+            $mail->setFrom($username["username"],'Message du formulaire de contact');
+            $mail->addAddress($username["username"]);
+            $mail->addReplyTo($data["user"]["email"],$data["user"]["firstname"]);
+            $mail->isHTML();
+
+            $mail->Subject = $data["user"]["subject"];
+            $mail->Body = "Le message suivant a été envoyé par <strong>" . $data["user"]["firstname"] . " " . $data["user"]["lastname"] . "</strong> via le formulaire de contact  : <br><br><br>" . $data["user"]["message"];
+
+            $mail->send();
+            header("HTTP/1.1 200");
+            return ["message_sent" => "Votre message a bien été envoyé !"];
+        }
+
+
   }
 }

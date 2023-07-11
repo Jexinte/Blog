@@ -18,5 +18,5 @@ class InvalidFieldException extends Exception
 
   const CONTENT_MESSAGE_ERROR_MIN_20_CHARS_MAX_500_CHARS = "Le texte doit contenir minimum 20 caractères et ne peut en excéder 500 !";
   const SUBJECT_MESSAGE_ERROR_MIN_20_CHARS_MAX_100_CHARS = "Le texte doit contenir minimum 20 caractères et ne peut en excéder 100 !";
-  const FORM_MESSAGE_ERROR_DELIVERY_FAILED = "Votre message n'a pu être envoyé ! Merci de réessayez plus tard !";
+
 }
