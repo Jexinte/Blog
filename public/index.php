@@ -34,7 +34,7 @@ $selection = "";
 
 $paths = [
     __DIR__ . "/../templates",
-    //__DIR__.'/../templates/admin'
+    __DIR__.'/../templates/admin'
 ];
 $loader = new \Twig\Loader\FilesystemLoader($paths);
 $twig = new \Twig\Environment(

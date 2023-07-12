@@ -59,17 +59,24 @@ readonly class User
   {
 
     $dbConnect = $this->connector->connect();
-    $statement = $dbConnect->prepare("SELECT username,email,password FROM users WHERE email = :email  ");
+    $statement = $dbConnect->prepare("SELECT username,email,type,password FROM users WHERE email = :email  ");
     $statement->bindParam(":email", $email);
     $statement->execute();
     $user = $statement->fetch();
-    if ($user) {
+    if ($user && $user["type"] == "user") {
       $check_password = password_verify($password, $user['password']);
         if (!$check_password) {
           header('HTTP/1.1 401');
           return ["password_error" => 1];
         }
-        header("Location: index.php?selection=blog",true,302);
+        header("HTTP/1.1 302");
+        header("Location: index.php?selection=blog");
+    }
+
+    elseif($user && $user["type"] == "admin"){
+      header("HTTP/1.1 302");
+      header("Location: index.php?selection=add_article");
+  
     }
     else{
       header('HTTP/1.1 400');
