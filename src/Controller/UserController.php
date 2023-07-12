@@ -107,7 +107,7 @@ readonly class UserController
   }
 
 
-  public function signUpValidator(string $username, array $file, string $email, string $password)
+  public function signUpValidator(string $username, array $file, string $email, string $password): array|string
   {
 
     $usernameResult = $this->handleUsernameField($username);
