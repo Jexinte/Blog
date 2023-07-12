@@ -2,12 +2,23 @@
 
 namespace Controller;
 
+use Enumeration\UserType;
+
+use Exceptions\EmailErrorEmptyException;
+use Exceptions\EmailWrongFormatException;
+use Exceptions\PasswordErrorEmptyException;
+use Exceptions\PasswordWrongFormatException;
+use Exceptions\UsernameWrongFormatException;
+use Exceptions\UsernameErrorEmptyException;
+use Exceptions\FileTypeException;
+use Exceptions\FileErrorEmptyException;
 
 use Model\User;
 use Model\UserModel;
-use Enumeration\UserType;
-use Exceptions\InvalidFieldException;
-use Exceptions\EmptyFieldException;
+
+
+
+
 
 
 readonly class UserController
@@ -19,28 +30,25 @@ readonly class UserController
   }
 
 
-  public function handleUsernameField(string $username): array |string
+  public function handleUsernameField(string $username): array|string
   {
-    try {
-      $userRegex =  "/^[A-Z][A-Za-z\d]{2,10}$/";
-      if (!empty($username)) {
-        if (preg_match($userRegex, $username)) {
-          return ["username" => $username];
-        }
+
+    $userRegex =  "/^[A-Z][A-Za-z\d]{2,10}$/";
+    switch (true) {
+      case empty($username):
         header("HTTP/1.1 400");
-        throw new InvalidFieldException(InvalidFieldException::USERNAME_MESSAGE_ERROR_WRONG_FORMAT);
-      }
-      header("HTTP/1.1 400");
-      throw new EmptyFieldException(EmptyFieldException::USERNAME_MESSAGE_ERROR_EMPTY);
-    } catch (InvalidFieldException | EmptyFieldException $e) {
-      return $e->getMessage();
+        throw new UsernameErrorEmptyException();
+      case !preg_match($userRegex, $username):
+        header("HTTP/1.1 400");
+        throw new UsernameWrongFormatException();
+      default:
+        return ["username" => $username];
     }
   }
   public function handleFileField(array $file): array|string
   {
-    try {
-      if (!empty($file["name"]) && $file["error"] == UPLOAD_ERR_OK) {
-
+    switch (true) {
+      case !empty($file["name"]) && $file["error"] == UPLOAD_ERR_OK:
         $filename = $file["name"];
         $dirImages = "../public/assets/images/";
         $filenameTmp = $file['tmp_name'];
@@ -53,60 +61,57 @@ readonly class UserController
           $filenameGenerated = $bytesToStr . "." . $filenameAndExtension[1];
 
           return ["file" => "$filenameGenerated;$filenameTmp;$dirImages"];
+        } else {
+          header("HTTP/1.1 400");
+          throw new FileTypeException();
         }
+
+      default:
         header("HTTP/1.1 400");
-        throw new InvalidFieldException(InvalidFieldException::FILE_MESSAGE_ERROR_TYPE_FILE);
-      }
-      header("HTTP/1.1 400");
-      throw new EmptyFieldException(EmptyFieldException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED);
-    } catch (InvalidFieldException | EmptyFieldException $e) {
-      return $e->getMessage();
+        throw new FileErrorEmptyException(FileErrorEmptyException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED);
     }
   }
 
 
   public function handleEmailField(string $email): array|string
   {
-    try {
-      $emailRegex = "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/";
-      if (!empty($email)) {
-        if (preg_match($emailRegex, $email)) {
-          return ["email" => $email];
-        }
+
+    $emailRegex = "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/";
+
+    switch (true) {
+      case empty($email):
         header("HTTP/1.1 400");
-        throw new InvalidFieldException(InvalidFieldException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT);
-      }
-      header("HTTP/1.1 400");
-      throw new EmptyFieldException(EmptyFieldException::EMAIL_MESSAGE_ERROR_EMPTY);
-    } catch (InvalidFieldException | EmptyFieldException $e) {
-      return $e->getMessage();
+        throw new EmailErrorEmptyException();
+      case !preg_match($emailRegex, $email):
+        header("HTTP/1.1 400");
+        throw new EmailWrongFormatException();
+      default:
+        return ["email" => $email];
     }
   }
   public function handlePasswordField(string $password): array|string
   {
-    try {
-      $passwordRegex = "/^(?=.*[A-Z])(?=.*\d).{8,}$/";
-      if (!empty($password)) {
-        if (preg_match($passwordRegex, $password)) {
-          $hashPassword = password_hash($password, PASSWORD_DEFAULT);
 
-          return ["password" => $hashPassword];
-        }
+    $passwordRegex = "/^(?=.*[A-Z])(?=.*\d).{8,}$/";
+    switch (true) {
+      case empty($password):
         header("HTTP/1.1 400");
-        throw new InvalidFieldException(InvalidFieldException::PASSWORD_MESSAGE_ERROR_WRONG_FORMAT);
-      }
-      header("HTTP/1.1 400");
-      throw new EmptyFieldException(EmptyFieldException::PASSWORD_MESSAGE_ERROR_EMPTY);
-    } catch (InvalidFieldException | EmptyFieldException $e) {
-      return $e->getMessage();
+        throw new PasswordErrorEmptyException();
+      case !preg_match($passwordRegex, $password):
+        header("HTTP/1.1 400");
+        throw new PasswordWrongFormatException();
+      default:
+        $hashPassword = password_hash($password, PASSWORD_DEFAULT);
+        return ["password" => $hashPassword];
     }
   }
 
 
-  public function signUpValidator(string $username, array $file, string $email, string $password): ?array
+  public function signUpValidator(string $username, array $file, string $email, string $password)
   {
 
     $usernameResult = $this->handleUsernameField($username);
+
     $emailResult = $this->handleEmailField($email);
     $passwordResult = $this->handlePasswordField($password);
     $fileResult = $this->handleFileField($file);
@@ -118,11 +123,7 @@ readonly class UserController
       "password" => $passwordResult,
       "file" => $fileResult
     ];
-    $errors = [];
 
-    foreach ($fields as $key => $v) {
-      if (gettype($v) === "string") $errors[$key . "_error"] = $v;
-    }
 
 
     foreach ($fields as $v) {
@@ -141,53 +142,47 @@ readonly class UserController
 
       switch (true) {
         case  $userDb["username"] === $username["username"] && $userDb["email"] === $email["email"]:
-          return ["username_error" => "Le nom d'utilisateur " . $username["username"] . " n'est pas disponible !", "email_error" => "L'adresse email " . $email["email"] . " n'est pas disponible !"];
+          header("HTTP/1.1 400");
+          return ["username_unavailable" => "Le nom d'utilisateur " . $username["username"] . " n'est pas disponible !", "email_unavailable" => "L'adresse email " . $email["email"] . " n'est pas disponible !"];
 
         case $userDb["username"] === $username["username"]:
-          return ["username_error" => "Le nom d'utilisateur " . $username["username"] . " n'est pas disponible !"];
+          header("HTTP/1.1 400");
+          return ["username_unavailable" => "Le nom d'utilisateur " . $username["username"] . " n'est pas disponible !"];
 
         case $userDb["email"] === $email["email"]:
-          return ["email_error" => "L'adresse email " . $email["email"] . " n'est pas disponible !"];
+          header("HTTP/1.1 400");
+          return ["email_unavailable" => "L'adresse email " . $email["email"] . " n'est pas disponible !"];
       }
     }
-    return !empty($errors) ? $errors : null;
+    return null;
   }
 
 
   public function verifyEmailOnLogin(string $email): array|string
   {
-    try {
 
-      $emailRegex = "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/";
-
-      if (!empty($email)) {
-        if (preg_match($emailRegex, $email)) {
-          return ["email" => $email];
-        }
+    $emailRegex = "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/";
+    switch (true) {
+      case empty($email):
         header("HTTP/1.1 400");
- 
-        throw new InvalidFieldException(InvalidFieldException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT);
-      }
-      header("HTTP/1.1 400");
-      throw new EmptyFieldException(EmptyFieldException::EMAIL_MESSAGE_ERROR_EMPTY);
-    } catch (InvalidFieldException | EmptyFieldException $e) {
-      return $e->getMessage();
+        throw new EmailErrorEmptyException();
+      case !preg_match($emailRegex, $email):
+        header("HTTP/1.1 400");
+        throw new EmailWrongFormatException();
+      default:
+        return ["email" => $email];
     }
   }
 
   public function verifyPasswordOnLogin(string $password): array|string
   {
 
-    try {
 
-      if (!empty($password)) {
-        return ["password" => $password];
-      }
+    if (empty($password)) {
       header("HTTP/1.1 400");
-      throw new EmptyFieldException(EmptyFieldException::PASSWORD_MESSAGE_ERROR_EMPTY);
-    } catch (EmptyFieldException $e) {
-      return $e->getMessage();
+      throw new PasswordErrorEmptyException(PasswordErrorEmptyException::PASSWORD_MESSAGE_ERROR_EMPTY);
     }
+    return ["password" => $password];
   }
 
 
@@ -203,11 +198,9 @@ readonly class UserController
       "password" => $passwordResult
     ];
 
-    $errors = [];
 
-    foreach ($fields as $key => $v) {
-      if (gettype($v) === "string") $errors[$key . "_error"] = $v;
-    }
+
+
 
     foreach ($fields as $v) {
       if (is_array($v)) $counter++;
@@ -222,6 +215,6 @@ readonly class UserController
       };
     }
 
-    return !empty($errors) ? $errors : null;
+    return null;
   }
 }

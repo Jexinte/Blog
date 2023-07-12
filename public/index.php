@@ -1,18 +1,29 @@
 <?php
 
-require_once __DIR__ . "/../vendor/autoload.php";
+require_once __DIR__ . "../../vendor/autoload.php";
 
 use Config\DatabaseConnection;
+
+use Exceptions\UsernameErrorEmptyException;
+use Exceptions\UsernameWrongFormatException;
+use Exceptions\FileErrorEmptyException;
+use Exceptions\FileTypeException;
+use Exceptions\EmailErrorEmptyException;
+use Exceptions\EmailWrongFormatException;
+use Exceptions\PasswordErrorEmptyException;
+use Exceptions\PasswordWrongFormatException;
+
 use Controller\ArticleController;
 use Controller\UserController;
 use Controller\DownloadController;
 use Controller\HomepageFormController;
+
 use Model\Article;
 use Model\User;
 use Model\HomepageForm;
 
 
-//TODO URGENT : Centraliser la levée des exceptions et des en-têtes de requêtes 400 dans index.php , faire des recherches
+
 //TODO  URGENT  : Mettre en place la création d'article pour les administrateurs avec les sessions ainsi il faudra avoir une class SessionManager qui sera la seule à créer des session_start() , session_destroy etc...
 //TODO URGENT : Maintenant que l'utilisation des sessions est confirmée il faudra faire en sorte de cacher l'accès au panel d'administration lorsque nécessaire
 //* IMPORTANT : Les credentials de mail étant une dépendance extérieure il faut faire quelquechose avec mais je ne sais plus donc je regardais ça plus tard
@@ -20,9 +31,9 @@ use Model\HomepageForm;
 
 $action = "";
 $selection = "";
-echo realpath("../../templates");
+
 $paths = [
-    __DIR__."/../templates",
+    __DIR__ . "/../templates",
     //__DIR__.'/../templates/admin'
 ];
 $loader = new \Twig\Loader\FilesystemLoader($paths);
@@ -34,9 +45,7 @@ $twig = new \Twig\Environment(
 );
 $db = new DatabaseConnection("professional_blog", "root", "");
 
-// catch (InvalidFieldException | EmptyFieldException $e) {
-//     return $e->getMessage();
-//   }
+
 $userRepository = new User($db);
 $userController = new UserController($userRepository);
 
@@ -56,18 +65,50 @@ if (isset($_GET['action'])) {
 
     switch ($action) {
         case "sign_up":
-            $template = "sign_up.twig";
-            $paramaters["message"] = $userController->signUpValidator(
-                $_POST['username'],
-                $_FILES['profile_image'],
-                $_POST["mail"],
-                $_POST["password"]
-            );
+            try {
+                $template = "sign_up.twig";
+
+                $paramaters["message"] = $userController->signUpValidator(
+                    $_POST['username'],
+                    $_FILES['profile_image'],
+                    $_POST["mail"],
+                    $_POST["password"]
+                );
+            } catch (UsernameWrongFormatException $e) {
+                $paramaters["username_exception"] = UsernameWrongFormatException::USERNAME_MESSAGE_ERROR_WRONG_FORMAT;
+            } catch (UsernameErrorEmptyException $e) {
+                $paramaters["username_exception"] =
+                    UsernameErrorEmptyException::USERNAME_MESSAGE_ERROR_EMPTY;
+            } catch (FileErrorEmptyException $e) {
+                $paramaters["file_exception"] = FileErrorEmptyException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED;
+            } catch (FileTypeException $e) {
+                $paramaters["file_exception"] = FileTypeException::FILE_MESSAGE_ERROR_TYPE_FILE;
+            } catch (EmailErrorEmptyException $e) {
+                $paramaters["email_exception"] = EmailErrorEmptyException::EMAIL_MESSAGE_ERROR_EMPTY;
+            } catch (EmailWrongFormatException $e) {
+                $paramaters["email_exception"] = EmailWrongFormatException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT;
+            } catch (PasswordErrorEmptyException $e) {
+                $paramaters["password_exception"] = PasswordErrorEmptyException::PASSWORD_MESSAGE_ERROR_EMPTY;
+            } catch (PasswordWrongFormatException $e) {
+                $paramaters["password_exception"] = PasswordWrongFormatException::PASSWORD_MESSAGE_ERROR_WRONG_FORMAT;
+            }
+
             break;
 
         case "sign_in":
-            $template = "sign_in.twig";
-            $paramaters["message"] = $userController->loginValidator($_POST['mail'], $_POST["password"]);
+            try {
+                $template = "sign_in.twig";
+                $paramaters["message"] = $userController->loginValidator($_POST['mail'], $_POST["password"]);
+            } catch (EmailErrorEmptyException $e) {
+                $paramaters["email_exception"] = EmailErrorEmptyException::EMAIL_MESSAGE_ERROR_EMPTY;
+            } catch (EmailWrongFormatException $e) {
+                $paramaters["email_exception"] = EmailWrongFormatException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT;
+            } catch (PasswordErrorEmptyException $e) {
+                $paramaters["password_exception"] = PasswordErrorEmptyException::PASSWORD_MESSAGE_ERROR_EMPTY;
+            } catch (PasswordWrongFormatException $e) {
+                $paramaters["password_exception"] = PasswordWrongFormatException::PASSWORD_MESSAGE_ERROR_WRONG_FORMAT;
+            }
+
             break;
 
         case "download_file":
@@ -87,9 +128,6 @@ if (isset($_GET['action'])) {
             }
             break;
     }
-
-
-
 } elseif ((isset($_GET['selection']))) {
 
     $selection = $_GET['selection'];
@@ -126,7 +164,6 @@ if (isset($_GET['action'])) {
             $template = "admin_update_article.twig";
             break;
     }
-
 }
 
 echo $twig->render($template, $paramaters);
