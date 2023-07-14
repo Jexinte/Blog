@@ -198,23 +198,34 @@ readonly class UserController
       "password" => $passwordResult
     ];
 
-
-
-
-
+    $emailField = $fields["email"]["email"];
+    $passwordField = $fields["password"]["password"];
     foreach ($fields as $v) {
       if (is_array($v)) $counter++;
     }
+
     if ($counter == 2) {
-      $emailField = $fields["email"]["email"];
-      $passwordField = $fields["password"]["password"];
+
       $login = $userRepository->loginUser($emailField, $passwordField);
       return match (true) {
         array_key_exists("password_error", $login) => ["password_error" => "Le mot de passe est incorrect !"],
-        array_key_exists('email_error', $login) => ["email_error" => "Oups ! Nous n'avons trouvé aucun compte associé à cette adresse e-mail. Assurez-vous que vous avez saisi correctement votre adresse e-mail et réessayez"]
+        array_key_exists('email_error', $login) => ["email_error" => "Oups ! Nous n'avons trouvé aucun compte associé à cette adresse e-mail. Assurez-vous que vous avez saisi correctement votre adresse e-mail et réessayez"],
+        default => $login
       };
     }
+  }
 
-    return null;
+  public function handleInsertSessionData(array $arr) :void
+  {
+    $userRepository = $this->user;
+
+    $userRepository->insertSessionData($arr);
+  }
+
+  public function handleGetIdSessionData($arr):?array
+  {
+    $userRepository = $this->user;
+
+    return $userRepository->getIdSessionData($arr);
   }
 }

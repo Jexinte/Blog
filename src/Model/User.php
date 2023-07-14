@@ -6,8 +6,10 @@ use Config\DatabaseConnection;
 use Enumeration\UserType;
 
 
+
 readonly class User
 {
+
 
   public function __construct(private DatabaseConnection $connector)
   {
@@ -52,7 +54,7 @@ readonly class User
       header("Location: ?selection=sign_in");
     }
 
-    return !empty($result) ? $result: null ;
+    return !empty($result) ? $result : null;
   }
 
   public function loginUser(string $email, string $password): ?array
@@ -63,25 +65,82 @@ readonly class User
     $statement->bindParam(":email", $email);
     $statement->execute();
     $user = $statement->fetch();
-    if ($user && $user["type"] == "user") {
-      $check_password = password_verify($password, $user['password']);
-        if (!$check_password) {
+    switch (true) {
+      case $user && $user["type"] == UserType::USER->value:
+        $checkPassword = password_verify($password, $user['password']);
+        $username = $user["username"];
+        $typeUser = $user["type"];
+        if (!$checkPassword) {
           header('HTTP/1.1 401');
           return ["password_error" => 1];
         }
         header("HTTP/1.1 302");
         header("Location: index.php?selection=blog");
-    }
+        return ["username" => $username, "type_user" => $typeUser];
 
-    elseif($user && $user["type"] == "admin"){
+      case $user && $user["type"] == UserType::ADMIN->value:
+        $checkPassword = password_verify($password, $user['password']);
+        $username = $user["username"];
+        $typeUser = $user["type"];
+        if (!$checkPassword) {
+          header('HTTP/1.1 401');
+          return ["password_error" => 1];
+        }
+        header("HTTP/1.1 302");
+        header("Location: index.php?selection=blog");
+        return ["username" => $username, "type_user" => $typeUser];
+
+
+      default:
+        header('HTTP/1.1 400');
+        return ["email_error" => 1];
+    }
+  }
+
+  public function insertSessionData(array $sessionData): ?array
+  {
+
+    $dbConnect = $this->connector->connect();
+
+    $statement = $dbConnect->prepare("SELECT username FROM session WHERE username = :username");
+    $statement->bindParam("username", $sessionData["username"]);
+    $statement->execute();
+    $result = $statement->fetch();
+
+    if ($result) {
       header("HTTP/1.1 302");
-      header("Location: index.php?selection=add_article");
-  
+      header("Location: index.php?selection=blog");
+      return null;
     }
-    else{
-      header('HTTP/1.1 400');
-      return ["email_error" => 1];
+    $idSession =  str_replace("/", "", base64_encode(random_bytes(50)));
+    $sessionData["id_session"] = $idSession;
+    $insertData = $dbConnect->prepare("INSERT INTO session (id_session,username,user_type) VALUES(?,?,?)");
+
+    $values = [$sessionData["id_session"], $sessionData["username"], $sessionData["type_user"]];
+    $insertData->execute($values);
+  }
+
+
+  public function getIdSessionData($sessionData): ?array
+  {
+    $dbConnect = $this->connector->connect();
+    $statement = $dbConnect->prepare("SELECT username,type FROM users WHERE username = :username AND type = :type_user");
+
+    $statement->bindParam("username", $sessionData["username"]);
+    $statement->bindParam("type_user", $sessionData["type_user"]);
+    $statement->execute();
+    $result = $statement->fetch();
+
+    if ($result) {
+      $statementSession = $dbConnect->prepare("SELECT id_session,username,user_type FROM session WHERE username = :username AND user_type = :type_user");
+      $statementSession->bindParam("username", $sessionData["username"]);
+      $statementSession->bindParam("type_user", $sessionData["type_user"]);
+
+      $statementSession->execute();
+      $resultStatementSession = $statementSession->fetch();
+      $idSession = !empty($resultStatementSession) ?  $resultStatementSession["id_session"] : null;
+
+      return ["session_id" => $idSession];
     }
-    
   }
 }

@@ -1,6 +1,15 @@
 <?php
 
+
 require_once __DIR__ . "../../vendor/autoload.php";
+
+use Model\Article;
+use Model\User;
+use Model\HomepageForm;
+use Model\SessionManager;
+
+$sessionRepository = new SessionManager();
+$sessionRepository->startSession();
 
 use Config\DatabaseConnection;
 
@@ -18,14 +27,12 @@ use Controller\UserController;
 use Controller\DownloadController;
 use Controller\HomepageFormController;
 
-use Model\Article;
-use Model\User;
-use Model\HomepageForm;
+
 
 
 
 //TODO  URGENT  : Mettre en place la création d'article pour les administrateurs avec les sessions ainsi il faudra avoir une class SessionManager qui sera la seule à créer des session_start() , session_destroy etc...
-//TODO URGENT : Maintenant que l'utilisation des sessions est confirmée il faudra faire en sorte de cacher l'accès au panel d'administration lorsque nécessaire
+
 //* IMPORTANT : Les credentials de mail étant une dépendance extérieure il faut faire quelquechose avec mais je ne sais plus donc je regardais ça plus tard
 //TODO  BONUS : Si la partie avec l'administrateur est terminé alors s'occuper de la partie commentaire !
 
@@ -34,7 +41,7 @@ $selection = "";
 
 $paths = [
     __DIR__ . "/../templates",
-    __DIR__.'/../templates/admin'
+    __DIR__ . '/../templates/admin'
 ];
 $loader = new \Twig\Loader\FilesystemLoader($paths);
 $twig = new \Twig\Environment(
@@ -56,6 +63,8 @@ $downloadController = new DownloadController();
 
 $formRepository = new HomepageForm($db);
 $formController = new HomepageFormController($formRepository);
+
+
 $template = "homepage.twig";
 $paramaters = [];
 if (isset($_GET['action'])) {
@@ -74,11 +83,11 @@ if (isset($_GET['action'])) {
                     $_POST["mail"],
                     $_POST["password"]
                 );
-            } catch (UsernameWrongFormatException $e) {
-                $paramaters["username_exception"] = UsernameWrongFormatException::USERNAME_MESSAGE_ERROR_WRONG_FORMAT;
             } catch (UsernameErrorEmptyException $e) {
                 $paramaters["username_exception"] =
                     UsernameErrorEmptyException::USERNAME_MESSAGE_ERROR_EMPTY;
+            } catch (UsernameWrongFormatException $e) {
+                $paramaters["username_exception"] = UsernameWrongFormatException::USERNAME_MESSAGE_ERROR_WRONG_FORMAT;
             } catch (FileErrorEmptyException $e) {
                 $paramaters["file_exception"] = FileErrorEmptyException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED;
             } catch (FileTypeException $e) {
@@ -98,7 +107,16 @@ if (isset($_GET['action'])) {
         case "sign_in":
             try {
                 $template = "sign_in.twig";
+
                 $paramaters["message"] = $userController->loginValidator($_POST['mail'], $_POST["password"]);
+                $login = $userController->loginValidator($_POST['mail'], $_POST["password"]);
+                $dataLogs = is_array($login) && array_key_exists("username", $login) && array_key_exists("type_user", $login) ? $login : null;
+
+
+                $_SESSION["username"] = $dataLogs["username"];
+                $_SESSION["type_user"] = $dataLogs["type_user"];
+
+                $userController->handleInsertSessionData($_SESSION);
             } catch (EmailErrorEmptyException $e) {
                 $paramaters["email_exception"] = EmailErrorEmptyException::EMAIL_MESSAGE_ERROR_EMPTY;
             } catch (EmailWrongFormatException $e) {
@@ -136,6 +154,7 @@ if (isset($_GET['action'])) {
 
         case "homepage":
             $template = "homepage.twig";
+            $paramaters["session"] =  $_SESSION;
             break;
         case "sign_in":
             $template = "sign_in.twig";
@@ -145,20 +164,34 @@ if (isset($_GET['action'])) {
             break;
         case "blog":
             $template = "blog.twig";
-            $paramaters["articles"] = $articleController->listOfAllArticles();
+
+            if (is_array($userController->handleGetIdSessionData($_SESSION)) && array_key_exists("session_id", $userController->handleGetIdSessionData($_SESSION))) {
+                $_SESSION["session_id"] = $userController->handleGetIdSessionData($_SESSION)["session_id"];
+            }
+
+            $paramaters = [
+                "articles" => $articleController->listOfAllArticles(),
+                "session" => $_SESSION
+            ];
             break;
         case "admin_panel":
             $template = "admin_homepage.twig";
+            $paramaters = [
+                "session" => $_SESSION
+            ];
             break;
         case "view_article":
             $template = "admin_article_and_commentary.twig";
             break;
         case "article":
+
+
             $template = "article.twig";
             $paramaters["article"] = $articleController->handleOneArticle($_GET['id']);
             break;
         case "add_article":
             $template = "admin_add_article.twig";
+            $paramaters["session"] =  $_SESSION;
             break;
         case "update_article":
             $template = "admin_update_article.twig";

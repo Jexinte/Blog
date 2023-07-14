@@ -21,7 +21,7 @@
 	<div class="container-fluid" id="article">
 
 		<div class="container-fluid" id="banner">
-			<img src="../src/admin/assets/images/banner_add_update_article.jpg" alt="">
+			<img src="../public/assets/images/banner_add_update_article.jpg" alt="">
 		</div>
 
 		<div class="container-fluid" id="form">
@@ -32,7 +32,7 @@
 			</div>
 
 
-			<form id="form" class="pt-3" action="#" method="post">
+			<form id="form" class="pt-3" action="?action=add_article" method="post">
 				<div class="row">
 					<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 form-box">
 						<div class="mb-3">
@@ -87,7 +87,7 @@
 			<div class="row">
 
 				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 preview-box">
-					<img src="" id="img-preview">
+					<img  id="img-preview">
 					<h2 id="title-preview"></h2>
 					<p id="short-phrase-preview"></p>
 					<p id="content-preview"></p>
@@ -96,6 +96,6 @@
 			</div>
 		</div>
 	</div>
-	<script src="../src/admin/assets/js/article_live_preview.js"></script>
+	<script src="../public/assets/js/article_live_preview.js"></script>
 {% endblock %}
 
