@@ -21,14 +21,19 @@ use Exceptions\EmailErrorEmptyException;
 use Exceptions\EmailWrongFormatException;
 use Exceptions\PasswordErrorEmptyException;
 use Exceptions\PasswordWrongFormatException;
+use Exceptions\TitleErrorEmptyException;
+use Exceptions\TitleWrongFormatException;
+use Exceptions\ContentArticleErrorEmptyException;
+use Exceptions\ContentArticleWrongFormatException;
+use Exceptions\ShortPhraseErrorEmptyException;
+use Exceptions\ShortPhraseWrongFormatException;
+use Exceptions\TagsErrorEmptyException;
+use Exceptions\TagsWrongFormatException;
 
 use Controller\ArticleController;
 use Controller\UserController;
 use Controller\DownloadController;
 use Controller\HomepageFormController;
-
-
-
 
 
 //TODO  URGENT  : Mettre en place la création d'article pour les administrateurs avec les sessions ainsi il faudra avoir une class SessionManager qui sera la seule à créer des session_start() , session_destroy etc...
@@ -64,6 +69,7 @@ $downloadController = new DownloadController();
 $formRepository = new HomepageForm($db);
 $formController = new HomepageFormController($formRepository);
 
+//$sessionRepository->destroySession();
 
 $template = "homepage.twig";
 $paramaters = [];
@@ -103,20 +109,18 @@ if (isset($_GET['action'])) {
             }
 
             break;
-
         case "sign_in":
             try {
                 $template = "sign_in.twig";
 
                 $paramaters["message"] = $userController->loginValidator($_POST['mail'], $_POST["password"]);
                 $login = $userController->loginValidator($_POST['mail'], $_POST["password"]);
-                $dataLogs = is_array($login) && array_key_exists("username", $login) && array_key_exists("type_user", $login) ? $login : null;
 
-
-                $_SESSION["username"] = $dataLogs["username"];
-                $_SESSION["type_user"] = $dataLogs["type_user"];
-
-                $userController->handleInsertSessionData($_SESSION);
+                if (is_array($login) && array_key_exists("username", $login) && array_key_exists("type_user", $login)) {
+                    $_SESSION["username"] = $login["username"];
+                    $_SESSION["type_user"] = $login["type_user"];
+                    $userController->handleInsertSessionData($_SESSION);
+                }
             } catch (EmailErrorEmptyException $e) {
                 $paramaters["email_exception"] = EmailErrorEmptyException::EMAIL_MESSAGE_ERROR_EMPTY;
             } catch (EmailWrongFormatException $e) {
@@ -145,6 +149,37 @@ if (isset($_GET['action'])) {
                 $paramaters["code"] = $_GET["code"];
             }
             break;
+
+        case "add_article":
+            $template = "admin_add_article.twig";
+            try {
+
+                $paramaters = [
+                    "article" => $articleController->handleCreateArticleValidator($_POST["title"], $_FILES["image_file"], $_POST["short-phrase"], $_POST["content"], $_POST["tags"], $_SESSION),
+                    "session" => $_SESSION,
+
+                ];
+            } catch (TitleErrorEmptyException $e) {
+                $paramaters["title_exception"] = TitleErrorEmptyException::TITLE_MESSAGE_ERROR_EMPTY;
+            } catch (TitleWrongFormatException $e) {
+                $paramaters["title_exception"] = TitleWrongFormatException::TITLE_MESSAGE_ERROR_MAX_51_CHARS;
+            } catch (FileErrorEmptyException $e) {
+                $paramaters["file_exception"] = FileErrorEmptyException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED;
+            } catch (FileTypeException $e) {
+                $paramaters["file_exception"] = FileTypeException::FILE_MESSAGE_ERROR_TYPE_FILE;
+            } catch (ShortPhraseErrorEmptyException $e) {
+                $paramaters["short_phrase_exception"] = ShortPhraseErrorEmptyException::SHORT_PHRASE_MESSAGE_ERROR_EMPTY;
+            } catch (ShortPhraseWrongFormatException $e) {
+                $paramaters["short_phrase_exception"] = ShortPhraseWrongFormatException::SHORT_PHRASE_MESSAGE_ERROR_MAX_200_CHARS;
+            } catch (ContentArticleErrorEmptyException $e) {
+                $paramaters["content_article_exception"] = ContentArticleErrorEmptyException::CONTENT_ARTICLE_MESSAGE_ERROR_EMPTY;
+            } catch (ContentArticleWrongFormatException $e) {
+                $paramaters["content_article_exception"] = ContentArticleWrongFormatException::CONTENT_ARTICLE_MESSAGE_ERROR_MAX_5000_CHARS;
+            } catch (TagsErrorEmptyException $e) {
+                $paramaters["tags_exception"] = TagsErrorEmptyException::TAGS_ERROR_EMPTY;
+            } catch (TagsWrongFormatException $e) {
+                $paramaters["tags_exception"] = TagsWrongFormatException::TAGS_MESSAGE_ERROR_MAX_3_TAGS;
+            }
     }
 } elseif ((isset($_GET['selection']))) {
 

@@ -7,17 +7,15 @@ use DateTime;
 use Exception;
 use IntlDateFormatter;
 
- class Article
+class Article
 {
 
   public function __construct(private readonly DatabaseConnection   $connector)
   {
   }
 
-    /**
-     * @throws Exception
-     */
-    public function getArticles(): array
+
+  public function getArticles(): array
   {
 
     $dbConnect = $this->connector->connect();
@@ -30,8 +28,8 @@ use IntlDateFormatter;
 
     while ($row = $statement->fetch()) {
       $frenchDateFormat = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
-        /** @var string $date */
-        $date = $frenchDateFormat->format(new DateTime($row["date_article"]));
+
+      $date = $frenchDateFormat->format(new DateTime($row["date_article"]));
       $statement2 = $dbConnect->prepare("SELECT profile_image AS image, username FROM users WHERE username = :author");
       $statement2->bindParam("author", $row["author"]);
       $statement2->execute();
@@ -55,10 +53,10 @@ use IntlDateFormatter;
     return $articles;
   }
 
-    /**
-     * @throws Exception
-     */
-    public function getArticle(int $id):array
+  /**
+   * @throws Exception
+   */
+  public function getArticle(int $id): array
   {
     $dbConnect = $this->connector->connect();
     $statement = $dbConnect->prepare("SELECT id, image,title,chapô,content,tags,author,DATE_FORMAT(date_creation,'%d %M %Y') AS date_article FROM articles WHERE id = :id");
@@ -67,7 +65,7 @@ use IntlDateFormatter;
     $article = [];
     while ($row = $statement->fetch()) {
       $french_date_format = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
-        /** @var string $date */
+
       $date = $french_date_format->format(new DateTime($row["date_article"]));
       $statement2 = $dbConnect->prepare("SELECT profile_image, username FROM users WHERE username = :author");
       $statement2->bindParam("author", $row["author"]);
@@ -90,5 +88,51 @@ use IntlDateFormatter;
     }
     header("HTTP/1.1 200");
     return $article;
+  }
+
+  public function createArticle(array $articleData, array $sessionData):void
+  {
+
+    $dbConnect = $this->connector->connect();
+    $idSession = $sessionData["session_id"];
+    $usernameSession = $sessionData["username"];
+    $typeUserSession = $sessionData["type_user"];
+
+    $statementSession = $dbConnect->prepare("SELECT id_session,username,user_type FROM session WHERE id_session = :id_from_session_variable AND username = :username_from_session_variable AND user_type = :type_user_from_session_variable");
+
+    $statementSession->bindParam("id_from_session_variable", $idSession);
+    $statementSession->bindParam("username_from_session_variable", $usernameSession);
+    $statementSession->bindParam("type_user_from_session_variable", $typeUserSession);
+
+    $statementSession->execute();
+
+    if ($statementSession) {
+      echo "Une correspondance à été trouvé !";
+      $titleArticle = $articleData["title"]["title"];
+      $fileArticle = $articleData["file"]["file"];
+      $shortPhraseArticle = $articleData["short_phrase"]["short_phrase"];
+      $contentArticle = $articleData["content"]["content"];
+      $tagsArticle = $articleData["tags"]["tags"];
+
+      $fileRequirements = explode(';', $fileArticle);
+      $fileSettings["file_name"] = $fileRequirements[0];
+      $fileSettings["tmp_name"] = $fileRequirements[1];
+      $fileSettings["directory"] = $fileRequirements[2];
+      $filePath = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/" . $fileSettings["file_name"];
+
+      $statementArticle = $dbConnect->prepare("INSERT INTO articles (image,title,chapô,content,tags,author,date_creation) VALUES(:fileArticle,:titleArticle,:shortPhraseArticle,:contentArticle,:tagsArticle,:authorArticle,:dateArticle)");
+    
+      $statementArticle->bindParam(':fileArticle', $filePath);
+      $statementArticle->bindParam(':titleArticle', $titleArticle);
+      $statementArticle->bindParam(':shortPhraseArticle', $shortPhraseArticle);
+      $statementArticle->bindParam(':contentArticle', $contentArticle);
+      $statementArticle->bindParam(':tagsArticle', $tagsArticle);
+      $statementArticle->bindParam(':authorArticle', $usernameSession);
+      $statementArticle->bindValue(':dateArticle', date('Y-m-d'));
+      $statementArticle->execute();
+      move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
+      header("HTTP/1.1 302");
+      header("Location: ?selection=admin_panel");
+    }
   }
 }

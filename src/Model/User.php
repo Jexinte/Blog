@@ -106,18 +106,19 @@ readonly class User
     $statement->bindParam("username", $sessionData["username"]);
     $statement->execute();
     $result = $statement->fetch();
-
-    if ($result) {
-      header("HTTP/1.1 302");
-      header("Location: index.php?selection=blog");
-      return null;
+    
+    if (!$result) {
+     
+      $idSession =  str_replace("/", "", base64_encode(random_bytes(50)));
+      $sessionData["id_session"] = $idSession;
+      $insertData = $dbConnect->prepare("INSERT INTO session (id_session,username,user_type) VALUES(?,?,?)");
+  
+      $values = [$sessionData["id_session"], $sessionData["username"], $sessionData["type_user"]];
+      $insertData->execute($values);
     }
-    $idSession =  str_replace("/", "", base64_encode(random_bytes(50)));
-    $sessionData["id_session"] = $idSession;
-    $insertData = $dbConnect->prepare("INSERT INTO session (id_session,username,user_type) VALUES(?,?,?)");
-
-    $values = [$sessionData["id_session"], $sessionData["username"], $sessionData["type_user"]];
-    $insertData->execute($values);
+    
+    return null;
+  
   }
 
 
@@ -139,8 +140,9 @@ readonly class User
       $statementSession->execute();
       $resultStatementSession = $statementSession->fetch();
       $idSession = !empty($resultStatementSession) ?  $resultStatementSession["id_session"] : null;
-
-      return ["session_id" => $idSession];
+      if(!empty($idSession)) return ["session_id" => $idSession];
     }
+    return  null;
+
   }
 }

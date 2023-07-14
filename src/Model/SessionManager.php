@@ -4,14 +4,14 @@ namespace Model;
 
 class SessionManager{
 
-  public function startSession(){
+  public function startSession():void
+  {
     if(session_status() !== PHP_SESSION_ACTIVE ) session_start();
   }
 
-  public function sessionAdminExist(){
-    if(session_status() === PHP_SESSION_ACTIVE) return ["session_active" => 1];
-  }
-  public function destroySession(){
+  
+  public function destroySession():void
+  {
     
     if(session_status() === PHP_SESSION_ACTIVE ) {
       session_destroy();
