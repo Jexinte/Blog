@@ -92,56 +92,30 @@
 
 		<div class="container-fluid" id="last-articles">
 			<h2 class="h2" id="last-articles-title">Derniers articles publiés récemments</h2>
+			{% if articles is defined and articles is not empty %}
+			{% for article in articles %}
 			<div class="row mt-5">
 				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 articles">
 					<article>
-						<h3 class="article-title">Les bases de PHP</h3>
-						<p class="short-content">PHP, acronyme de Hypertext Preprocessor, est un langage de script largement utilisé pour le développement web. Avec PHP, vous pouvez créer des pages web interactives et dynamiques en générant du contenu HTML en temps réel...
-						</p>
+						<h3 class="article-title">{{article.title}}</h3>
+						<p class="short-content">{{article.content}}</p>
 						<div class="commands">
 							<button class="btn btn-warning">
-								<a class="commands-admin" href="#">Modifier</a>
+								<a class="commands-admin" href="?selection=view_update_article&amp;id={{article.id}}">Modifier</a>
 							</button>
 							<button class="btn btn-dark">
-								<a class="commands-admin" href="#">Supprimer</a>
+								<a class="commands-admin" href="?action=delete_article">Supprimer</a>
 							</button>
 						</div>
 					</article>
 				</div>
-
-				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 articles">
-					<article>
-						<h3 class="article-title">Les bonnes pratiques en PHP</h3>
-						<p class="short-content">Lorsque vous développez en PHP, il est important de suivre les bonnes pratiques pour garantir la qualité de votre code. En adoptant des conventions de codage cohérentes, en utilisant des noms de variables significatifs et en organisant votre code de manière structurée, vous facilitez la maintenance et la collaboration sur vos projets PHP...
-						</p>
-						<div class="commands">
-							<button class="btn btn-warning">
-								<a class="commands-admin" href="#">Modifier</a>
-							</button>
-							<button class="btn btn-dark">
-								<a class="commands-admin" href="#">Supprimer</a>
-							</button>
-						</div>
-					</article>
-				</div>
-
-				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 articles">
-					<article>
-						<h3 class="article-title">Les frameworks PHP populaires</h3>
-						<p class="short-content">Les frameworks PHP sont des outils puissants qui accélèrent le processus de développement d'applications web en fournissant des structures et des fonctionnalités prêtes à l'emploi..
-						</p>
-						<div class="commands">
-							<button class="btn btn-warning">
-								<a class="commands-admin" href="#">Modifier</a>
-							</button>
-							<form action="#">
-								<button class="btn btn-dark commands-admin" type="submit" name="submit" id="submit">Supprimer</button>
-							</form>
-						</div>
-					</article>
-				</div>
-
-			</div>
+			</div>	
+			{% endfor %}
+			{% else %}
+			<h2 class="text-dark text-center">Aucun article n'a été publié pour le moment</h2>
+			{% endif %}
+	
+			
 		</div>
 
 	</div>

@@ -245,14 +245,14 @@ if (isset($_GET['action'])) {
         case "admin_panel":
             $template = "admin_homepage.twig";
             $paramaters = [
+                "articles" => $articleController->listOfAllArticles(),
                 "session" => $_SESSION
             ];
             break;
-        case "view_article":
+        case "view_article_and_commentary":
             $template = "admin_article_and_commentary.twig";
             break;
         case "article":
-
 
             $template = "article.twig";
             $paramaters["article"] = $articleController->handleOneArticle($_GET['id']);
@@ -261,8 +261,11 @@ if (isset($_GET['action'])) {
             $template = "admin_add_article.twig";
             $paramaters["session"] =  $_SESSION;
             break;
-        case "update_article":
+        case "view_update_article":
             $template = "admin_update_article.twig";
+            $paramaters = [
+                "articles" => $articleController->handleOneArticle($_GET["id"])
+            ];
             break;
     }
 }
