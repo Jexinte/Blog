@@ -52,22 +52,22 @@ class ArticleController
     }
   }
 
-  public function handleFileField(array $file): array|string
+  public function handleFileField(array $fileArticle): array|string
   {
     switch (true) {
-      case !empty($file["name"]) && $file["error"] == UPLOAD_ERR_OK:
-        $filename = $file["name"];
-        $dirImages = "../public/assets/images/";
-        $filenameTmp = $file['tmp_name'];
-        $extensionOfTheUploaded_file = explode('.', $filename);
-        $authorizedExtensions = array("jpg", "jpeg", "png", "webp");
+      case !empty($fileArticle["name"]) && $fileArticle["error"] == UPLOAD_ERR_OK:
+        $filenameArticle = $fileArticle["name"];
+        $dirImagesArticle = "../public/assets/images/";
+        $filenameTmpArticle = $fileArticle['tmp_name'];
+        $extensionOfTheUploadedFile = explode('.', $filenameArticle);
+        $authorizedExtensionsArticle = array("jpg", "jpeg", "png", "webp");
 
-        if (in_array($extensionOfTheUploaded_file[1], $authorizedExtensions)) {
+        if (in_array($extensionOfTheUploadedFile[1], $authorizedExtensionsArticle)) {
           $bytesToStr = str_replace("/", "", base64_encode(random_bytes(9)));
-          $filenameAndExtension = explode('.', $filename);
-          $filenameGenerated = $bytesToStr . "." . $filenameAndExtension[1];
+          $filenameAndExtensionArticle = explode('.', $filenameArticle);
+          $filenameGeneratedArticle = $bytesToStr . "." . $filenameAndExtensionArticle[1];
 
-          return ["file" => "$filenameGenerated;$filenameTmp;$dirImages"];
+          return ["file" => "$filenameGeneratedArticle;$filenameTmpArticle;$dirImagesArticle"];
         } else {
           header("HTTP/1.1 400");
           throw new FileTypeException();
@@ -122,11 +122,11 @@ class ArticleController
   }
 
 
-  public function handleCreateArticleValidator(string $title, array $file, string $shortPhrase, string $content, string $tags, array $sessionData): void
+  public function handleCreateArticleValidator(string $title, array $fileArticle, string $shortPhrase, string $content, string $tags, array $sessionData): void
   {
     $articleRepository = $this->article;
     $titleField = $this->handleTitleField($title);
-    $fileField = $this->handleFileField($file);
+    $fileField = $this->handleFileField($fileArticle);
     $shortPhraseField = $this->handleShortPhraseField($shortPhrase);
     $contentField = $this->handleContentField($content);
     $tagsField = $this->handleTagsField($tags);
