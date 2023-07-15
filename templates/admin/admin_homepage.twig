@@ -15,13 +15,23 @@
 {% block content %}
 	<header>
 		<nav class="menu">
-				<a href="?selection=blog"><i class="fa-solid fa-newspaper"></i></a>
+			<a href="?selection=blog">
+				<i class="fa-solid fa-newspaper"></i>
+			</a>
 			<ul>
-				<li><a href="?selection=add_article"><i class="fa-solid fa-plus"></i></a></li>
+				<li>
+					<a href="?selection=add_article">
+						<i class="fa-solid fa-plus"></i>
+					</a>
+				</li>
 				{% if session is defined and session.type_user == "admin" %}
-					<li><a href="action=log_out"><i class="fa-solid fa-right-from-bracket"></i></a></li>
+					<li>
+						<a href="action=log_out">
+							<i class="fa-solid fa-right-from-bracket"></i>
+						</a>
+					</li>
 				{% endif %}
-				
+
 			</ul>
 		</nav>
 	</header>
@@ -72,7 +82,7 @@
 							<h4>CyranoB , le 19 juin 2023</h4>
 							<p>
 								C'est un roc !... c'est un pic... c'est un cap !
-																																																Que dis-je, c'est un cap ?... C'est une péninsule ! »</p>
+																																																								Que dis-je, c'est un cap ?... C'est une péninsule ! »</p>
 						</div>
 					</a>
 				</div>
@@ -135,7 +145,7 @@
 		</div>
 
 	</div>
-		{% if session is defined and session.type_user == "admin" %}
+	{% if session is defined and session.type_user == "admin" %}
 		{% include "admin_footer.twig" %}
 	{% else %}
 

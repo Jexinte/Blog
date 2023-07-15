@@ -29,6 +29,14 @@ use Exceptions\ShortPhraseErrorEmptyException;
 use Exceptions\ShortPhraseWrongFormatException;
 use Exceptions\TagsErrorEmptyException;
 use Exceptions\TagsWrongFormatException;
+use Exceptions\ContentMessageWrongFormatException;
+use Exceptions\ContentMessageErrorEmptyException;
+use Exceptions\SubjectErrorEmptyException;
+use Exceptions\SubjectWrongFormatException;
+use Exceptions\LastnameErrorEmptyException;
+use Exceptions\LastnameWrongFormatException;
+use Exceptions\FirstNameErrorEmptyException;
+use Exceptions\FirstNameWrongFormatException;
 
 use Controller\ArticleController;
 use Controller\UserController;
@@ -36,10 +44,8 @@ use Controller\DownloadController;
 use Controller\HomepageFormController;
 
 
-//TODO  URGENT  : Mettre en place la création d'article pour les administrateurs avec les sessions ainsi il faudra avoir une class SessionManager qui sera la seule à créer des session_start() , session_destroy etc...
 
-//* IMPORTANT : Les credentials de mail étant une dépendance extérieure il faut faire quelquechose avec mais je ne sais plus donc je regardais ça plus tard
-//TODO  BONUS : Si la partie avec l'administrateur est terminé alors s'occuper de la partie commentaire !
+
 
 $action = "";
 $selection = "";
@@ -69,7 +75,6 @@ $downloadController = new DownloadController();
 $formRepository = new HomepageForm($db);
 $formController = new HomepageFormController($formRepository);
 
-//$sessionRepository->destroySession();
 
 $template = "homepage.twig";
 $paramaters = [];
@@ -139,8 +144,30 @@ if (isset($_GET['action'])) {
             break;
 
         case "contact":
-            $template = "homepage.twig";
-            $paramaters["message"] = $formController->homepageFormValidator($_POST["firstname"], $_POST["lastname"], $_POST["mail"], $_POST["subject"], $_POST["message"]);
+            try {
+                $template = "homepage.twig";
+                $paramaters["message"] = $formController->homepageFormValidator($_POST["firstname"], $_POST["lastname"], $_POST["mail"], $_POST["subject"], $_POST["message"]);
+            } catch (FirstNameErrorEmptyException $e) {
+                $paramaters["firstname_exception"] = FirstNameErrorEmptyException::FIRSTNAME_MESSAGE_ERROR_EMPTY;
+            } catch (FirstNameWrongFormatException $e) {
+                $paramaters["firstname_exception"] = FirstNameWrongFormatException::FIRSTNAME_MESSAGE_ERROR_WRONG_FORMAT;
+            } catch (LastnameErrorEmptyException $e) {
+                $paramaters["lastname_exception"] = LastnameErrorEmptyException::LASTNAME_MESSAGE_ERROR_EMPTY;
+            } catch (LastnameWrongFormatException $e) {
+                $paramaters["lastname_exception"] = LastnameWrongFormatException::LASTNAME_MESSAGE_ERROR_WRONG_FORMAT;
+            } catch (EmailErrorEmptyException $e) {
+                $paramaters["email_exception"] = EmailErrorEmptyException::EMAIL_MESSAGE_ERROR_EMPTY;
+            } catch (EmailWrongFormatException $e) {
+                $paramaters["email_exception"] = EmailWrongFormatException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT;
+            } catch (SubjectErrorEmptyException $e) {
+                $paramaters["subject_exception"] = SubjectErrorEmptyException::SUBJECT_MESSAGE_ERROR_EMPTY;
+            } catch (SubjectWrongFormatException $e) {
+                $paramaters["subject_exception"] = SubjectWrongFormatException::SUBJECT_MESSAGE_ERROR_MIN_20_CHARS_MAX_100_CHARS;
+            } catch (ContentMessageErrorEmptyException $e) {
+                $paramaters["content_message_exception"] = ContentMessageErrorEmptyException::CONTENT_MESSAGE_ERROR_EMPTY;
+            } catch (ContentMessageWrongFormatException $e) {
+                $paramaters["content_message_exception"] = ContentMessageWrongFormatException::CONTENT_MESSAGE_ERROR_MIN_20_CHARS_MAX_500_CHARS;
+            }
             break;
 
         case "error":
@@ -180,6 +207,12 @@ if (isset($_GET['action'])) {
             } catch (TagsWrongFormatException $e) {
                 $paramaters["tags_exception"] = TagsWrongFormatException::TAGS_MESSAGE_ERROR_MAX_3_TAGS;
             }
+            break;
+
+        case "logout":
+            $logout = $userController->handleLogout($_SESSION);
+            if (is_array($logout) && array_key_exists("logout", $logout) && $logout["logout"] == 1) $sessionRepository->destroySession();
+            break;
     }
 } elseif ((isset($_GET['selection']))) {
 

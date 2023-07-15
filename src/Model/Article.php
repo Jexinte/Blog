@@ -20,7 +20,7 @@ class Article
 
     $dbConnect = $this->connector->connect();
 
-    $statement = $dbConnect->prepare("SELECT id,title,chapô,content,tags,author,DATE_FORMAT(date_creation,'%d %M %Y') AS date_article  FROM articles ORDER BY date_article DESC");
+    $statement = $dbConnect->prepare("SELECT id,title,chapô,content,tags,author,DATE_FORMAT(date_creation,'%d %M %Y') AS date_article  FROM article ORDER BY id DESC");
     $statement->execute();
 
     $articles = [];
@@ -30,7 +30,7 @@ class Article
       $frenchDateFormat = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
 
       $date = $frenchDateFormat->format(new DateTime($row["date_article"]));
-      $statement2 = $dbConnect->prepare("SELECT profile_image AS image, username FROM users WHERE username = :author");
+      $statement2 = $dbConnect->prepare("SELECT profile_image AS image, username FROM user WHERE username = :author");
       $statement2->bindParam("author", $row["author"]);
       $statement2->execute();
       while ($row2 = $statement2->fetch()) {
@@ -59,7 +59,7 @@ class Article
   public function getArticle(int $id): array
   {
     $dbConnect = $this->connector->connect();
-    $statement = $dbConnect->prepare("SELECT id, image,title,chapô,content,tags,author,DATE_FORMAT(date_creation,'%d %M %Y') AS date_article FROM articles WHERE id = :id");
+    $statement = $dbConnect->prepare("SELECT id, image,title,chapô,content,tags,author,DATE_FORMAT(date_creation,'%d %M %Y') AS date_article FROM article WHERE id = :id");
     $statement->bindParam("id", $id);
     $statement->execute();
     $article = [];
@@ -67,7 +67,7 @@ class Article
       $french_date_format = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
 
       $date = $french_date_format->format(new DateTime($row["date_article"]));
-      $statement2 = $dbConnect->prepare("SELECT profile_image, username FROM users WHERE username = :author");
+      $statement2 = $dbConnect->prepare("SELECT profile_image, username FROM user WHERE username = :author");
       $statement2->bindParam("author", $row["author"]);
       $statement2->execute();
       while ($row2 = $statement2->fetch()) {
@@ -90,7 +90,7 @@ class Article
     return $article;
   }
 
-  public function createArticle(array $articleData, array $sessionData):void
+  public function createArticle(array $articleData, array $sessionData): void
   {
 
     $dbConnect = $this->connector->connect();
@@ -120,8 +120,8 @@ class Article
       $fileSettings["directory"] = $fileRequirements[2];
       $filePath = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/" . $fileSettings["file_name"];
 
-      $statementArticle = $dbConnect->prepare("INSERT INTO articles (image,title,chapô,content,tags,author,date_creation) VALUES(:fileArticle,:titleArticle,:shortPhraseArticle,:contentArticle,:tagsArticle,:authorArticle,:dateArticle)");
-    
+      $statementArticle = $dbConnect->prepare("INSERT INTO article (image,title,chapô,content,tags,author,date_creation) VALUES(:fileArticle,:titleArticle,:shortPhraseArticle,:contentArticle,:tagsArticle,:authorArticle,:dateArticle)");
+
       $statementArticle->bindParam(':fileArticle', $filePath);
       $statementArticle->bindParam(':titleArticle', $titleArticle);
       $statementArticle->bindParam(':shortPhraseArticle', $shortPhraseArticle);
@@ -132,7 +132,7 @@ class Article
       $statementArticle->execute();
       move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
       header("HTTP/1.1 302");
-      header("Location: ?selection=admin_panel");
+      header("Location: index.php?selection=admin_panel");
     }
   }
 }

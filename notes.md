@@ -1,4 +1,3 @@
-# Administration - Ajouter un article
+# Déconnexion
 
-Lorsqu'un administrateur créera un article les éléments de ce dernier seront filtrés vis à vis de la base de données puis passeront ensuite dans un validateur avec les données de sessions qui serviront par la suite à bien vérifier qui est en train d'effectuer l'action ainsi si tous les éléments concordent alors on insère l'article en base de données et on redirige l'administrateur sur la page d'accueil du panel d'administration
-
+Lorsqu'un utilisateur souhaitera se déconnecter il faudra vérifier que les informations de session dans la superglobale corresponde avec celles présentes en base de données ainsi la déconnexion pourra se faire en supprimant les données de session présente en base de données ainsi qu'en détruisant la session actuelle de l'utilisateur

@@ -16,7 +16,7 @@ use Exceptions\ContentArticleWrongFormatException;
 use Exceptions\TagsErrorEmptyException;
 use Exceptions\TagsWrongFormatException;
 
- class ArticleController
+class ArticleController
 {
 
   public function __construct(private readonly Article $article)
@@ -28,14 +28,14 @@ use Exceptions\TagsWrongFormatException;
     return $this->article->getArticles();
   }
 
-  public function handleOneArticle(int $id):?array
+  public function handleOneArticle(int $id): ?array
   {
     $result = !empty($id);
 
-     return $result ? $this->article->getArticle($id) : null;
+    return $result ? $this->article->getArticle($id) : null;
   }
 
- 
+
 
   public function handleTitleField(string $title): array|string
   {
@@ -52,7 +52,7 @@ use Exceptions\TagsWrongFormatException;
     }
   }
 
-  public function handleFileField(array $file):array|string
+  public function handleFileField(array $file): array|string
   {
     switch (true) {
       case !empty($file["name"]) && $file["error"] == UPLOAD_ERR_OK:
@@ -78,7 +78,7 @@ use Exceptions\TagsWrongFormatException;
         throw new FileErrorEmptyException(FileErrorEmptyException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED);
     }
   }
-  public function handleShortPhraseField(string $shortPhrase):array|string
+  public function handleShortPhraseField(string $shortPhrase): array|string
   {
     $shortPhraseRegex = "/^(?=.{1,100}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ -']*$/";
     switch (true) {
@@ -91,9 +91,8 @@ use Exceptions\TagsWrongFormatException;
       default:
         return ["short_phrase" => $shortPhrase];
     }
-
   }
-  public function handleContentField(string $content):array|string
+  public function handleContentField(string $content): array|string
   {
     $contentRegex = "/^(?=.{1,5000}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ -']*$/";
     switch (true) {
@@ -107,7 +106,7 @@ use Exceptions\TagsWrongFormatException;
         return ["content" => $content];
     }
   }
-  public function handleTagsField(string $tags):array|string
+  public function handleTagsField(string $tags): array|string
   {
     $tagsRegex = "/^(#([\p{L} '-]{1,20})(?:\s|$)){1,3}$/";
     switch (true) {
@@ -120,35 +119,33 @@ use Exceptions\TagsWrongFormatException;
       default:
         return ["tags" => $tags];
     }
-
   }
- 
-  
-  public function handleCreateArticleValidator( string $title, array $file, string $shortPhrase, string $content, string $tags, array $sessionData):void
+
+
+  public function handleCreateArticleValidator(string $title, array $file, string $shortPhrase, string $content, string $tags, array $sessionData): void
   {
-$articleRepository = $this->article;
-$titleField = $this->handleTitleField($title);
-$fileField = $this->handleFileField($file);
-$shortPhraseField = $this->handleShortPhraseField($shortPhrase);
-$contentField = $this->handleContentField($content);
-$tagsField = $this->handleTagsField($tags);
-$counter = 0; 
+    $articleRepository = $this->article;
+    $titleField = $this->handleTitleField($title);
+    $fileField = $this->handleFileField($file);
+    $shortPhraseField = $this->handleShortPhraseField($shortPhrase);
+    $contentField = $this->handleContentField($content);
+    $tagsField = $this->handleTagsField($tags);
+    $counter = 0;
 
-$fields = [
-  "title" =>  $titleField,
-  "file" =>  $fileField,
-  "short_phrase" =>  $shortPhraseField,
-  "content" =>  $contentField,
-  "tags" =>  $tagsField,
-];
+    $fields = [
+      "title" =>  $titleField,
+      "file" =>  $fileField,
+      "short_phrase" =>  $shortPhraseField,
+      "content" =>  $contentField,
+      "tags" =>  $tagsField,
+    ];
 
-foreach($fields as $v){
-  if(is_array($v)) $counter++;
-}
+    foreach ($fields as $v) {
+      if (is_array($v)) $counter++;
+    }
 
-if($counter == 5){
-  $articleRepository->createArticle($fields,$sessionData);
-}
-
+    if ($counter == 5) {
+      $articleRepository->createArticle($fields, $sessionData);
+    }
   }
 }

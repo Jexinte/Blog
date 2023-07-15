@@ -215,17 +215,23 @@ readonly class UserController
     }
   }
 
-  public function handleInsertSessionData(array $arr) :void
+  public function handleInsertSessionData(array $arr): void
   {
     $userRepository = $this->user;
 
     $userRepository->insertSessionData($arr);
   }
 
-  public function handleGetIdSessionData($arr):?array
+  public function handleGetIdSessionData($arr): ?array
   {
     $userRepository = $this->user;
 
     return $userRepository->getIdSessionData($arr);
+  }
+
+  public function handleLogout(array $sessionData): ?array
+  {
+    $userRepository = $this->user;
+    return $userRepository->logout($sessionData);
   }
 }

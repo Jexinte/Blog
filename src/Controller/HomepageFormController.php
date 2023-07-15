@@ -2,10 +2,21 @@
 
 namespace Controller;
 
+use Exceptions\ContentMessageWrongFormatException;
+use Exceptions\ContentMessageErrorEmptyException;
+use Exceptions\SubjectErrorEmptyException;
+use Exceptions\SubjectWrongFormatException;
+use Exceptions\EmailErrorEmptyException;
+use Exceptions\EmailWrongFormatException;
+use Exceptions\LastnameErrorEmptyException;
+use Exceptions\LastnameWrongFormatException;
+use Exceptions\FirstNameErrorEmptyException;
+use Exceptions\FirstNameWrongFormatException;
+
+
 use Model\HomepageFormModel;
 use Model\HomepageForm;
-use Exceptions\EmptyFieldException;
-use Exceptions\InvalidFieldException;
+
 
 
 readonly class HomepageFormController
@@ -17,93 +28,73 @@ readonly class HomepageFormController
 
   public function handleFirstNameField(string $firstname): array|string
   {
-    try {
-      $firstnameRegex = "/^[A-Z][a-zA-ZÀ-ÖØ-öø-ſ\s'-]*$/";
-      if (!empty($firstname)) {
-          if (preg_match($firstnameRegex, $firstname)) {
-              return ["firstname" => $firstname];
-          }
+    $firstnameRegex = "/^[A-Z][a-zA-ZÀ-ÖØ-öø-ſ\s'-]*$/";
+    switch (true) {
+      case empty($firstname):
         header('HTTP/1.1 400');
-        throw new InvalidFieldException(InvalidFieldException::FIRSTNAME_MESSAGE_ERROR_WRONG_FORMAT);
-      }
-      header('HTTP/1.1 400');
-      throw new EmptyFieldException(EmptyFieldException::FIRSTNAME_MESSAGE_ERROR_EMPTY);
-    } catch (InvalidFieldException|EmptyFieldException $e) {
-      return $e->getMessage();
+        throw new FirstNameErrorEmptyException();
+      case !preg_match($firstnameRegex, $firstname):
+        header('HTTP/1.1 400');
+        throw new FirstNameWrongFormatException();
+      default:
+        return ["firstname" => $firstname];
     }
   }
   public function handleLastNameField(string $lastname): array|string
   {
-
-    try {
-      $lastnameRegex = "/^[A-Z][a-zA-ZÀ-ÖØ-öø-ſ\s'-]*$/";
-      if (!empty($lastname)) {
-          if (preg_match($lastnameRegex, $lastname)) {
-              return ["lastname" => $lastname];
-          }
+    $lastnameRegex = "/^[A-Z][a-zA-ZÀ-ÖØ-öø-ſ\s'-]*$/";
+    switch (true) {
+      case empty($lastname):
         header('HTTP/1.1 400');
-        throw new InvalidFieldException(InvalidFieldException::LASTNAME_MESSAGE_ERROR_WRONG_FORMAT);
-      }
-      header('HTTP/1.1 400');
-      throw new EmptyFieldException(EmptyFieldException::LASTNAME_MESSAGE_ERROR_EMPTY);
-    } catch (InvalidFieldException|EmptyFieldException $e) {
-      return $e->getMessage();
+        throw new LastnameErrorEmptyException();
+      case !preg_match($lastnameRegex, $lastname):
+        header('HTTP/1.1 400');
+        throw new LastnameWrongFormatException();
+      default:
+        return ["lastname" => $lastname];
     }
   }
   public function handleEmailField(string $email): array|string
   {
-    try {
-      $emailRegex = "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/";
-
-      if (!empty($email)) {
-          if (preg_match($emailRegex, $email)) {
-              return ["email" => $email];
-          }
+    $emailRegex = "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/";
+    switch (true) {
+      case empty($email):
         header('HTTP/1.1 400');
-        throw new InvalidFieldException(InvalidFieldException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT);
-      }
-      header('HTTP/1.1 400');
-      throw new EmptyFieldException(EmptyFieldException::EMAIL_MESSAGE_ERROR_EMPTY);
-    } catch (InvalidFieldException|EmptyFieldException $e) {
-      return $e->getMessage();
+        throw new EmailErrorEmptyException();
+      case !preg_match($emailRegex, $email):
+        header('HTTP/1.1 400');
+        throw new EmailWrongFormatException();
+      default:
+        return ["email" => $email];
     }
   }
 
   public function handleSubjectField(string $subject): array|string
   {
-    try {
-      $subjectRegex = "/^.{20,100}$/";
-
-      if (!empty($subject)) {
-          if (preg_match($subjectRegex, $subject)) {
-              return ["subject" => $subject];
-          }
+    $subjectRegex = "/^.{20,100}$/";
+    switch (true) {
+      case empty($subject):
         header('HTTP/1.1 400');
-        throw new InvalidFieldException(InvalidFieldException::SUBJECT_MESSAGE_ERROR_MIN_20_CHARS_MAX_100_CHARS);
-      }
-      header('HTTP/1.1 400');
-      throw new EmptyFieldException(EmptyFieldException::SUBJECT_MESSAGE_ERROR_EMPTY);
-    } catch (InvalidFieldException|EmptyFieldException $e) {
-      return $e->getMessage();
+        throw new SubjectErrorEmptyException();
+      case !preg_match($subjectRegex, $subject):
+        header('HTTP/1.1 400');
+        throw new SubjectWrongFormatException();
+      default:
+        return ["subject" => $subject];
     }
   }
   public function handleMessageField(string $message): array|string
   {
-
-    try {
-      $messageRegex = "/^.{20,500}$/";
-
-      if (!empty($message)) {
-          if (preg_match($messageRegex, $message)) {
-              return ["message" => $message];
-          }
+    $messageRegex = "/^.{20,500}$/";
+    switch (true) {
+      case empty($message):
         header('HTTP/1.1 400');
-        throw new InvalidFieldException(InvalidFieldException::CONTENT_MESSAGE_ERROR_MIN_20_CHARS_MAX_500_CHARS);
-      }
-      header('HTTP/1.1 400');
-      throw new EmptyFieldException(EmptyFieldException::CONTENT_MESSAGE_ERROR_EMPTY);
-    } catch (InvalidFieldException|EmptyFieldException $e) {
-      return $e->getMessage();
+        throw new ContentMessageErrorEmptyException();
+      case !preg_match($messageRegex, $message):
+        header('HTTP/1.1 400');
+        throw new ContentMessageWrongFormatException();
+      default:
+        return ["message" => $message];
     }
   }
 
@@ -141,7 +132,7 @@ readonly class HomepageFormController
       }
     }
 
-    
+
     if ($counter == 5) {
       $userDataFromForm = new HomepageFormModel(null, $firstnameResult["firstname"], $lastnameResult["lastname"], $emailResult["email"], $subjectResult["subject"], $messageResult["message"]);
 

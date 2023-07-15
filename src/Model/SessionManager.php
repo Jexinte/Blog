@@ -1,19 +1,20 @@
-<?php 
+<?php
 
 namespace Model;
 
-class SessionManager{
+class SessionManager
+{
 
-  public function startSession():void
+  public function startSession(): void
   {
-    if(session_status() !== PHP_SESSION_ACTIVE ) session_start();
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
   }
 
-  
-  public function destroySession():void
+
+  public function destroySession(): void
   {
-    
-    if(session_status() === PHP_SESSION_ACTIVE ) {
+
+    if (session_status() === PHP_SESSION_ACTIVE) {
       session_destroy();
     }
   }
