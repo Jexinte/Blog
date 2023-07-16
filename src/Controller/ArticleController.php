@@ -151,111 +151,115 @@ class ArticleController
 
 
 
-  public function handleUpdateValidationOnCharacterLength(string $value,int $minimumLength,int $maximumLength) :string
+  public function handleUpdateValidationOnCharacterLength(string $value, int $minimumLength, int $maximumLength): string
   {
     return strlen($value) >= $minimumLength && strlen($value) <= $maximumLength;
   }
 
-  public function handleUpdateValidationOnNumberOfTagsAuthorized($value,$numberOfTagsAuthorized) : bool
+  public function handleUpdateValidationOnNumberOfTagsAuthorized($value, $numberOfTagsAuthorized): bool
   {
-     $result = count(explode(" ",$value)) == 3 ? explode(' ',$value) : null;
-     $counter = 0;
-     if(!is_null($result)){
-      foreach($result as $v){
-        if($v[0] === "#" && ctype_upper($v[1])) $counter++;
+    $result = count(explode(" ", $value)) == 3 ? explode(' ', $value) : null;
+    $counter = 0;
+    if (!is_null($result)) {
+      foreach ($result as $v) {
+        if ($v[0] === "#" && isset($v[1]) && ctype_upper($v[1])) $counter++;
       }
-     }
+    }
 
-     return $counter === $numberOfTagsAuthorized;
-     
+    return $counter === $numberOfTagsAuthorized;
   }
 
-  public function handleUpdateValidationOnFilePath(array $filePathFromForm,string $originalPathFromDatabase)
+  public function handleUpdateValidationOnFilePath(array $filePathFromForm, string $originalPathFromDatabase): string|array
   {
-   
-    switch(true){
+
+    switch (true) {
       case empty($filePathFromForm["name"]):
         return $originalPathFromDatabase;
 
       default:
-      if($filePathFromForm["error"] == UPLOAD_ERR_OK){
-        $filenameUpdateArticle = $filePathFromForm["name"];
-        $dirImagesUpdateArticle = "../public/assets/images/";
-        $filenameTmpUpdateArticle = $filePathFromForm['tmp_name'];
-        $extensionOfTheUploadedFile = explode('.', $filenameUpdateArticle);
-        $authorizedExtensionsArticle = array("jpg", "jpeg", "png", "webp");
+        if ($filePathFromForm["error"] == UPLOAD_ERR_OK) {
+          $filenameUpdateArticle = $filePathFromForm["name"];
+          $dirImagesUpdateArticle = "../public/assets/images/";
+          $filenameTmpUpdateArticle = $filePathFromForm['tmp_name'];
+          $extensionOfTheUploadedFile = explode('.', $filenameUpdateArticle);
+          $authorizedExtensionsArticle = array("jpg", "jpeg", "png", "webp");
 
-        if (in_array($extensionOfTheUploadedFile[1], $authorizedExtensionsArticle)) {
-          $bytesToStr = str_replace("/", "", base64_encode(random_bytes(9)));
-          $filenameAndExtensionUpdateArticle = explode('.', $filenameUpdateArticle);
-          $filenameGeneratedUpdateArticle = $bytesToStr . "." . $filenameAndExtensionUpdateArticle[1];
+          if (in_array($extensionOfTheUploadedFile[1], $authorizedExtensionsArticle)) {
+            $bytesToStr = str_replace("/", "", base64_encode(random_bytes(9)));
+            $filenameAndExtensionUpdateArticle = explode('.', $filenameUpdateArticle);
+            $filenameGeneratedUpdateArticle = $bytesToStr . "." . $filenameAndExtensionUpdateArticle[1];
 
-          return ["file" => "$filenameGeneratedUpdateArticle;$filenameTmpUpdateArticle;$dirImagesUpdateArticle"];
-      }
+            return ["file" => "$filenameGeneratedUpdateArticle;$filenameTmpUpdateArticle;$dirImagesUpdateArticle"];
+          }
 
-      return ["failed_type" => "Seuls les fichiers de type : jpg, jpeg , png et webp sont acceptés !"];
-
-      
+          return ["failed_type" => "Seuls les fichiers de type : jpg, jpeg , png et webp sont acceptés !"];
+        }
     }
+    return null;
   }
-  }
-  public function handleUpdateArticleValidator(string $title, array $fileArticle,string $hiddenInputFileOriginalPath, string $shortPhrase, string $content, string $tags, array $sessionData)
-{
-$articleRepository = $this->article;
+  public function handleUpdateArticleValidator(string $title, array $fileArticle, string $hiddenInputFileOriginalPath, string $shortPhrase, string $content, string $tags, array $sessionData, int $idArticle): ?array
+  {
+    $articleRepository = $this->article;
 
-$numberOfTagsAuthorized = 3;
-$counterOfFieldsWithoutError = 0;
+    $numberOfTagsAuthorized = 3;
+    $counterOfFieldsWithoutError = 0;
 
-$fields = [];
-$errors = [];
-
-
-$titleMinimumLength = 20;
-$titleMaximumLength = 50;
-$shortPhraseMinimumLength = 20;
-$shortPhraseMaximumLength = 100;
-$contentMinimumLength = 2000;
-$contentMaximumLength = 5000;
-
-$titleResult = $this->handleUpdateValidationOnCharacterLength($title,$titleMinimumLength,$titleMaximumLength) ? $counterOfFieldsWithoutError++ : $errors["title_error"] = "Le titre doit minimum posséder 20 caractères et ne peut en excéder 50";
-
-$shortPhraseResult = $this->handleUpdateValidationOnCharacterLength($shortPhrase,$shortPhraseMinimumLength,$shortPhraseMaximumLength) ?  $counterOfFieldsWithoutError++ : $errors["short_phrase_error"] = "Le chapô e doit minimum posséder 20 caractères et ne peut en excéder 100";
-
-$contentResult = $this->handleUpdateValidationOnCharacterLength($content,$contentMinimumLength,$contentMaximumLength) ? $counterOfFieldsWithoutError++ :  $errors["content_error"] = "Le contenu doit minimum posséder 2000 caractères et ne peut en excéder 5000";;
-
-$tagsResult = $this->handleUpdateValidationOnNumberOfTagsAuthorized($tags,$numberOfTagsAuthorized) ? $counterOfFieldsWithoutError++ : $errors["tags_error"] = "Le nombre de tags doit être au nombre de 3 et doit suivre le format suivant #Nomdutag #Nomdutag #Nomdutag";
+    $fields = [];
+    $errors = [];
 
 
-    
-$fileResult =  $this->handleUpdateValidationOnFilePath($fileArticle,$hiddenInputFileOriginalPath);
+    $titleMinimumLength = 20;
+    $titleMaximumLength = 50;
+    $shortPhraseMinimumLength = 20;
+    $shortPhraseMaximumLength = 100;
+    $contentMinimumLength = 2000;
+    $contentMaximumLength = 5000;
 
-switch(true){
-  case $counterOfFieldsWithoutError == 4 && is_array($fileResult) && array_key_exists("file",$fileResult):
-    $counterOfFieldsWithoutError++;
-    break;
-  case $counterOfFieldsWithoutError == 4 && is_array($fileResult) && array_key_exists("failed_type",$fileResult):
-    $errors["file_error"] = "Seuls les fichiers de type : jpg, jpeg , png et webp sont acceptés !";
-    break;
+    $this->handleUpdateValidationOnCharacterLength($title, $titleMinimumLength, $titleMaximumLength) ? $counterOfFieldsWithoutError++ : $errors["title_error"] = "Le titre doit minimum posséder 20 caractères et ne peut en excéder 50";
 
-  case $counterOfFieldsWithoutError == 4 && is_string($fileResult):
-    $counterOfFieldsWithoutError++;
-    break;
+    $this->handleUpdateValidationOnCharacterLength($shortPhrase, $shortPhraseMinimumLength, $shortPhraseMaximumLength) ?  $counterOfFieldsWithoutError++ : $errors["short_phrase_error"] = "Le chapô e doit minimum posséder 20 caractères et ne peut en excéder 100";
 
-}
+    $this->handleUpdateValidationOnCharacterLength($content, $contentMinimumLength, $contentMaximumLength) ? $counterOfFieldsWithoutError++ :  $errors["content_error"] = "Le contenu doit minimum posséder 2000 caractères et ne peut en excéder 5000";
+
+    $this->handleUpdateValidationOnNumberOfTagsAuthorized($tags, $numberOfTagsAuthorized) ? $counterOfFieldsWithoutError++ : $errors["tags_error"] = "Le nombre de tags doit être au nombre de 3 et doit suivre le format suivant #Nomdutag #Nomdutag #Nomdutag";
 
 
-if($counterOfFieldsWithoutError === 5){
-  $fields = [
-    "title" => $title,
-    "short_phrase" => $shortPhrase,
-    "content" => $content,
-    "tags" => $tags,
-    "file" => $fileResult,
-  ];
 
-  $articleRepository->modifyArticle($fields,$sessionData);
-}
+    $fileResult =  $this->handleUpdateValidationOnFilePath($fileArticle, $hiddenInputFileOriginalPath);
+
+    switch (true) {
+      case $counterOfFieldsWithoutError == 4 && is_array($fileResult) && array_key_exists("file", $fileResult):
+        $counterOfFieldsWithoutError++;
+        break;
+      case $counterOfFieldsWithoutError == 4 && is_array($fileResult) && array_key_exists("failed_type", $fileResult):
+        $errors["file_error"] = "Seuls les fichiers de type : jpg, jpeg , png et webp sont acceptés !";
+        break;
+
+      case $counterOfFieldsWithoutError == 4 && is_string($fileResult):
+        $counterOfFieldsWithoutError++;
+        break;
+    }
+
+
+    if ($counterOfFieldsWithoutError === 5) {
+      $fields = [
+        "title" => $title,
+        "short_phrase" => $shortPhrase,
+        "content" => $content,
+        "tags" => $tags,
+        "file" => $fileResult,
+        "id_article" => $idArticle
+      ];
+
+      $articleRepository->modifyArticle($fields, $sessionData);
+    }
     return $errors;
+  }
 
+
+  public function handleDeleteArticle(int $idArticle, array $sessionData): void
+  {
+    $articleRepository = $this->article;
+    $articleRepository->deleteArticle($idArticle, $sessionData);
   }
 }

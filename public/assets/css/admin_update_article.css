@@ -39,6 +39,10 @@ header {
   padding-bottom: .4em;
 }
 
+.form-box .error{
+  margin-top:1em;
+  font-weight: var(--900);
+}
 .requirements {
   position: absolute;
   right: 0;

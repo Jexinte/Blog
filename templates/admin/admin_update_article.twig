@@ -31,7 +31,11 @@
 				<p class="requirements">Tous les champs * sont requis</p>
 			</div>
 
-			<form id="form" class="pt-3" action="?action=update_article&amp;id={{article.id}}" method="post" enctype="multipart/form-data" onclick="x()">
+			<form id="form" class="pt-3" action="?action=update_article" method="post" enctype="multipart/form-data">
+
+				<input type="text" name="original_file_path" value="{{article.image is defined ? article.image : default_value.file_image}}" hidden>
+				<input type="text" name="id_article" value="{{article.id is defined ? article.id : default_value.id_article}}" hidden>
+
 				<div class="row">
 
 					<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 form-box">
@@ -48,8 +52,7 @@
 							<input class="form-control" type="file" name="image_file" id="image-file" onchange="displayImagePreview(this)">
 							<p class="text-danger error" id="error-image-article">{{message.file_error is defined ? message.file_error : ''}}</p>
 						</div>
-						<input type="text" name="original_file_path" value="{{article.image is defined ? article.image : default_value.file_image}}" hidden>
-						
+
 						<div class="mb-3">
 							<label for="short-phrase" class="form-label">Chapô *</label>
 							<input class="form-control" type="text" name="short_phrase" id="short-phrase" placeholder="Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum necessitatibus dolorem" value="{{article.short_phrase is defined ? article.short_phrase : default_value.short_phrase}}">
