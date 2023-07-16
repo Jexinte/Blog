@@ -151,12 +151,12 @@ class ArticleController
 
 
 
-  public function handleUpdateValidationOnCharacterLength(string $value, int $minimumLength, int $maximumLength): string
+  public function handleUpdateValidationOnCharacterLength(string $value, int $minimumLength, int $maximumLength): bool
   {
     return strlen($value) >= $minimumLength && strlen($value) <= $maximumLength;
   }
 
-  public function handleUpdateValidationOnNumberOfTagsAuthorized($value, $numberOfTagsAuthorized): bool
+  public function handleUpdateValidationOnNumberOfTagsAuthorized(string $value, int $numberOfTagsAuthorized): bool
   {
     $result = count(explode(" ", $value)) == 3 ? explode(' ', $value) : null;
     $counter = 0;
@@ -194,8 +194,9 @@ class ArticleController
 
           return ["failed_type" => "Seuls les fichiers de type : jpg, jpeg , png et webp sont acceptés !"];
         }
+        
     }
-    return null;
+  
   }
   public function handleUpdateArticleValidator(string $title, array $fileArticle, string $hiddenInputFileOriginalPath, string $shortPhrase, string $content, string $tags, array $sessionData, int $idArticle): ?array
   {
