@@ -82,7 +82,7 @@
 							<h4>CyranoB , le 19 juin 2023</h4>
 							<p>
 								C'est un roc !... c'est un pic... c'est un cap !
-																																																								Que dis-je, c'est un cap ?... C'est une péninsule ! »</p>
+																																																																Que dis-je, c'est un cap ?... C'est une péninsule ! »</p>
 						</div>
 					</a>
 				</div>
@@ -93,29 +93,29 @@
 		<div class="container-fluid" id="last-articles">
 			<h2 class="h2" id="last-articles-title">Derniers articles publiés récemments</h2>
 			{% if articles is defined and articles is not empty %}
-			{% for article in articles %}
-			<div class="row mt-5">
-				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 articles">
-					<article>
-						<h3 class="article-title">{{article.title}}</h3>
-						<p class="short-content">{{article.content}}</p>
-						<div class="commands">
-							<button class="btn btn-warning">
-								<a class="commands-admin" href="?selection=view_update_article&amp;id={{article.id}}">Modifier</a>
-							</button>
-							<button class="btn btn-dark">
-								<a class="commands-admin" href="?action=delete_article">Supprimer</a>
-							</button>
+				{% for article in articles %}
+					<div class="row mt-5">
+						<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 articles">
+							<article>
+								<h3 class="article-title">{{article.title}}</h3>
+								<p class="short-content">{{article.content}}</p>
+								<div class="commands">
+									<button class="btn btn-warning">
+										<a class="commands-admin" href="?selection=view_update_article&amp;id={{article.id}}">Modifier</a>
+									</button>
+									<button class="btn btn-dark">
+										<a class="commands-admin" href="?action=delete_article">Supprimer</a>
+									</button>
+								</div>
+							</article>
 						</div>
-					</article>
-				</div>
-			</div>	
-			{% endfor %}
+					</div>
+				{% endfor %}
 			{% else %}
-			<h2 class="text-dark text-center">Aucun article n'a été publié pour le moment</h2>
+				<h2 class="text-dark text-center">Aucun article n'a été publié pour le moment</h2>
 			{% endif %}
-	
-			
+
+
 		</div>
 
 	</div>

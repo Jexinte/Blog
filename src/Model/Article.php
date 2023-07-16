@@ -135,4 +135,8 @@ class Article
       header("Location: index.php?selection=admin_panel");
     }
   }
+//Todo Reprendre à partir d'ici
+  public function modifyArticle(array $articleData,array $sessionData){
+  var_dump($sessionData);
+}
 }
