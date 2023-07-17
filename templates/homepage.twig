@@ -19,7 +19,7 @@
 			<nav class="menu">
 					<a href="?selection=blog"><i class="fa-solid fa-newspaper"></i></a>
 				<ul>
-				{% if session is defined and session.type_user == "admin" %}
+				{% if session is defined and (session.type_user == "admin" or session.type_user == "user") %}
 								<li><a href="?action=logout"><i class="fa-solid fa-right-from-bracket"></i></a></li>
 								{% else %}
 					<li><a href="?selection=sign_in"><i class="fa-solid fa-key"></i></a></li>
