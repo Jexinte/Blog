@@ -78,6 +78,7 @@ $formController = new HomepageFormController($formRepository);
 
 $template = "homepage.twig";
 $paramaters = [];
+
 if (isset($_GET['action'])) {
 
     $action = $_GET['action'];
@@ -209,6 +210,31 @@ if (isset($_GET['action'])) {
             }
             break;
 
+        case "update_article":
+
+
+            $defautValuesInEachField =
+                [
+                    "title" => $_POST["title"],
+                    "short_phrase" => $_POST["short_phrase"],
+                    "content" => $_POST["content"],
+                    "tags" => $_POST["tags"],
+                    "file_image" => $_POST["original_file_path"],
+                    "id_article" => $_POST['id_article']
+                ];
+
+            $template = "admin_update_article.twig";
+            $paramaters = [
+                "message" => $articleController->handleUpdateArticleValidator($_POST["title"], $_FILES["image_file"], $_POST["original_file_path"], $_POST["short_phrase"], $_POST["content"], $_POST["tags"], $_SESSION, $_POST["id_article"]),
+                "default_value" => $defautValuesInEachField,
+
+            ];
+
+
+            break;
+        case "delete_article":
+            $articleController->handleDeleteArticle($_GET["id"], $_SESSION);
+            break;
         case "logout":
             $logout = $userController->handleLogout($_SESSION);
             if (is_array($logout) && array_key_exists("logout", $logout) && $logout["logout"] == 1) $sessionRepository->destroySession();
@@ -255,17 +281,19 @@ if (isset($_GET['action'])) {
         case "article":
 
             $template = "article.twig";
-            $paramaters["article"] = $articleController->handleOneArticle($_GET['id']);
+            $paramaters["article"] = $articleController->handleOneArticle($_GET['id'])[0];
             break;
         case "add_article":
             $template = "admin_add_article.twig";
             $paramaters["session"] =  $_SESSION;
             break;
         case "view_update_article":
+
             $template = "admin_update_article.twig";
             $paramaters = [
-                "articles" => $articleController->handleOneArticle($_GET["id"])
+                "article" => current($articleController->handleOneArticle($_GET["id"])),
             ];
+
             break;
     }
 }

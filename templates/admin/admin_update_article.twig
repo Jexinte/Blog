@@ -31,47 +31,50 @@
 				<p class="requirements">Tous les champs * sont requis</p>
 			</div>
 
-			<form id="form" class="pt-3" action="#" method="post">
-				<div class="row">
-				{% for article in articles %}
-					
-					<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 form-box">
-				
+			<form id="form" class="pt-3" action="?action=update_article" method="post" enctype="multipart/form-data">
 
+				<input type="text" name="original_file_path" value="{{article.image is defined ? article.image : default_value.file_image}}" hidden>
+				<input type="text" name="id_article" value="{{article.id is defined ? article.id : default_value.id_article}}" hidden>
+
+				<div class="row">
+
+					<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 form-box">
 						<div class="mb-3">
 							<label for="title" class="form-label">Titre *</label>
-							<input class="form-control" type="text" name="title" id="title" aria-describedby="" value="{{article.title}}">
-							<p class="text-danger error" id="error-title"></p>
+							<input class="form-control" id="title" type="text" name="title" id="title" aria-describedby="" value="{{article.title is defined ? article.title : default_value.title}}">
+
+							<p class="text-danger error" id="error-title">
+								{{message.title_error is defined ? message.title_error : ''}}</p>
 						</div>
 
 						<div class="mb-3">
 							<label for="image-file" class="form-label">Image *</label>
-							<input class="form-control" type="file" name="image-file" id="image-file" onchange="displayImagePreview(this)">
-							<p class="text-danger error" id="error-image-article"></p>
+							<input class="form-control" type="file" name="image_file" id="image-file" onchange="displayImagePreview(this)">
+							<p class="text-danger error" id="error-image-article">{{message.file_error is defined ? message.file_error : ''}}</p>
 						</div>
 
 						<div class="mb-3">
 							<label for="short-phrase" class="form-label">Chapô *</label>
-							<input class="form-control" type="text" name="short-phrase" id="short-phrase" placeholder="Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum necessitatibus dolorem" value="{{article.short_phrase}}">
-							<p class="text-danger error" id="error-short-phrase-article"></p>
+							<input class="form-control" type="text" name="short_phrase" id="short-phrase" placeholder="Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum necessitatibus dolorem" value="{{article.short_phrase is defined ? article.short_phrase : default_value.short_phrase}}">
+							<p class="text-danger error" id="error-short-phrase-article">{{message.short_phrase_error is defined ? message.short_phrase_error : ''}}</p>
 						</div>
 
 						<div class="mb-3">
 							<label for="content" class="form-label">Contenu *</label>
-							<textarea class="form-control" type="text" name="content" id="content">{{article.content}}</textarea>
-							<p class="text-danger error" id="error-content-article"></p>
+							<textarea class="form-control" type="text" name="content" id="content">{{article.content is defined ? article.content : default_value.content}}</textarea>
+							<p class="text-danger error" id="error-content-article">{{message.content_error is defined ? message.content_error : ''}}</p>
 						</div>
 
 						<div class="mb-3">
 							<label for="tags" class="form-label">Tags</label>
-							<input class="form-control" type="text" name="tags" id="tags" value="{{article.tags}}">
-							<p class="text-danger error" id="error-tags-article"></p>
+							<input class="form-control" type="text" name="tags" id="tags" value="{{article.tags is defined ? article.tags : default_value.tags}}">
+							<p class="text-danger error" id="error-tags-article">{{message.tags_error is defined ? message.tags_error : ''}}</p>
 						</div>
 
 					</div>
-				{% endfor %}
-						<input class="btn btn-dark" type="submit" name="submit" value="Envoyer">
 
+
+					<input class="btn btn-dark" type="submit" name="submit" value="Envoyer">
 				</div>
 			</form>
 		</div>
@@ -81,12 +84,12 @@
 			<div class="row">
 
 				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 preview-box">
-				{% for article in articles %}
-					<img src="{{article.image}}"  id="img-preview">
-					<h2 id="title-preview">{{article.title}}</h2>
+
+					<img src="{{article.image is defined ? article.image : default_value.file_image}}" id="img-preview">
+					<h2 id="title-preview">{{article.title is defined ? article.title : default_value.title}}</h2>
 					<p id="short-phrase-preview">{{article.short_phrase}}</p>
 					<p id="content-preview">{{article.content}}</p>
-				{% endfor %}
+
 				</div>
 
 			</div>
