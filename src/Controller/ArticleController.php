@@ -39,7 +39,7 @@ class ArticleController
 
   public function handleTitleField(string $title): array|string
   {
-    $titleRegex = "/^(?=.{1,51}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ -']*$/";
+    $titleRegex = "/^(?=.{1,500}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ -']*$/";
     switch (true) {
       case empty($title):
         header("HTTP/1.1 400");
@@ -80,7 +80,7 @@ class ArticleController
   }
   public function handleShortPhraseField(string $shortPhrase): array|string
   {
-    $shortPhraseRegex = "/^(?=.{1,100}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ -']*$/";
+    $shortPhraseRegex = "/^(?=.{1,500}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ -']*$/";
     switch (true) {
       case empty($shortPhrase):
         header("HTTP/1.1 400");
@@ -130,23 +130,19 @@ class ArticleController
     $shortPhraseField = $this->handleShortPhraseField($shortPhrase);
     $contentField = $this->handleContentField($content);
     $tagsField = $this->handleTagsField($tags);
-    $counter = 0;
+
 
     $fields = [
-      "title" =>  $titleField,
-      "file" =>  $fileField,
-      "short_phrase" =>  $shortPhraseField,
-      "content" =>  $contentField,
-      "tags" =>  $tagsField,
+      "title" =>  $titleField["title"],
+      "file" =>  $fileField["file"],
+      "short_phrase" =>  $shortPhraseField["short_phrase"],
+      "content" =>  $contentField["content"],
+      "tags" =>  $tagsField["tags"],
     ];
 
-    foreach ($fields as $v) {
-      if (is_array($v)) $counter++;
-    }
 
-    if ($counter == 5) {
       $articleRepository->createArticle($fields, $sessionData);
-    }
+
   }
 
 

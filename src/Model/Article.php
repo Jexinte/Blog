@@ -96,7 +96,7 @@ class Article
     $idSession = $sessionData["session_id"];
     $usernameSession = $sessionData["username"];
     $typeUserSession = $sessionData["type_user"];
-
+    var_dump($articleData);
     $statementSession = $dbConnect->prepare("SELECT id_session,username,user_type FROM session WHERE id_session = :id_from_session_variable AND username = :username_from_session_variable AND user_type = :type_user_from_session_variable");
 
     $statementSession->bindParam("id_from_session_variable", $idSession);
@@ -107,11 +107,11 @@ class Article
     $result = $statementSession->fetch();
     if ($result["user_type"] === UserType::ADMIN->value) {
 
-      $titleArticle = $articleData["title"]["title"];
-      $fileArticle = $articleData["file"]["file"];
-      $shortPhraseArticle = $articleData["short_phrase"]["short_phrase"];
-      $contentArticle = $articleData["content"]["content"];
-      $tagsArticle = $articleData["tags"]["tags"];
+      $titleArticle = $articleData["title"];
+      $fileArticle = $articleData["file"];
+      $shortPhraseArticle = $articleData["short_phrase"];
+      $contentArticle = $articleData["content"];
+      $tagsArticle = $articleData["tags"];
 
       $fileRequirements = explode(';', $fileArticle);
       $fileSettings["file_name"] = $fileRequirements[0];

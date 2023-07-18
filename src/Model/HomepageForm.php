@@ -4,7 +4,6 @@ namespace Model;
 
 use Config\DatabaseConnection;
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 
 
 

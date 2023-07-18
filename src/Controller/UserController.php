@@ -180,7 +180,7 @@ readonly class UserController
 
     if (empty($password)) {
       header("HTTP/1.1 400");
-      throw new PasswordErrorEmptyException(PasswordErrorEmptyException::PASSWORD_MESSAGE_ERROR_EMPTY);
+      throw new PasswordErrorEmptyException();
     }
     return ["password" => $password];
   }

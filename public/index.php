@@ -127,13 +127,17 @@ if (isset($_GET['action'])) {
                     $_SESSION["type_user"] = $login["type_user"];
                     $userController->handleInsertSessionData($_SESSION);
                 }
-            } catch (EmailErrorEmptyException $e) {
+            }
+            catch (EmailErrorEmptyException $e) {
                 $paramaters["email_exception"] = EmailErrorEmptyException::EMAIL_MESSAGE_ERROR_EMPTY;
-            } catch (EmailWrongFormatException $e) {
+            }
+            catch (EmailWrongFormatException $e) {
                 $paramaters["email_exception"] = EmailWrongFormatException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT;
-            } catch (PasswordErrorEmptyException $e) {
+            }
+            catch (PasswordErrorEmptyException $e) {
                 $paramaters["password_exception"] = PasswordErrorEmptyException::PASSWORD_MESSAGE_ERROR_EMPTY;
-            } catch (PasswordWrongFormatException $e) {
+            }
+            catch (PasswordWrongFormatException $e) {
                 $paramaters["password_exception"] = PasswordWrongFormatException::PASSWORD_MESSAGE_ERROR_WRONG_FORMAT;
             }
 
@@ -190,7 +194,7 @@ if (isset($_GET['action'])) {
             } catch (TitleErrorEmptyException $e) {
                 $paramaters["title_exception"] = TitleErrorEmptyException::TITLE_MESSAGE_ERROR_EMPTY;
             } catch (TitleWrongFormatException $e) {
-                $paramaters["title_exception"] = TitleWrongFormatException::TITLE_MESSAGE_ERROR_MAX_51_CHARS;
+                $paramaters["title_exception"] = TitleWrongFormatException::TITLE_MESSAGE_ERROR_MAX_500_CHARS;
             } catch (FileErrorEmptyException $e) {
                 $paramaters["file_exception"] = FileErrorEmptyException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED;
             } catch (FileTypeException $e) {
@@ -198,7 +202,7 @@ if (isset($_GET['action'])) {
             } catch (ShortPhraseErrorEmptyException $e) {
                 $paramaters["short_phrase_exception"] = ShortPhraseErrorEmptyException::SHORT_PHRASE_MESSAGE_ERROR_EMPTY;
             } catch (ShortPhraseWrongFormatException $e) {
-                $paramaters["short_phrase_exception"] = ShortPhraseWrongFormatException::SHORT_PHRASE_MESSAGE_ERROR_MAX_200_CHARS;
+                $paramaters["short_phrase_exception"] = ShortPhraseWrongFormatException::SHORT_PHRASE_MESSAGE_ERROR_MAX_500_CHARS;
             } catch (ContentArticleErrorEmptyException $e) {
                 $paramaters["content_article_exception"] = ContentArticleErrorEmptyException::CONTENT_ARTICLE_MESSAGE_ERROR_EMPTY;
             } catch (ContentArticleWrongFormatException $e) {
@@ -281,7 +285,7 @@ if (isset($_GET['action'])) {
         case "article":
 
             $template = "article.twig";
-            $paramaters["article"] = $articleController->handleOneArticle($_GET['id'])[0];
+            $paramaters["article"] = current($articleController->handleOneArticle($_GET['id']));
             break;
         case "add_article":
             $template = "admin_add_article.twig";
