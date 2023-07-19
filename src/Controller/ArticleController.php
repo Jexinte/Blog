@@ -154,7 +154,7 @@ class ArticleController
     return $counter === $numberOfTagsAuthorized;
   }
 
-  public function handleUpdateValidationOnFilePath(array $filePathFromForm, string $originalPathFromDatabase): string|array
+  public function handleUpdateValidationOnFilePath(array $filePathFromForm, string $originalPathFromDatabase): string|array|null
   {
 
     switch (true) {
