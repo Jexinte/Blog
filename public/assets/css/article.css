@@ -152,11 +152,15 @@ form textarea {
   margin-bottom: 2em;
   font-weight: var(--700);
 }
-
-/* Servira plus tard pour la partie commentaire*/
-.disable-comments {
-  display: none;
+#user-not-connected{
+  font-weight: var(--700);
 }
+
+#comment-already-sent{
+  font-weight: var(--700);
+}
+/* Servira plus tard pour la partie commentaire*/
+
 
 #comment .command-box .command {
   width: 100%;

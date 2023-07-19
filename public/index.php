@@ -262,7 +262,6 @@ if (isset($_GET['action'])) {
             $template = "admin_add_article.twig";
             try {
                 $paramaters = [
-                    "article" => $articleController->handleCreateArticleValidator($_POST["title"], $_FILES["image_file"], $_POST["short-phrase"], $_POST["content"], $_POST["tags"], $_SESSION),
                     "session" => $_SESSION,
                 ];
 
@@ -332,15 +331,13 @@ if (isset($_GET['action'])) {
 
             break;
         case "delete_article":
-            if ($_SESSION["type_user"] == UserType::ADMIN->value) {
-                if (is_array($articleController->handleDeleteArticle($_GET["id"], $_SESSION))) {
-                    header("HTTP/1.1 302");
-                    header("Location: index.php?selection=admin_panel");
-                    $articleController->handleDeleteArticle($_GET["id"], $_SESSION);
-                }
+            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
+                header("Location: index.php?action=error&code=401");                
             }
-            header("Location: index.php?action=error&code=401");
-
+            if (is_array($articleController->handleDeleteArticle($_GET["id"], $_SESSION))) {
+                header("HTTP/1.1 302");
+                header("Location: index.php?selection=admin_panel");
+            }
             break;
         case "logout":
 
@@ -360,8 +357,14 @@ if (isset($_GET['action'])) {
 
             try{
                 $template = "article.twig";
-                $temporaryCommentController->handleInsertTemporaryCommentValidator($_POST["comment"],$_POST["id_article"],$_SESSION);
+              
                 $paramaters["default"] = $defaultValues;
+                if(is_array($temporaryCommentController->handleInsertTemporaryCommentValidator($_POST["comment"],$_POST["id_article"],$_SESSION))){
+                    header("HTTP/1.1 302");
+                    header("Location: index.php?selection=article&id=".$defaultValues["id"]);
+                }
+
+              
             } catch(CommentEmptyException $e){
                 $paramaters =[
                     "comment_exception" => CommentEmptyException::COMMENT_EMPTY_EXCEPTION,
@@ -420,10 +423,22 @@ if (isset($_GET['action'])) {
             break;
         case "article":
             $defaultValue = [
-                "default_value_title" => current($articleController->handleOneArticle($_GET['id']))
+                "data" => current($articleController->handleOneArticle($_GET['id']))
             ];
             $template = "article.twig";
+            
+            $_SESSION["id_article"] = $defaultValue["data"]["id"];
             $paramaters["article"] = current($articleController->handleOneArticle($_GET['id']));
+  
+        if(isset($_SESSION["username"])){
+
+            if(is_array($temporaryCommentController->handlecheckCommentAlreadySentByUser($_SESSION)) && array_key_exists("user_already_commented",$temporaryCommentController->handlecheckCommentAlreadySentByUser($_SESSION))){
+                $paramaters["count_of_comments"] = $temporaryCommentController->handlecheckCommentAlreadySentByUser($_SESSION)["user_already_commented"];
+            }
+        }
+        else{
+            $paramaters["no_user_connected"] = 1;
+        }
             break;
         case "add_article":
             if ($_SESSION["type_user"] != UserType::ADMIN->value) {

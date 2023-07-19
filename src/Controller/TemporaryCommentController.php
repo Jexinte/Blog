@@ -24,13 +24,18 @@ class TemporaryCommentController {
     }
       
   }
-  public function handleInsertTemporaryCommentValidator(string $comment , int $idArticle, array $sessionData):void
+  public function handleInsertTemporaryCommentValidator(string $comment , int $idArticle, array $sessionData):array
   {
 
     $temporaryCommentRepository = $this->temporaryComment;
     $dateDay =  date('Y-m-d');
     $commentResult = $this->handleCommentField($comment)["comment"];
     $commentsData = new TemporaryCommentModel($idArticle,$sessionData["id_user"],$commentResult,$dateDay,null,null,null);
-    $temporaryCommentRepository->insertTemporaryComment($commentsData,$sessionData);
+    return $temporaryCommentRepository->insertTemporaryComment($commentsData,$sessionData);
+  }
+
+  public function handlecheckCommentAlreadySentByUser($sessionData){
+    $temporaryCommentRepository = $this->temporaryComment;
+    return $temporaryCommentRepository->checkCommentAlreadySentByUser($sessionData);
   }
 }
