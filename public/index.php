@@ -4,6 +4,7 @@
 require_once __DIR__ . "../../vendor/autoload.php";
 
 use Model\Article;
+use Model\TemporaryComment;
 use Model\User;
 use Model\HomepageForm;
 use Model\SessionManager;
@@ -42,7 +43,11 @@ use Controller\ArticleController;
 use Controller\UserController;
 use Controller\DownloadController;
 use Controller\HomepageFormController;
+use Controller\TemporaryCommentController;
+
 use Enumeration\UserType;
+use Exceptions\CommentEmptyException;
+use Exceptions\CommentWrongFormatException;
 use Exceptions\EmailUnavailableException;
 use Exceptions\EmailUnexistException;
 use Exceptions\FormMessageNotSentException;
@@ -77,14 +82,26 @@ $downloadController = new DownloadController();
 $formRepository = new HomepageForm($db);
 $formController = new HomepageFormController($formRepository);
 
+$temporaryCommentRepository = new TemporaryComment($db);
+$temporaryCommentController = new TemporaryCommentController($temporaryCommentRepository);
+
 
 $template = "homepage.twig";
 $paramaters = [];
 
+
 if (isset($_GET['action'])) {
 
     $action = $_GET['action'];
-
+    $defaultValues = [];
+    $labels = ["title","id",
+    "short_phrase",
+    "content",
+    "image",
+    "author_image",
+    "author",
+    "tags",
+    "date_of_publication"];
 
     switch ($action) {
         case "sign_up":
@@ -147,6 +164,7 @@ if (isset($_GET['action'])) {
                 if (is_array($login) && array_key_exists("username", $login) && array_key_exists("type_user", $login)) {
                     $_SESSION["username"] = $login["username"];
                     $_SESSION["type_user"] = $login["type_user"];
+                    $_SESSION["id_user"] = $login["id_user"];
                     $userController->handleInsertSessionData($_SESSION);
                     header("HTTP/1.1 302");
                     header("Location: index.php?selection=blog");
@@ -289,6 +307,7 @@ if (isset($_GET['action'])) {
             if ($_SESSION["type_user"] != UserType::ADMIN->value) {
                 header("Location: index.php?action=error&code=401");
             }
+            //TODO Appliquer le même processus que pour la partie "add_comment" ainsi les exceptions pourront être utilisées !
             $defautValuesInEachField =
                 [
                     "title" => $_POST["title"],
@@ -329,6 +348,30 @@ if (isset($_GET['action'])) {
                 header("HTTP/1.1 302");
                 header("Location: index.php?selection=blog");
                 $sessionRepository->destroySession();
+            }
+            break;
+
+        case "add_comment":
+            $article = current($articleController->handleOneArticle($_GET["idArticle"]));
+            foreach($labels as $k => $v){
+                $defaultValues[$v] = $article[$v];
+            }
+
+
+            try{
+                $template = "article.twig";
+                $temporaryCommentController->handleInsertTemporaryCommentValidator($_POST["comment"],$_POST["id_article"],$_SESSION);
+                $paramaters["default"] = $defaultValues;
+            } catch(CommentEmptyException $e){
+                $paramaters =[
+                    "comment_exception" => CommentEmptyException::COMMENT_EMPTY_EXCEPTION,
+                    "default" => $defaultValues
+                ];
+            }catch(CommentWrongFormatException $e){
+                $paramaters =[
+                "comment_exception" => CommentWrongFormatException::COMMENT_WRONG_FORMAT_EXCEPTION,
+                "default" => $defaultValues
+                ] ;
             }
             break;
     }
@@ -376,7 +419,9 @@ if (isset($_GET['action'])) {
             $template = "admin_article_and_commentary.twig";
             break;
         case "article":
-
+            $defaultValue = [
+                "default_value_title" => current($articleController->handleOneArticle($_GET['id']))
+            ];
             $template = "article.twig";
             $paramaters["article"] = current($articleController->handleOneArticle($_GET['id']));
             break;

@@ -145,7 +145,12 @@ header {
 form textarea {
   resize: none;
   width: 100%;
+  margin-bottom: 1em;
+}
+
+#comment-error{
   margin-bottom: 2em;
+  font-weight: var(--700);
 }
 
 /* Servira plus tard pour la partie commentaire*/

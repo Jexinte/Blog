@@ -60,29 +60,32 @@ readonly class User
   {
 
     $dbConnect = $this->connector->connect();
-    $statement = $dbConnect->prepare("SELECT username,email,type,password FROM user WHERE email = :email  ");
+    $statement = $dbConnect->prepare("SELECT id,username,email,type,password FROM user WHERE email = :email  ");
     $statement->bindParam(":email", $email);
     $statement->execute();
     $user = $statement->fetch();
+  
     switch (true) {
       case $user && $user["type"] == UserType::USER->value:
         $checkPassword = password_verify($password, $user['password']);
         $username = $user["username"];
         $typeUser = $user["type"];
+        $userId = $user["id"];
         if (!$checkPassword) {
           return ["password_error" => 1];
         }
 
-        return ["username" => $username, "type_user" => $typeUser];
+        return ["username" => $username, "type_user" => $typeUser,"id_user" => $userId];
 
       case $user && $user["type"] == UserType::ADMIN->value:
         $checkPassword = password_verify($password, $user['password']);
         $username = $user["username"];
         $typeUser = $user["type"];
+        $userId = $user["id"];
         if (!$checkPassword) {
           return ["password_error" => 1];
         }
-        return ["username" => $username, "type_user" => $typeUser];
+        return ["username" => $username, "type_user" => $typeUser,"id_user" => $userId];
       default:
         return ["email_error" => 1];
     }
