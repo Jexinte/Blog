@@ -10,6 +10,7 @@ use Model\SessionManager;
 
 $sessionRepository = new SessionManager();
 $sessionRepository->startSession();
+
 use Config\DatabaseConnection;
 
 use Exceptions\UsernameErrorEmptyException;
@@ -41,6 +42,7 @@ use Controller\ArticleController;
 use Controller\UserController;
 use Controller\DownloadController;
 use Controller\HomepageFormController;
+use Enumeration\UserType;
 use Exceptions\EmailUnavailableException;
 use Exceptions\EmailUnexistException;
 use Exceptions\FormMessageNotSentException;
@@ -236,6 +238,9 @@ if (isset($_GET['action'])) {
             break;
 
         case "add_article":
+            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
+                header("Location: index.php?action=error&code=401");
+            }
             $template = "admin_add_article.twig";
             try {
                 $paramaters = [
@@ -281,7 +286,9 @@ if (isset($_GET['action'])) {
             break;
 
         case "update_article":
-
+            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
+                header("Location: index.php?action=error&code=401");
+            }
             $defautValuesInEachField =
                 [
                     "title" => $_POST["title"],
@@ -306,11 +313,14 @@ if (isset($_GET['action'])) {
 
             break;
         case "delete_article":
-            if (is_array($articleController->handleDeleteArticle($_GET["id"], $_SESSION))) {
-                header("HTTP/1.1 302");
-                header("Location: index.php?selection=admin_panel");
-                $articleController->handleDeleteArticle($_GET["id"], $_SESSION);
+            if ($_SESSION["type_user"] == UserType::ADMIN->value) {
+                if (is_array($articleController->handleDeleteArticle($_GET["id"], $_SESSION))) {
+                    header("HTTP/1.1 302");
+                    header("Location: index.php?selection=admin_panel");
+                    $articleController->handleDeleteArticle($_GET["id"], $_SESSION);
+                }
             }
+            header("Location: index.php?action=error&code=401");
 
             break;
         case "logout":
@@ -351,11 +361,16 @@ if (isset($_GET['action'])) {
             ];
             break;
         case "admin_panel":
+            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
+                header("Location: index.php?action=error&code=401");
+            }
             $template = "admin_homepage.twig";
             $paramaters = [
                 "articles" => $articleController->listOfAllArticles(),
                 "session" => $_SESSION
             ];
+
+
             break;
         case "view_article_and_commentary":
             $template = "admin_article_and_commentary.twig";
@@ -366,11 +381,16 @@ if (isset($_GET['action'])) {
             $paramaters["article"] = current($articleController->handleOneArticle($_GET['id']));
             break;
         case "add_article":
+            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
+                header("Location: index.php?action=error&code=401");
+            }
             $template = "admin_add_article.twig";
             $paramaters["session"] =  $_SESSION;
             break;
         case "view_update_article":
-
+            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
+                header("Location: index.php?action=error&code=401");
+            }
             $template = "admin_update_article.twig";
             $paramaters = [
                 "article" => current($articleController->handleOneArticle($_GET["id"])),
