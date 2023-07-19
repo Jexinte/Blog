@@ -8,7 +8,7 @@
 {% block title %}
 	<title>
 		Article - Blog professionnel
-		
+
 	</title>
 {% endblock %}
 {% block css_page %}
@@ -19,25 +19,25 @@
 	{% include "menu_article.twig" %}
 
 	<div class="container-fluid" id="article">
-	
-			<img class="article-banner" src="{{article.image}}" alt="Climbing to the top">
-			<div class="row">
-				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 article">
-					<article>
-						<div class="author-box">
-							<img class="author-img" src="{{article.author_image}}" alt="avatar author1">
-							<h2 class="author-name">{{article.author}}</h2>
-						</div>
 
-						<h1 class="article-title" id="h1">{{article.title}}</h1>
-						<p class="article-short-phrase">{{article.short_phrase}}</p>
-						<p class="article-content">{{article.content|nl2br }}</p>
-						<ul class="tags">
-							<li class="tag">{{article.tags}}</li>
-						</ul>
-						<p class="article-date">{{article.date_of_publication}}</p>
-					</article>
-				
+		<img class="article-banner" src="{{article.image}}" alt="Climbing to the top">
+		<div class="row">
+			<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 article">
+				<article>
+					<div class="author-box">
+						<img class="author-img" src="{{article.author_image}}" alt="avatar author1">
+						<h2 class="author-name">{{article.author}}</h2>
+					</div>
+
+					<h1 class="article-title" id="h1">{{article.title}}</h1>
+					<p class="article-short-phrase">{{article.short_phrase}}</p>
+					<p class="article-content">{{article.content|nl2br }}</p>
+					<ul class="tags">
+						<li class="tag">{{article.tags}}</li>
+					</ul>
+					<p class="article-date">{{article.date_of_publication}}</p>
+				</article>
+
 
 			</div>
 		</div>

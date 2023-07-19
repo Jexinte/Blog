@@ -50,8 +50,7 @@ readonly class User
       ];
       $statement2->execute($values);
       move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
-      header("HTTP/1.1 302");
-      header("Location: ?selection=sign_in");
+      return ["user_created" => 1];
     }
 
     return !empty($result) ? $result : null;
@@ -71,11 +70,9 @@ readonly class User
         $username = $user["username"];
         $typeUser = $user["type"];
         if (!$checkPassword) {
-          header('HTTP/1.1 401');
           return ["password_error" => 1];
         }
-        header("HTTP/1.1 302");
-        header("Location: index.php?selection=blog");
+
         return ["username" => $username, "type_user" => $typeUser];
 
       case $user && $user["type"] == UserType::ADMIN->value:
@@ -83,16 +80,10 @@ readonly class User
         $username = $user["username"];
         $typeUser = $user["type"];
         if (!$checkPassword) {
-          header('HTTP/1.1 401');
           return ["password_error" => 1];
         }
-        header("HTTP/1.1 302");
-        header("Location: index.php?selection=blog");
         return ["username" => $username, "type_user" => $typeUser];
-
-
       default:
-        header('HTTP/1.1 400');
         return ["email_error" => 1];
     }
   }
@@ -162,10 +153,7 @@ readonly class User
       $deleteSession = $dbConnect->prepare("DELETE FROM session WHERE id = :id");
       $deleteSession->bindParam("id", $idSessionInDb);
       $deleteSession->execute();
-      header("HTTP/1.1 302");
-      header("Location: index.php?selection=blog");
-      return ["logout" => 1];
     }
-    return null;
+    return ["logout" => 1];
   }
 }

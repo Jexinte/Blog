@@ -3,6 +3,7 @@
 namespace Model;
 
 use Config\DatabaseConnection;
+use Exceptions\FormMessageNotSentException;
 use PHPMailer\PHPMailer\PHPMailer;
 
 
@@ -36,7 +37,6 @@ readonly class HomepageForm
       $message
     ];
     $statement->execute($values);
-    header("HTTP/1.1 201");
     return ["data_saved" => 1];
   }
 
@@ -50,7 +50,6 @@ readonly class HomepageForm
       $statement = $dbConnect->prepare("SELECT * FROM form_message ORDER BY id DESC LIMIT 1");
       $statement->execute();
       $resReq = $statement->fetch();
-      header("HTTP/1.1 200");
       return [
         "data_retrieved" => 1,
         "user" =>  $resReq
@@ -65,18 +64,17 @@ readonly class HomepageForm
 
     $key = file_get_contents("../config/stmp_credentials.json");
     $key_2 = file_get_contents("../config/stmp_credentials.json");
+    $key_3 = file_get_contents("../config/stmp_credentials.json");
     $username = json_decode($key, true);
     $password = json_decode($key_2, true);
+    $gmail = json_decode($key_3, true);
 
     $mail = new PHPMailer(true);
     $result = !empty($data);
 
-    if (!$result) {
-      header("HTTP/1.1 500");
-      return  ["message_sent_failed" => "Votre message n'a pu être envoyé , veuillez réessayez plus tard !"];
-    } else {
+    if ($result) {
       $mail->isSMTP();
-      $mail->Host = 'smtp.gmail.com';
+      $mail->Host = $gmail["smtp_address"];
       $mail->SMTPAuth = true;
       $mail->Username = $username["username"]; // Name of the owner application password
       $mail->Password = $password["password"]; // Gmail Password Application
@@ -99,8 +97,9 @@ readonly class HomepageForm
       $mail->Body = "Le message suivant a été envoyé par <strong>" . $data["user"]["firstname"] . " " . $data["user"]["lastname"] . "</strong> via le formulaire de contact  : <br><br><br>" . $data["user"]["message"];
 
       $mail->send();
-      header("HTTP/1.1 200");
       return ["message_sent" => "Votre message a bien été envoyé !"];
     }
+
+    throw new FormMessageNotSentException();
   }
 }

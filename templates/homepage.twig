@@ -17,16 +17,26 @@
 	<div class="container-fluid mb-5" id="starter-block">
 		<header>
 			<nav class="menu">
-					<a href="?selection=blog"><i class="fa-solid fa-newspaper"></i></a>
+				<a href="?selection=blog">
+					<i class="fa-solid fa-newspaper"></i>
+				</a>
 				<ul>
-				{% if session is defined and (session.type_user == "admin" or session.type_user == "user") %}
-								<li><a href="?action=logout"><i class="fa-solid fa-right-from-bracket"></i></a></li>
-								{% else %}
-					<li><a href="?selection=sign_in"><i class="fa-solid fa-key"></i></a></li>
-									
-{% endif %}
-					
-	
+					{% if session is defined and (session.type_user == "admin" or session.type_user == "user") %}
+						<li>
+							<a href="?action=logout">
+								<i class="fa-solid fa-right-from-bracket"></i>
+							</a>
+						</li>
+					{% else %}
+						<li>
+							<a href="?selection=sign_in">
+								<i class="fa-solid fa-key"></i>
+							</a>
+						</li>
+
+					{% endif %}
+
+
 				</ul>
 			</nav>
 		</header>
@@ -113,7 +123,7 @@
 					</div>
 					<input class="btn btn-dark mt-4" id="submit" type="submit" value="Envoyer">
 					<p class="text-center" id="message-sent">{{message.message_sent is defined ? message.message_sent : ''}}</p>
-					<p class="text-danger text-center" id="message-failed">{{message.message_sent_failed is defined ? message.message_sent_failed : ''}}</p>
+					<p class="text-danger text-center" id="message-failed">{{message_not_sent_exception is defined ? message_not_sent_exception : ''}}</p>
 				</div>
 
 
@@ -139,12 +149,11 @@
 
 	</div>
 </div>
-	{% if session is defined and session.type_user == "admin" %}
-		{% include "admin_footer.twig" %}
-	{% else %}
+{% if session is defined and session.type_user == "admin" %}
+	{% include "admin_footer.twig" %}
+{% else %}
 
-		{% include "footer.twig" %}
+	{% include "footer.twig" %}
 
-	{% endif %}
-	{% endblock %}
+{% endif %}{% endblock %}
 

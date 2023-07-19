@@ -42,10 +42,8 @@ class ArticleController
     $titleRegex = "/^(?=.{1,500}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ -']*$/";
     switch (true) {
       case empty($title):
-        header("HTTP/1.1 400");
         throw new TitleErrorEmptyException();
       case !preg_match($titleRegex, $title):
-        header("HTTP/1.1 400");
         throw new TitleWrongFormatException();
       default:
         return ["title" => $title];
@@ -69,12 +67,10 @@ class ArticleController
 
           return ["file" => "$filenameGeneratedArticle;$filenameTmpArticle;$dirImagesUpdateArticle"];
         } else {
-          header("HTTP/1.1 400");
           throw new FileTypeException();
         }
 
       default:
-        header("HTTP/1.1 400");
         throw new FileErrorEmptyException(FileErrorEmptyException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED);
     }
   }
@@ -83,10 +79,8 @@ class ArticleController
     $shortPhraseRegex = "/^(?=.{1,500}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ -']*$/";
     switch (true) {
       case empty($shortPhrase):
-        header("HTTP/1.1 400");
         throw new ShortPhraseErrorEmptyException();
       case !preg_match($shortPhraseRegex, $shortPhrase):
-        header("HTTP/1.1 400");
         throw new ShortPhraseWrongFormatException();
       default:
         return ["short_phrase" => $shortPhrase];
@@ -97,10 +91,8 @@ class ArticleController
     $contentRegex = "/^(?=.{1,5000}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ, .'-]*$/u";
     switch (true) {
       case empty($content):
-        header("HTTP/1.1 400");
         throw new ContentArticleErrorEmptyException();
       case !preg_match($contentRegex, $content):
-        header("HTTP/1.1 400");
         throw new ContentArticleWrongFormatException();
       default:
         return ["content" => $content];
@@ -111,10 +103,8 @@ class ArticleController
     $tagsRegex = "/^(#([\p{L} '-]{1,20})(?:\s|$)){1,3}$/";
     switch (true) {
       case empty($tags):
-        header("HTTP/1.1 400");
         throw new TagsErrorEmptyException();
       case !preg_match($tagsRegex, $tags):
-        header("HTTP/1.1 400");
         throw new TagsWrongFormatException();
       default:
         return ["tags" => $tags];
@@ -122,7 +112,7 @@ class ArticleController
   }
 
 
-  public function handleCreateArticleValidator(string $title, array $fileArticle, string $shortPhrase, string $content, string $tags, array $sessionData): void
+  public function handleCreateArticleValidator(string $title, array $fileArticle, string $shortPhrase, string $content, string $tags, array $sessionData): ?array
   {
     $articleRepository = $this->article;
     $titleField = $this->handleTitleField($title);
@@ -141,8 +131,7 @@ class ArticleController
     ];
 
 
-      $articleRepository->createArticle($fields, $sessionData);
-
+    return $articleRepository->createArticle($fields, $sessionData);
   }
 
 
@@ -190,9 +179,8 @@ class ArticleController
 
           return ["failed_type" => "Seuls les fichiers de type : jpg, jpeg , png et webp sont acceptés !"];
         }
-        
+        return null;
     }
-  
   }
   public function handleUpdateArticleValidator(string $title, array $fileArticle, string $hiddenInputFileOriginalPath, string $shortPhrase, string $content, string $tags, array $sessionData, int $idArticle): ?array
   {
@@ -201,15 +189,15 @@ class ArticleController
     $numberOfTagsAuthorized = 3;
     $counterOfFieldsWithoutError = 0;
 
-    $fields = [];
+
     $errors = [];
 
 
-    $titleMinimumLength = 20;
-    $titleMaximumLength = 50;
-    $shortPhraseMinimumLength = 20;
-    $shortPhraseMaximumLength = 100;
-    $contentMinimumLength = 2000;
+    $titleMinimumLength = 1;
+    $titleMaximumLength = 500;
+    $shortPhraseMinimumLength = 1;
+    $shortPhraseMaximumLength = 500;
+    $contentMinimumLength = 1;
     $contentMaximumLength = 5000;
 
     $this->handleUpdateValidationOnCharacterLength($title, $titleMinimumLength, $titleMaximumLength) ? $counterOfFieldsWithoutError++ : $errors["title_error"] = "Le titre doit minimum posséder 20 caractères et ne peut en excéder 50";
@@ -225,15 +213,12 @@ class ArticleController
     $fileResult =  $this->handleUpdateValidationOnFilePath($fileArticle, $hiddenInputFileOriginalPath);
 
     switch (true) {
+      case $counterOfFieldsWithoutError == 4 && is_string($fileResult):
       case $counterOfFieldsWithoutError == 4 && is_array($fileResult) && array_key_exists("file", $fileResult):
         $counterOfFieldsWithoutError++;
         break;
       case $counterOfFieldsWithoutError == 4 && is_array($fileResult) && array_key_exists("failed_type", $fileResult):
         $errors["file_error"] = "Seuls les fichiers de type : jpg, jpeg , png et webp sont acceptés !";
-        break;
-
-      case $counterOfFieldsWithoutError == 4 && is_string($fileResult):
-        $counterOfFieldsWithoutError++;
         break;
     }
 
@@ -248,15 +233,15 @@ class ArticleController
         "id_article" => $idArticle
       ];
 
-      $articleRepository->modifyArticle($fields, $sessionData);
+      return $articleRepository->updateArticle($fields, $sessionData);
     }
     return $errors;
   }
 
 
-  public function handleDeleteArticle(int $idArticle, array $sessionData): void
+  public function handleDeleteArticle(int $idArticle, array $sessionData): ?array
   {
     $articleRepository = $this->article;
-    $articleRepository->deleteArticle($idArticle, $sessionData);
+    return $articleRepository->deleteArticle($idArticle, $sessionData);
   }
 }

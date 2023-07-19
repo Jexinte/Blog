@@ -31,10 +31,8 @@ readonly class HomepageFormController
     $firstnameRegex = "/^[A-Z][a-zA-ZÀ-ÖØ-öø-ſ\s'-]*$/";
     switch (true) {
       case empty($firstname):
-        header('HTTP/1.1 400');
         throw new FirstNameErrorEmptyException();
       case !preg_match($firstnameRegex, $firstname):
-        header('HTTP/1.1 400');
         throw new FirstNameWrongFormatException();
       default:
         return ["firstname" => $firstname];
@@ -45,10 +43,8 @@ readonly class HomepageFormController
     $lastnameRegex = "/^[A-Z][a-zA-ZÀ-ÖØ-öø-ſ\s'-]*$/";
     switch (true) {
       case empty($lastname):
-        header('HTTP/1.1 400');
         throw new LastnameErrorEmptyException();
       case !preg_match($lastnameRegex, $lastname):
-        header('HTTP/1.1 400');
         throw new LastnameWrongFormatException();
       default:
         return ["lastname" => $lastname];
@@ -59,10 +55,8 @@ readonly class HomepageFormController
     $emailRegex = "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/";
     switch (true) {
       case empty($email):
-        header('HTTP/1.1 400');
         throw new EmailErrorEmptyException();
       case !preg_match($emailRegex, $email):
-        header('HTTP/1.1 400');
         throw new EmailWrongFormatException();
       default:
         return ["email" => $email];
@@ -74,10 +68,9 @@ readonly class HomepageFormController
     $subjectRegex = "/^.{20,100}$/";
     switch (true) {
       case empty($subject):
-        header('HTTP/1.1 400');
         throw new SubjectErrorEmptyException();
       case !preg_match($subjectRegex, $subject):
-        header('HTTP/1.1 400');
+
         throw new SubjectWrongFormatException();
       default:
         return ["subject" => $subject];
@@ -88,10 +81,8 @@ readonly class HomepageFormController
     $messageRegex = "/^.{20,500}$/";
     switch (true) {
       case empty($message):
-        header('HTTP/1.1 400');
         throw new ContentMessageErrorEmptyException();
       case !preg_match($messageRegex, $message):
-        header('HTTP/1.1 400');
         throw new ContentMessageWrongFormatException();
       default:
         return ["message" => $message];
@@ -107,40 +98,15 @@ readonly class HomepageFormController
     $emailResult = $this->handleEmailField($email);
     $subjectResult = $this->handleSubjectField($subject);
     $messageResult = $this->handleMessageField($message);
-    $counter = 0;
-
-    $fields = [
-      "firstname" => $firstnameResult,
-      "lastname" => $lastnameResult,
-      "email" => $emailResult,
-      "subject" => $subjectResult,
-      "message" => $messageResult
-    ];
-
-    $errors = [];
 
 
-    foreach ($fields as $key => $v) {
-      if (gettype($v) == "string") $errors[$key . "_error"] = $v;
-    }
 
     $formRepository = $this->homepageForm;
 
-    foreach ($fields as $v) {
-      if (is_array($v)) {
-        $counter++;
-      }
-    }
+    $userDataFromForm = new HomepageFormModel(null, $firstnameResult["firstname"], $lastnameResult["lastname"], $emailResult["email"], $subjectResult["subject"], $messageResult["message"]);
 
-
-    if ($counter == 5) {
-      $userDataFromForm = new HomepageFormModel(null, $firstnameResult["firstname"], $lastnameResult["lastname"], $emailResult["email"], $subjectResult["subject"], $messageResult["message"]);
-
-      $insertDataDb = $formRepository->insertDataInDatabase($userDataFromForm);
-      $getDataFromDb = $formRepository->getDataFromDatabase($insertDataDb);
-      return array_key_exists("data_retrieved", $getDataFromDb) && $getDataFromDb["data_retrieved"] == 1 ? $formRepository->sendMailAdmin($getDataFromDb) : null;
-    }
-
-    return $errors;
+    $insertDataDb = $formRepository->insertDataInDatabase($userDataFromForm);
+    $getDataFromDb = $formRepository->getDataFromDatabase($insertDataDb);
+    return array_key_exists("data_retrieved", $getDataFromDb) && $getDataFromDb["data_retrieved"] == 1 ? $formRepository->sendMailAdmin($getDataFromDb) : null;
   }
 }

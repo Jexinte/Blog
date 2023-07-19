@@ -54,7 +54,7 @@ class Article
     return $articles;
   }
 
-  
+
   public function getArticle(int $id): array
   {
     $dbConnect = $this->connector->connect();
@@ -85,18 +85,16 @@ class Article
       }
       $article[] = $data;
     }
-    header("HTTP/1.1 200");
     return $article;
   }
 
-  public function createArticle(array $articleData, array $sessionData): void
+  public function createArticle(array $articleData, array $sessionData): ?array
   {
 
     $dbConnect = $this->connector->connect();
     $idSession = $sessionData["session_id"];
     $usernameSession = $sessionData["username"];
     $typeUserSession = $sessionData["type_user"];
-    var_dump($articleData);
     $statementSession = $dbConnect->prepare("SELECT id_session,username,user_type FROM session WHERE id_session = :id_from_session_variable AND username = :username_from_session_variable AND user_type = :type_user_from_session_variable");
 
     $statementSession->bindParam("id_from_session_variable", $idSession);
@@ -130,12 +128,11 @@ class Article
       $statementArticle->bindValue(':dateArticle', date('Y-m-d'));
       $statementArticle->execute();
       move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
-      header("HTTP/1.1 302");
-      header("Location: index.php?selection=admin_panel");
+      return ["article_created" => 1];
     }
   }
 
-  public function modifyArticle(array $updateArticleData, array $sessionData)
+  public function updateArticle(array $updateArticleData, array $sessionData): ?array
   {
     $dbConnect = $this->connector->connect();
     $idSession = $sessionData["session_id"];
@@ -176,9 +173,8 @@ class Article
           $statement->bindParam(':idUpdateArticle', $idUpdateArticle);
           $statement->execute();
           move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
-          header("HTTP/1.1 302");
-          header("Location: index.php?selection=admin_panel");
-          break;
+          return ["article_updated" => 1];
+
         case !is_array($fileUpdateArticle):
 
           $statement = $dbConnect->prepare("UPDATE article SET image = :filePath,title = :titleUpdateArticle,chapô  = :shortPhraseUpdateArticle,content = :contentUpdateArticle,tags = :tagsUpdateArticle,author = :authorArticle,date_creation = :dateUpdateArticle WHERE id = :idUpdateArticle");
@@ -191,14 +187,11 @@ class Article
           $statement->bindParam(':dateUpdateArticle', $dateOfTheDay);
           $statement->bindParam(':idUpdateArticle', $idUpdateArticle);
           $statement->execute();
-
-          header("HTTP/1.1 302");
-          header("Location: index.php?selection=admin_panel");
-          break;
+          return ["article_updated" => 1];
       }
     }
   }
-  public function deleteArticle(int $idArticle, array $sessionData)
+  public function deleteArticle(int $idArticle, array $sessionData): ?array
   {
 
     $dbConnect = $this->connector->connect();
@@ -218,8 +211,7 @@ class Article
       $statement = $dbConnect->prepare("DELETE FROM article WHERE id = :id");
       $statement->bindParam("id", $idArticle);
       $statement->execute();
-      header("HTTP/1.1 302");
-      header("Location: index.php?selection=admin_panel");
+      return ["article_deleted" => 1];
     }
   }
 }

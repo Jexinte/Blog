@@ -5,9 +5,13 @@ namespace Controller;
 use Enumeration\UserType;
 
 use Exceptions\EmailErrorEmptyException;
+use Exceptions\EmailUnavailableException;
+use Exceptions\EmailUnexistException;
 use Exceptions\EmailWrongFormatException;
 use Exceptions\PasswordErrorEmptyException;
+use Exceptions\PasswordIncorrectException;
 use Exceptions\PasswordWrongFormatException;
+use Exceptions\UsernameUnavailableException;
 use Exceptions\UsernameWrongFormatException;
 use Exceptions\UsernameErrorEmptyException;
 use Exceptions\FileTypeException;
@@ -36,10 +40,10 @@ readonly class UserController
     $userRegex =  "/^[A-Z][A-Za-z\d]{2,10}$/";
     switch (true) {
       case empty($username):
-        header("HTTP/1.1 400");
+
         throw new UsernameErrorEmptyException();
       case !preg_match($userRegex, $username):
-        header("HTTP/1.1 400");
+
         throw new UsernameWrongFormatException();
       default:
         return ["username" => $username];
@@ -62,12 +66,12 @@ readonly class UserController
 
           return ["file" => "$filenameGenerated;$filenameTmp;$dirImages"];
         } else {
-          header("HTTP/1.1 400");
+
           throw new FileTypeException();
         }
 
       default:
-        header("HTTP/1.1 400");
+
         throw new FileErrorEmptyException(FileErrorEmptyException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED);
     }
   }
@@ -80,10 +84,10 @@ readonly class UserController
 
     switch (true) {
       case empty($email):
-        header("HTTP/1.1 400");
+
         throw new EmailErrorEmptyException();
       case !preg_match($emailRegex, $email):
-        header("HTTP/1.1 400");
+
         throw new EmailWrongFormatException();
       default:
         return ["email" => $email];
@@ -95,10 +99,10 @@ readonly class UserController
     $passwordRegex = "/^(?=.*[A-Z])(?=.*\d).{8,}$/";
     switch (true) {
       case empty($password):
-        header("HTTP/1.1 400");
+
         throw new PasswordErrorEmptyException();
       case !preg_match($passwordRegex, $password):
-        header("HTTP/1.1 400");
+
         throw new PasswordWrongFormatException();
       default:
         $hashPassword = password_hash($password, PASSWORD_DEFAULT);
@@ -107,7 +111,7 @@ readonly class UserController
   }
 
 
-  public function signUpValidator(string $username, array $file, string $email, string $password): array|string|null
+  public function signUpValidator(string $username, array $file, string $email, string $password): array|string
   {
 
     $usernameResult = $this->handleUsernameField($username);
@@ -115,7 +119,7 @@ readonly class UserController
     $emailResult = $this->handleEmailField($email);
     $passwordResult = $this->handlePasswordField($password);
     $fileResult = $this->handleFileField($file);
-    $counter = 0;
+
 
     $fields = [
       "username" => $usernameResult,
@@ -125,36 +129,27 @@ readonly class UserController
     ];
 
 
+    $userRepository = $this->user;
+    $username = $fields["username"]["username"];
+    $fileSettings = $fields["file"];
+    $email = $fields["email"]["email"];
+    $password = $fields["password"]["password"];
+    $userType = UserType::USER;
+    $userData = new UserModel($username, $fileSettings["file"], $email, $password, $userType);
 
-    foreach ($fields as $v) {
-      if (is_array($v)) $counter++;
+    $userDb = $userRepository->createUser($userData);
+
+
+
+
+    switch (true) {
+      case isset($userDb["username"])  && $userDb["username"]  === $username:
+        throw new UsernameUnavailableException();
+      case isset($userDb["email"]) && $userDb["email"] === $email:
+        throw new EmailUnavailableException();
+      default:
+        return $userDb;
     }
-    if ($counter == 4) {
-      $userRepository = $this->user;
-      $username = $fields["username"];
-      $fileSettings = $fields["file"];
-      $email = $fields["email"];
-      $password = $fields["password"];
-      $userType = UserType::USER;
-      $userData = new UserModel($username["username"], $fileSettings["file"], $email["email"], $password["password"], $userType);
-
-      $userDb = $userRepository->createUser($userData);
-
-      switch (true) {
-        case  $userDb["username"] === $username["username"] && $userDb["email"] === $email["email"]:
-          header("HTTP/1.1 400");
-          return ["username_unavailable" => "Le nom d'utilisateur " . $username["username"] . " n'est pas disponible !", "email_unavailable" => "L'adresse email " . $email["email"] . " n'est pas disponible !"];
-
-        case $userDb["username"] === $username["username"]:
-          header("HTTP/1.1 400");
-          return ["username_unavailable" => "Le nom d'utilisateur " . $username["username"] . " n'est pas disponible !"];
-
-        case $userDb["email"] === $email["email"]:
-          header("HTTP/1.1 400");
-          return ["email_unavailable" => "L'adresse email " . $email["email"] . " n'est pas disponible !"];
-      }
-    }
-    return null;
   }
 
 
@@ -164,10 +159,10 @@ readonly class UserController
     $emailRegex = "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/";
     switch (true) {
       case empty($email):
-        header("HTTP/1.1 400");
+
         throw new EmailErrorEmptyException();
       case !preg_match($emailRegex, $email):
-        header("HTTP/1.1 400");
+
         throw new EmailWrongFormatException();
       default:
         return ["email" => $email];
@@ -179,19 +174,18 @@ readonly class UserController
 
 
     if (empty($password)) {
-      header("HTTP/1.1 400");
       throw new PasswordErrorEmptyException();
     }
     return ["password" => $password];
   }
 
 
-  public function loginValidator(string $email, string $password): ?array
+  public function loginValidator(string $email, string $password): array|string|null
   {
     $userRepository = $this->user;
     $emailResult = $this->verifyEmailOnLogin($email);
     $passwordResult = $this->verifyPasswordOnLogin($password);
-    $counter = 0;
+
 
     $fields = [
       "email" => $emailResult,
@@ -200,19 +194,17 @@ readonly class UserController
 
     $emailField = $fields["email"]["email"];
     $passwordField = $fields["password"]["password"];
-    foreach ($fields as $v) {
-      if (is_array($v)) $counter++;
-    }
 
-    if ($counter == 2) {
 
-      $login = $userRepository->loginUser($emailField, $passwordField);
-      return match (true) {
-        array_key_exists("password_error", $login) => ["password_error" => "Le mot de passe est incorrect !"],
-        array_key_exists('email_error', $login) => ["email_error" => "Oups ! Nous n'avons trouvé aucun compte associé à cette adresse e-mail. Assurez-vous que vous avez saisi correctement votre adresse e-mail et réessayez"],
-        default => $login
-      };
+
+    $login = $userRepository->loginUser($emailField, $passwordField);
+
+    if (array_key_exists("password_error", $login)) {
+      throw new PasswordIncorrectException();
+    } elseif (array_key_exists('email_error', $login)) {
+      throw new EmailUnexistException();
     }
+    return $login ?? null;
   }
 
   public function handleInsertSessionData(array $arr): void
@@ -232,6 +224,9 @@ readonly class UserController
   public function handleLogout(array $sessionData): ?array
   {
     $userRepository = $this->user;
-    return $userRepository->logout($sessionData);
+
+    if (is_array($userRepository->logout($sessionData))) {
+      return $userRepository->logout($sessionData);
+    }
   }
 }
