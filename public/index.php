@@ -187,7 +187,7 @@ if (isset($_GET['action'])) {
                 header("HTTP/1.1 400");
                 $paramaters["email_exception"] = EmailUnexistException::EMAIL_UNEXIST_MESSAGE_ERROR;
             } catch (PasswordIncorrectException $e) {
-                header("HTTP/1.1 401");
+                header("HTTP/1.1 403");
                 $paramaters["password_exception"] = PasswordIncorrectException::PASSWORD_INCORRECT_MESSAGE_ERROR;
             }
 
@@ -259,7 +259,7 @@ if (isset($_GET['action'])) {
 
         case "add_article":
             if ($_SESSION["type_user"] != UserType::ADMIN->value) {
-                header("Location: index.php?action=error&code=401");
+                header("Location: index.php?action=error&code=403");
             }
             $template = "admin_add_article.twig";
             try {
@@ -306,7 +306,7 @@ if (isset($_GET['action'])) {
 
         case "update_article":
             if ($_SESSION["type_user"] != UserType::ADMIN->value) {
-                header("Location: index.php?action=error&code=401");
+                header("Location: index.php?action=error&code=403");
             }
             //TODO Appliquer le même processus que pour la partie "add_comment" ainsi les exceptions pourront être utilisées !
             $defautValuesInEachField =
@@ -334,7 +334,7 @@ if (isset($_GET['action'])) {
             break;
         case "delete_article":
             if ($_SESSION["type_user"] != UserType::ADMIN->value) {
-                header("Location: index.php?action=error&code=401");
+                header("Location: index.php?action=error&code=403");
             }
             if (is_array($articleController->handleDeleteArticle($_GET["id"], $_SESSION))) {
                 header("HTTP/1.1 302");
@@ -409,7 +409,7 @@ if (isset($_GET['action'])) {
             break;
         case "admin_panel":
             if ($_SESSION["type_user"] != UserType::ADMIN->value) {
-                header("Location: index.php?action=error&code=401");
+                header("Location: index.php?action=error&code=403");
             }
             $template = "admin_homepage.twig";
             $paramaters = [
@@ -421,10 +421,19 @@ if (isset($_GET['action'])) {
 
 
             break;
-        case "view_article_and_commentary":
-            $template = "admin_article_and_commentary.twig";
+        case "comment_details":
+            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
+                header("Location: index.php?action=error&code=403");
+            }
+            $template = "admin_validation_commentary.twig";
+            if (is_array($temporaryCommentController->handleGetOneTemporaryComment($_GET["idComment"]))) {
+                $paramaters["comment"] = $temporaryCommentController->handleGetOneTemporaryComment($_GET["idComment"]);
+            }
             break;
         case "article":
+            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
+                header("Location: index.php?action=error&code=403");
+            }
             $defaultValue = [
                 "data" => current($articleController->handleOneArticle($_GET['id']))
             ];
@@ -445,14 +454,14 @@ if (isset($_GET['action'])) {
             break;
         case "add_article":
             if ($_SESSION["type_user"] != UserType::ADMIN->value) {
-                header("Location: index.php?action=error&code=401");
+                header("Location: index.php?action=error&code=403");
             }
             $template = "admin_add_article.twig";
             $paramaters["session"] =  $_SESSION;
             break;
         case "view_update_article":
             if ($_SESSION["type_user"] != UserType::ADMIN->value) {
-                header("Location: index.php?action=error&code=401");
+                header("Location: index.php?action=error&code=403");
             }
             $template = "admin_update_article.twig";
             $paramaters = [

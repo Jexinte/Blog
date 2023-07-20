@@ -1,0 +1,48 @@
+{% extends "layout.twig" %}
+
+
+{% block icon_img %}
+	<link rel="icon" type="image/png" href="../public/favicon.ico"/>
+{% endblock %}
+
+{% block title %}
+	<title>Validation de commentaire - Administration - Blog professionnel</title>
+{% endblock %}
+{% block css_page %}
+	<link rel="stylesheet" href="../public/assets/css/admin_validation_commentary.css">
+{% endblock %}
+
+{% block content %}
+	{% include "menu_admin.twig" %}
+
+
+	<div class="container-fluid" id="comment">
+		<img class="comment-banner" src="../public/assets/images/banner_commentary.jpg" alt="banner img">
+	</div>
+
+	<div class="container-fluid" id="comment">
+		<h2 id="comment-main-title">Commentaire</h2>
+		<div class="commentary-box">
+			<h3 class="author-comment">{{comment.username}}, le {{comment.date_of_publication}} :</h3>
+			
+			<p class="text-center content-comment">{{comment.content}}</p>
+		</div>
+		<form action="#">
+			<label for="feedback">Explication (facultatif) :</label>
+			<textarea name="feedback" id="feedback" cols="30" rows="10"></textarea>
+			<div class="commands-admin">
+				<input class="btn btn-warning command" type="submit" value="Accepter">
+				<input class="btn btn-dark command" type="submit" value="Rejeter">
+			</div>
+
+		</form>
+	</div>
+		{% if session is defined and session.type_user == "admin" %}
+		{% include "admin_footer.twig" %}
+	{% else %}
+
+		{% include "footer.twig" %}
+
+	{% endif %}
+{% endblock %}
+

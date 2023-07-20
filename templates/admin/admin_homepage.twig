@@ -58,7 +58,7 @@
 				{% for comment in comments %}
 
 				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 comments">
-					<a class="comment" href="#">
+					<a class="comment" href="index.php?selection=comment_details&amp;idComment={{comment.id}}">
 						<h3 class="h3">{{comment.title}}</h3>
 						<div class="author-comment">
 							<h4>{{comment.username}}, {{comment.date_creation}} : </h4>

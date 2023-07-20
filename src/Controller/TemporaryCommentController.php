@@ -55,4 +55,10 @@ class TemporaryCommentController
     $temporaryCommentRepository = $this->temporaryComment;
     $temporaryCommentRepository->mailToAdmin($sessionData, $titleOfArticle);
   }
+
+  public function handleGetOneTemporaryComment(int $idComment): ?array
+  {
+    $temporaryCommentRepository = $this->temporaryComment;
+    return $temporaryCommentRepository->getOneTemporaryComment($idComment);
+  }
 }

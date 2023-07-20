@@ -29,16 +29,17 @@
 
 					<div class="error-box">
 						{% if code == 500 %}
-							<img src="../public/assets/images/500.jpg" alt="500 code error">
-							<a href="index.php?selection=homepage">Retour vers la page d'accueil
+							<img src="../public/assets/images/500.jpg" alt="500 code error">		
 							</a>
 							{% elseif code == 401 %}
 							
 							<img src="../public/assets/images/401.jpg" alt="401 code error">
-							<a href="index.php?selection=homepage">Retour vers la page d'accueil								
+							{% elseif code == 403 %}
+							<img src="../public/assets/images/403.jpg" alt="403 code error">
 						{% endif %}
 
 					{% endif %}
+							<a href="index.php?selection=homepage">Retour vers la page d'accueil</a>
 				</div>
 			</div>
 

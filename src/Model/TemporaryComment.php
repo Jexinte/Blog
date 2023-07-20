@@ -94,7 +94,7 @@ class TemporaryComment
 
 
       $temporaryComments = [];
-      $statementTemporaryComment = $dbConnect->prepare("SELECT tc.idArticle, tc.idUser, tc.content, DATE_FORMAT(tc.date_creation, '%d %M %Y') AS date_of_publication, a.title FROM temporary_comment tc JOIN article a ON tc.idArticle = a.id ");
+      $statementTemporaryComment = $dbConnect->prepare("SELECT tc.id,tc.idArticle, tc.idUser, tc.content, DATE_FORMAT(tc.date_creation, '%d %M %Y') AS date_of_publication, a.title FROM temporary_comment tc JOIN article a ON tc.idArticle = a.id ");
       $statementTemporaryComment->execute();
 
 
@@ -107,6 +107,7 @@ class TemporaryComment
         while ($row2 = $statementUser->fetch()) {
           $data = [
             "id_article" => $row["idArticle"],
+            "id" => $row["id"],
             "id_user" => $row["idUser"],
             "content" => $row["content"],
             "date_creation" => $date,
@@ -121,7 +122,7 @@ class TemporaryComment
     }
   }
 
-  public function mailToAdmin(array $sessionData, string $titleOfArticle):void
+  public function mailToAdmin(array $sessionData, string $titleOfArticle): void
   {
 
     $key = file_get_contents("../config/stmp_credentials.json");
@@ -159,5 +160,26 @@ class TemporaryComment
       Cordialement,<br><br>
       L'équipe du site";
     $mail->send();
+  }
+
+  public function getOneTemporaryComment(int $idComment): ?array
+  {
+    $dbConnect = $this->connector->connect();
+    $statement = $dbConnect->prepare("SELECT id,idArticle,idUser,content,DATE_FORMAT(date_creation, '%d %M %Y') AS date_of_publication FROM temporary_comment WHERE id=:idComment");
+    $statement->bindParam("idComment", $idComment);
+    $statement->execute();
+    $result = $statement->fetch();
+    if ($result) {
+      $statementUser = $dbConnect->prepare("SELECT id,username FROM user WHERE id = :idUser");
+      $statementUser->bindParam("idUser", $result["idUser"]);
+      $statementUser->execute();
+      $resultUser = $statementUser->fetch();
+      if ($resultUser)
+        $frenchDateFormat = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
+      $date = $frenchDateFormat->format(new DateTime($result["date_of_publication"]));
+      $result["date_of_publication"] = $date;
+      $result["username"] = $resultUser["username"];
+      return $result;
+    }
   }
 }

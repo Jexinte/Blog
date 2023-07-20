@@ -13,93 +13,20 @@ header {
   font-size: 1.5em;
 }
 
-#article {
+#comment {
   margin-top: 8em;
   padding-inline: 0;
   width: 80%;
 }
 
-#article .article-banner {
+#comment .comment-banner {
   width: 100%;
   margin-bottom: 6em;
 }
 
-.author-box img {
-  width: 100px;
-  border-radius: 50%;
-}
 
-.article {
-  display: flex;
-  flex-direction: column;
-}
 
-.author-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5em;
-  margin-bottom: 3em;
-}
-
-.author-box .author-name {
-  color: var(--black);
-  font-weight: var(--900);
-}
-
-.article-title {
-  font-weight: var(--900);
-  color: var(--black);
-  margin-bottom: 1.5em;
-  width: 100%;
-  text-align: center;
-  padding-bottom: .8em;
-  border-width: .2em;
-  position: relative;
-}
-
-.article-title::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  border-bottom: 1px solid orange;
-  border-bottom-width: 1px;
-  border-width: .2em;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  bottom: -24px;
-}
-
-.article-short-phrase {
-  text-align: center;
-  color: #ada3a3;
-}
-
-.article-content {
-
-  line-height: 2em;
-  margin-bottom: 2em;
-}
-
-.article-date {
-  font-weight: var(--700);
-  text-align: center;
-  margin-top: 1em;
-}
-
-.tags {
-  display: flex;
-  gap: 1em;
-  justify-content: center;
-  margin-bottom: 2.5em;
-}
-
-.tags .tag {
-  font-weight: var(--700);
-}
-
-#article .row {
+#comment .row {
   margin-inline: 0;
 }
 
@@ -178,35 +105,18 @@ form textarea {
   color: var(--white);
 }
 
+.commentary-box{
+  display: flex;
+  flex-direction: column;
+  gap:1em;
+}
 @media (max-width:576px) {
 
-  #article .article-banner {
+  #comment .comment-banner {
     width: 100%;
     height: 500px;
     margin-bottom: 3em;
   }
 
-  .article-title {
-    text-align: center;
-  }
 
-  .article-content {
-    text-align: justify;
-
-    font-size: .9em;
-  }
-
-  .tags {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .tag {
-    font-size: .9em;
-  }
-
-  .article-date {
-
-    font-size: .9em;
-  }
 }
