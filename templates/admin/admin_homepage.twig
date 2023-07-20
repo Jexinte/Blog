@@ -48,51 +48,39 @@
 
 		<div class="container-fluid" id="last-comments">
 			<h2 class="h2" id="h2">Derniers commentaires publiés récemments
-				<span id="total-comments">{# Le nombre total de commentaires à valider#}</span>
+				<span id="total-comments">({{total_comments is defined ? total_comments : ""}})</span>
 			</h2>
 
 			<div class="row">
-
-				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 comments">
-					<a class="comment" href="?selection=view_article">
-						<h3 class="h3">Les bases de php</h3>
-						<div class="author-comment">
-							<h4>Jane , le 13 juin 2023</h4>
-							<p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptas tempore explicabo iusto quam molestias est corporis, natus nulla deleniti porro tenetur nesciunt excepturi commodi animi asperiores? Voluptatum ex odio cumque.</p>
-						</div>
-					</a>
-				</div>
-
+			{% if comments is empty %}
+			<h2 class="text-center" id="no-comments">Aucun commentaire n'a été publié pour le moment</h2>
+			{% else %}
+				{% for comment in comments %}
 
 				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 comments">
 					<a class="comment" href="#">
-						<h3 class="h3">Les bonnes pratiques en PHP</h3>
+						<h3 class="h3">{{comment.title}}</h3>
 						<div class="author-comment">
-							<h4>Lovelace, le 19 juin 2023</h4>
-							<p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptas tempore explicabo iusto quam molestias est corporis, natus nulla deleniti porro tenetur nesciunt excepturi commodi animi asperiores? Voluptatum ex odio cumque.</p>
+							<h4>{{comment.username}}, {{comment.date_creation}} : </h4>
+							<p>{{comment.content}}</p>
 						</div>
 					</a>
 				</div>
+				{% endfor %}				
+			{% endif %}
+			
 
 
-				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 comments">
-					<a class="comment" href="#">
-						<h3 class="h3">Les frameworks PHP populaires</h3>
-						<div class="author-comment">
-							<h4>CyranoB , le 19 juin 2023</h4>
-							<p>
-								C'est un roc !... c'est un pic... c'est un cap !
-																																																																																Que dis-je, c'est un cap ?... C'est une péninsule ! »</p>
-						</div>
-					</a>
-				</div>
 			</div>
 		</div>
 
 
 		<div class="container-fluid" id="last-articles">
 			<h2 class="h2" id="last-articles-title">Derniers articles publiés récemments</h2>
-			{% if articles is defined and articles is not empty %}
+			{% if articles is empty %}
+			<h2 class="text-center" id="no-article">Aucun article n'a été publié pour le moment</h2>
+			{% else %}
+				
 				{% for article in articles %}
 					<div class="row mt-5">
 						<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 articles">
@@ -111,8 +99,7 @@
 						</div>
 					</div>
 				{% endfor %}
-			{% else %}
-				<h2 class="text-dark text-center">Aucun article n'a été publié pour le moment</h2>
+
 			{% endif %}
 
 

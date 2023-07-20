@@ -49,9 +49,19 @@ a {
   border-radius: 1em;
   padding: 1.1em;
 }
+#no-comments{
+  color: var(--black);
+  font-weight: var(--900);
+  margin-top: 2.5em;
+}
 
+#no-article{
+  color: var(--black);
+  font-weight: var(--900);
+}
 .comments .comment {
   text-decoration: none;
+  color:var(--black);
 }
 
 #h1,

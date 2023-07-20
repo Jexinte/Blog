@@ -413,7 +413,9 @@ if (isset($_GET['action'])) {
             $template = "admin_homepage.twig";
             $paramaters = [
                 "articles" => $articleController->listOfAllArticles(),
-                "session" => $_SESSION
+                "session" => $_SESSION,
+                "comments" => $temporaryCommentController->handlegetTemporaryCommentsForAdministrators($_SESSION),
+                "total_comments" => !is_null($temporaryCommentController->handlegetTemporaryCommentsForAdministrators($_SESSION)) ?? count($temporaryCommentController->handlegetTemporaryCommentsForAdministrators($_SESSION))
             ];
 
 
@@ -429,6 +431,7 @@ if (isset($_GET['action'])) {
 
             $_SESSION["id_article"] = $defaultValue["data"]["id"];
             $paramaters["article"] = current($articleController->handleOneArticle($_GET['id']));
+
 
             if (isset($_SESSION["username"])) {
 

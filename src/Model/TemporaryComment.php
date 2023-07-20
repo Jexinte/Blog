@@ -3,7 +3,9 @@
 namespace Model;
 
 use Config\DatabaseConnection;
-
+use DateTime;
+use IntlDateFormatter;
+use Enumeration\UserType;
 class TemporaryComment
 {
 
@@ -72,6 +74,47 @@ class TemporaryComment
 
 
       return count($userComments) == 1 ? ["user_already_commented" => 1] : null;
+    }
+  }
+
+  public function getTemporaryCommentsForAdministrators(array $sessionData):?array
+  {
+    $dbConnect = $this->connector->connect();
+    $statement = $dbConnect->prepare("SELECT username,user_type FROM session WHERE username = :username AND user_type = :user_type");
+
+    $statement->bindParam("username", $sessionData["username"]);
+    $statement->bindParam("user_type", $sessionData["type_user"]);
+    $statement->execute();
+    $resultSession = $statement->fetch();
+
+    if($resultSession["user_type"] === UserType::ADMIN->value){
+    
+   
+      $temporaryComments = [];
+      $statementTemporaryComment = $dbConnect->prepare("SELECT tc.idArticle, tc.idUser, tc.content, DATE_FORMAT(tc.date_creation, '%d %M %Y') AS date_of_publication, a.title FROM temporary_comment tc JOIN article a ON tc.idArticle = a.id ");
+      $statementTemporaryComment->execute();
+
+      
+      while ($row = $statementTemporaryComment->fetch()) {
+        $frenchDateFormat = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
+        $date = $frenchDateFormat->format(new DateTime($row["date_of_publication"]));
+        $statementUser = $dbConnect->prepare("SELECT id,username FROM user WHERE id = :idUser");
+        $statementUser->bindParam("idUser",$row["idUser"]);
+        $statementUser->execute();
+        while($row2 = $statementUser->fetch()){
+          $data = [
+            "id_article" => $row["idArticle"],
+            "id_user" => $row["idUser"],
+            "content" => $row["content"],
+            "date_creation" => $date,
+            "title" => $row["title"],
+            "username" => $row2["username"]
+          ];
+        }
+      
+          $temporaryComments[] = $data;
+      }
+      return !empty($temporaryComments) ? $temporaryComments : null;
     }
   }
 }
