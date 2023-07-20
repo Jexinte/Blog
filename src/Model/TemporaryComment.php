@@ -132,7 +132,6 @@ class TemporaryComment
     $gmail = json_decode($key_3, true);
     $usernameSession = $sessionData["username"];
     $mail = new PHPMailer(true);
-    var_dump($titleOfArticle);
     $mail->isSMTP();
     $mail->Host = $gmail["smtp_address"];
     $mail->SMTPAuth = true;
