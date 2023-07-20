@@ -44,7 +44,7 @@ class TemporaryCommentController
     return $temporaryCommentRepository->checkCommentAlreadySentByUser($sessionData);
   }
 
-  public function handlegetTemporaryCommentsForAdministrators($sessionData):?array
+  public function handlegetTemporaryCommentsForAdministrators(array $sessionData):?array
   {
     $temporaryCommentRepository = $this->temporaryComment;
     return $temporaryCommentRepository->getTemporaryCommentsForAdministrators($sessionData);
