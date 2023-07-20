@@ -94,14 +94,16 @@ if (isset($_GET['action'])) {
 
     $action = $_GET['action'];
     $defaultValues = [];
-    $labels = ["title","id",
-    "short_phrase",
-    "content",
-    "image",
-    "author_image",
-    "author",
-    "tags",
-    "date_of_publication"];
+    $labels = [
+        "title", "id",
+        "short_phrase",
+        "content",
+        "image",
+        "author_image",
+        "author",
+        "tags",
+        "date_of_publication"
+    ];
 
     switch ($action) {
         case "sign_up":
@@ -332,7 +334,7 @@ if (isset($_GET['action'])) {
             break;
         case "delete_article":
             if ($_SESSION["type_user"] != UserType::ADMIN->value) {
-                header("Location: index.php?action=error&code=401");                
+                header("Location: index.php?action=error&code=401");
             }
             if (is_array($articleController->handleDeleteArticle($_GET["id"], $_SESSION))) {
                 header("HTTP/1.1 302");
@@ -350,31 +352,29 @@ if (isset($_GET['action'])) {
 
         case "add_comment":
             $article = current($articleController->handleOneArticle($_GET["idArticle"]));
-            foreach($labels as $k => $v){
+            foreach ($labels as $k => $v) {
                 $defaultValues[$v] = $article[$v];
             }
 
 
-            try{
+            try {
                 $template = "article.twig";
-              
-                $paramaters["default"] = $defaultValues;
-                if(is_array($temporaryCommentController->handleInsertTemporaryCommentValidator($_POST["comment"],$_POST["id_article"],$_SESSION))){
-                    header("HTTP/1.1 302");
-                    header("Location: index.php?selection=article&id=".$defaultValues["id"]);
-                }
 
-              
-            } catch(CommentEmptyException $e){
-                $paramaters =[
+                $paramaters["default"] = $defaultValues;
+                if (is_array($temporaryCommentController->handleInsertTemporaryCommentValidator($_POST["comment"], $_POST["id_article"], $_SESSION))) {
+                    header("HTTP/1.1 302");
+                    header("Location: index.php?selection=article&id=" . $defaultValues["id"]);
+                }
+            } catch (CommentEmptyException $e) {
+                $paramaters = [
                     "comment_exception" => CommentEmptyException::COMMENT_EMPTY_EXCEPTION,
                     "default" => $defaultValues
                 ];
-            }catch(CommentWrongFormatException $e){
-                $paramaters =[
-                "comment_exception" => CommentWrongFormatException::COMMENT_WRONG_FORMAT_EXCEPTION,
-                "default" => $defaultValues
-                ] ;
+            } catch (CommentWrongFormatException $e) {
+                $paramaters = [
+                    "comment_exception" => CommentWrongFormatException::COMMENT_WRONG_FORMAT_EXCEPTION,
+                    "default" => $defaultValues
+                ];
             }
             break;
     }
@@ -426,19 +426,18 @@ if (isset($_GET['action'])) {
                 "data" => current($articleController->handleOneArticle($_GET['id']))
             ];
             $template = "article.twig";
-            
+
             $_SESSION["id_article"] = $defaultValue["data"]["id"];
             $paramaters["article"] = current($articleController->handleOneArticle($_GET['id']));
-  
-        if(isset($_SESSION["username"])){
 
-            if(is_array($temporaryCommentController->handlecheckCommentAlreadySentByUser($_SESSION)) && array_key_exists("user_already_commented",$temporaryCommentController->handlecheckCommentAlreadySentByUser($_SESSION))){
-                $paramaters["count_of_comments"] = $temporaryCommentController->handlecheckCommentAlreadySentByUser($_SESSION)["user_already_commented"];
+            if (isset($_SESSION["username"])) {
+
+                if (is_array($temporaryCommentController->handlecheckCommentAlreadySentByUser($_SESSION)) && array_key_exists("user_already_commented", $temporaryCommentController->handlecheckCommentAlreadySentByUser($_SESSION))) {
+                    $paramaters["count_of_comments"] = $temporaryCommentController->handlecheckCommentAlreadySentByUser($_SESSION)["user_already_commented"];
+                }
+            } else {
+                $paramaters["no_user_connected"] = 1;
             }
-        }
-        else{
-            $paramaters["no_user_connected"] = 1;
-        }
             break;
         case "add_article":
             if ($_SESSION["type_user"] != UserType::ADMIN->value) {

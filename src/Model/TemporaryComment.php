@@ -12,7 +12,7 @@ class TemporaryComment
   ) {
   }
 
-  public function insertTemporaryComment(object $data , array $sessionData)
+  public function insertTemporaryComment(object $data , array $sessionData):array
   {
     $commentsData = $data->getData();
     $dbConnect = $this->connector->connect();
