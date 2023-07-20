@@ -364,6 +364,7 @@ if (isset($_GET['action'])) {
                 if (is_array($temporaryCommentController->handleInsertTemporaryCommentValidator($_POST["comment"], $_POST["id_article"], $_SESSION))) {
                     header("HTTP/1.1 302");
                     header("Location: index.php?selection=article&id=" . $defaultValues["id"]);
+                    $temporaryCommentController->handleMailToAdmin($_SESSION, $defaultValues["title"]);
                 }
             } catch (CommentEmptyException $e) {
                 $paramaters = [

@@ -6,6 +6,9 @@ use Config\DatabaseConnection;
 use DateTime;
 use IntlDateFormatter;
 use Enumeration\UserType;
+use Exceptions\FormMessageNotSentException;
+use PHPMailer\PHPMailer\PHPMailer;
+
 class TemporaryComment
 {
 
@@ -77,7 +80,7 @@ class TemporaryComment
     }
   }
 
-  public function getTemporaryCommentsForAdministrators(array $sessionData):?array
+  public function getTemporaryCommentsForAdministrators(array $sessionData): ?array
   {
     $dbConnect = $this->connector->connect();
     $statement = $dbConnect->prepare("SELECT username,user_type FROM session WHERE username = :username AND user_type = :user_type");
@@ -87,21 +90,21 @@ class TemporaryComment
     $statement->execute();
     $resultSession = $statement->fetch();
 
-    if($resultSession["user_type"] === UserType::ADMIN->value){
-    
-   
+    if ($resultSession["user_type"] === UserType::ADMIN->value) {
+
+
       $temporaryComments = [];
       $statementTemporaryComment = $dbConnect->prepare("SELECT tc.idArticle, tc.idUser, tc.content, DATE_FORMAT(tc.date_creation, '%d %M %Y') AS date_of_publication, a.title FROM temporary_comment tc JOIN article a ON tc.idArticle = a.id ");
       $statementTemporaryComment->execute();
 
-      
+
       while ($row = $statementTemporaryComment->fetch()) {
         $frenchDateFormat = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
         $date = $frenchDateFormat->format(new DateTime($row["date_of_publication"]));
         $statementUser = $dbConnect->prepare("SELECT id,username FROM user WHERE id = :idUser");
-        $statementUser->bindParam("idUser",$row["idUser"]);
+        $statementUser->bindParam("idUser", $row["idUser"]);
         $statementUser->execute();
-        while($row2 = $statementUser->fetch()){
+        while ($row2 = $statementUser->fetch()) {
           $data = [
             "id_article" => $row["idArticle"],
             "id_user" => $row["idUser"],
@@ -111,10 +114,51 @@ class TemporaryComment
             "username" => $row2["username"]
           ];
         }
-      
-          $temporaryComments[] = $data;
+
+        $temporaryComments[] = $data;
       }
       return !empty($temporaryComments) ? $temporaryComments : null;
     }
+  }
+
+  public function mailToAdmin(array $sessionData, string $titleOfArticle):void
+  {
+
+    $key = file_get_contents("../config/stmp_credentials.json");
+    $key_2 = file_get_contents("../config/stmp_credentials.json");
+    $key_3 = file_get_contents("../config/stmp_credentials.json");
+    $username = json_decode($key, true);
+    $password = json_decode($key_2, true);
+    $gmail = json_decode($key_3, true);
+    $usernameSession = $sessionData["username"];
+    $mail = new PHPMailer(true);
+    var_dump($titleOfArticle);
+    $mail->isSMTP();
+    $mail->Host = $gmail["smtp_address"];
+    $mail->SMTPAuth = true;
+    $mail->Username = $username["username"]; // Name of the owner application password
+    $mail->Password = $password["password"]; // Gmail Password Application
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = 587;
+    $mail->SMTPOptions = array(
+      'ssl' => array(
+        'verify_peer' => false,
+        'verify_peer_name' => false,
+        'allow_self_signed' => true
+      )
+    );
+
+    $mail->setFrom($username["username"],);
+    $mail->addAddress($username["username"]);
+    $mail->isHTML();
+
+    $mail->Subject = "Nouveau commentaire du sujet $titleOfArticle";
+
+    $mail->Body = "Cher administrateur, <br><br>
+      Un nouveau commentaire a été publié sur le site par l'utilisateur <strong>$usernameSession</strong>. <br><br>
+      Pour modérer ou répondre à ce commentaire, veuillez vous connecter à l'interface d'administration du site. <br><br>
+      Cordialement,<br><br>
+      L'équipe du site";
+    $mail->send();
   }
 }
