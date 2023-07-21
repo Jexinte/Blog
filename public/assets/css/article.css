@@ -26,12 +26,17 @@ header {
 
 .author-box img {
   width: 100px;
-  border-radius: 50%;
+  border-radius: 90%;
+  height: 105px;
+  border: 3px solid black;
 }
 
 .article {
   display: flex;
   flex-direction: column;
+}
+.author-comment{
+  color:var(--black);
 }
 
 .author-box {
@@ -159,7 +164,7 @@ form textarea {
 #comment-already-sent{
   font-weight: var(--700);
 }
-/* Servira plus tard pour la partie commentaire*/
+
 
 
 #comment .command-box .command {
@@ -167,6 +172,12 @@ form textarea {
   background-color: var(--black);
   font-weight: var(--700);
   padding: 1em;
+}
+
+#comments .comments {
+  display: flex;
+  flex-direction: column;
+  gap: 3em;
 }
 
 @media (max-width:576px) {

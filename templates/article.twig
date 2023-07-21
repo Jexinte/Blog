@@ -65,22 +65,26 @@
 		{% endif %}
 		
 		
-		{# La logique pour afficher un paragraphe disant qu'il faut être connecté arrivera plus tard #}
+		
 	
 	</div>
 
 	<div class="container-fluid" id="comments">
 		<h2 class="h2">Commentaires</h2>
 		<div class="row">
+
+		{% for comment in comments %}
+			
 			<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 comments">
 				<div class="author-box">
-					<img src="../public/assets/images/author_1.jpg" alt="author comment img">
-					<h3 class="author-name">Test ,
-						<span class="date-comment">le 14 juin 2023</span>
+					<img src="{{comment.profile_image}}" alt="author comment img">
+					<h3 class="author-name">{{comment.username}} ,
+						<span class="date-comment">le {{comment.date_of_publication}}</span>
 					</h3>
-					<p class="author-comment">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tenetur natus similique, dolor fugit, neque facilis molestiae error consequatur corporis, a nulla quisquam vero laudantium molestias. Mollitia id autem possimus alias!</p>
+					<p class="author-comment">{{comment.content}}</p>
 				</div>
 
+		{% endfor %}
 
 			</div>
 		</div>

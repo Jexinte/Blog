@@ -5,6 +5,7 @@ require_once __DIR__ . "../../vendor/autoload.php";
 
 use Model\Article;
 use Model\TemporaryComment;
+use Model\Comment;
 use Model\User;
 use Model\HomepageForm;
 use Model\SessionManager;
@@ -52,6 +53,7 @@ use Controller\UserController;
 use Controller\DownloadController;
 use Controller\HomepageFormController;
 use Controller\TemporaryCommentController;
+use Controller\CommentController;
 
 use Enumeration\UserType;
 
@@ -87,6 +89,8 @@ $formController = new HomepageFormController($formRepository);
 $temporaryCommentRepository = new TemporaryComment($db);
 $temporaryCommentController = new TemporaryCommentController($temporaryCommentRepository);
 
+$commentRepository = new Comment($db);
+$commentController = new CommentController($commentRepository);
 
 $template = "homepage.twig";
 $paramaters = [];
@@ -475,16 +479,18 @@ if (isset($_GET['action'])) {
             }
             break;
         case "article":
+           
 
             $defaultValue = [
                 "data" => current($articleController->handleOneArticle($_GET['id']))
+                
             ];
             $template = "article.twig";
 
             $_SESSION["id_article"] = $defaultValue["data"]["id"];
             $paramaters["article"] = current($articleController->handleOneArticle($_GET['id']));
 
-
+            $paramaters["comments"] = $commentController->handleGetAllComments($_GET['id']);
             if (isset($_SESSION["username"])) {
 
                 if (is_array($temporaryCommentController->handlecheckCommentAlreadySentByUser($_SESSION)) && array_key_exists("user_already_commented", $temporaryCommentController->handlecheckCommentAlreadySentByUser($_SESSION))) {
