@@ -23,16 +23,18 @@
 	<div class="container-fluid" id="comment">
 		<h2 id="comment-main-title">Commentaire</h2>
 		<div class="commentary-box">
-			<h3 class="author-comment">{{comment.username}}, le {{comment.date_of_publication}} :</h3>
+			<h3 class="author-comment">{{comment.username is defined ? comment.username : com.username}}, le {{comment.date_of_publication is defined ? comment.date_of_publication : com.date_of_publication}} :</h3>
 			
-			<p class="text-center content-comment">{{comment.content}}</p>
+			<p class="text-center content-comment">{{comment.content is defined ? comment.content : com.content}}</p>
 		</div>
-		<form action="#">
+		<form action="?action=validation&amp;idComment={{comment.id is defined ? comment.id : comment.idComment}}" method="post">
 			<label for="feedback">Explication (facultatif) :</label>
 			<textarea name="feedback" id="feedback" cols="30" rows="10"></textarea>
+			<p class="text-danger" id="feedback-error">{{validation_exception is defined ? validation_exception : ''}}</p>
+			
 			<div class="commands-admin">
-				<input class="btn btn-warning command" type="submit" value="Accepter">
-				<input class="btn btn-dark command" type="submit" value="Rejeter">
+				<input class="btn btn-warning command" name="accepted" type="submit" value="Accepter">
+				<input class="btn btn-dark command" name="rejected" type="submit" value="Rejeter">
 			</div>
 
 		</form>

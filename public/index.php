@@ -38,6 +38,14 @@ use Exceptions\LastnameErrorEmptyException;
 use Exceptions\LastnameWrongFormatException;
 use Exceptions\FirstNameErrorEmptyException;
 use Exceptions\FirstNameWrongFormatException;
+use Exceptions\CommentEmptyException;
+use Exceptions\CommentWrongFormatException;
+use Exceptions\EmailUnavailableException;
+use Exceptions\EmailUnexistException;
+use Exceptions\FormMessageNotSentException;
+use Exceptions\PasswordIncorrectException;
+use Exceptions\UsernameUnavailableException;
+use Exceptions\ValidationErrorWrongFormatException;
 
 use Controller\ArticleController;
 use Controller\UserController;
@@ -46,13 +54,7 @@ use Controller\HomepageFormController;
 use Controller\TemporaryCommentController;
 
 use Enumeration\UserType;
-use Exceptions\CommentEmptyException;
-use Exceptions\CommentWrongFormatException;
-use Exceptions\EmailUnavailableException;
-use Exceptions\EmailUnexistException;
-use Exceptions\FormMessageNotSentException;
-use Exceptions\PasswordIncorrectException;
-use Exceptions\UsernameUnavailableException;
+
 
 $action = "";
 $selection = "";
@@ -94,6 +96,7 @@ if (isset($_GET['action'])) {
 
     $action = $_GET['action'];
     $defaultValues = [];
+    $defaultValuesTemporaryComments = [];
     $labels = [
         "title", "id",
         "short_phrase",
@@ -103,6 +106,10 @@ if (isset($_GET['action'])) {
         "author",
         "tags",
         "date_of_publication"
+    ];
+
+    $labelsTemporaryComments = [
+        "username", "date_of_publication", "content"
     ];
 
     switch ($action) {
@@ -378,6 +385,43 @@ if (isset($_GET['action'])) {
                 ];
             }
             break;
+        case "validation":
+
+            try {
+
+                $template = "admin_validation_commentary.twig";
+
+                $defaultValues = [];
+                $defaultValues["idComment"] = $_GET["idComment"];
+                $temporaryComment = $temporaryCommentController->handleGetOneTemporaryComment($defaultValues["idComment"]);
+                foreach ($labelsTemporaryComments as $k => $v) {
+                    $defaultValuesTemporaryComments[$v] = $temporaryComment[$v];
+                }
+                $paramaters["comment"] = $defaultValues;
+                $paramaters["com"] = $temporaryCommentController->handleGetOneTemporaryComment($defaultValues["idComment"]);
+
+
+                $finalPost = isset($_POST["accepted"]) ? $_POST["accepted"] : $_POST["rejected"];
+
+
+                if (array_key_exists("approved", $temporaryCommentController->handleValidationTemporaryComment($finalPost, $_GET["idComment"], $_POST["feedback"])) || array_key_exists("rejected", $temporaryCommentController->handleValidationTemporaryComment($finalPost, $_GET["idComment"], $_POST["feedback"]))) {
+                    header("HTTP/1.1 302");
+                    header("Location:index.php?selection=admin_panel");
+                    $_SESSION[array_key_first($temporaryCommentController->handleinsertNotificationUserOfTemporaryComment($temporaryCommentController->handleValidationTemporaryComment($finalPost, $_GET["idComment"], $_POST["feedback"])))] = 1;
+                    $_SESSION["id_comment"] = $defaultValues["idComment"];
+                    if (array_key_exists("temporary_comment_approved", $temporaryCommentController->handleFinalValidationOfTemporaryComment($_SESSION))) {
+                        unset($_SESSION["temporary_comment_approved"]);
+                    } else {
+                        unset($_SESSION["temporary_comment_rejected"]);
+                    }
+                }
+            } catch (ValidationErrorWrongFormatException $e) {
+                $paramaters = [
+                    "validation_exception" => ValidationErrorWrongFormatException::VALIDATION_MESSAGE_ERROR_WRONG_FORMAT,
+                    "comment" => $temporaryComment
+                ];
+            }
+            break;
     }
 } elseif ((isset($_GET['selection']))) {
 
@@ -431,9 +475,7 @@ if (isset($_GET['action'])) {
             }
             break;
         case "article":
-            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
-                header("Location: index.php?action=error&code=403");
-            }
+
             $defaultValue = [
                 "data" => current($articleController->handleOneArticle($_GET['id']))
             ];
