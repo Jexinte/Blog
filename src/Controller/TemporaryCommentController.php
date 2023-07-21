@@ -31,7 +31,7 @@ class TemporaryCommentController
     }
   }
 
-  public function handleFeedbackField($feedback)
+  public function handleFeedbackField(string $feedback):?array
   {
     $feedbackRegex = "/^[A-ZÀ-ÿa-zÀ-ÿ0-9\s\-_\!\@\#\$\%\&\'\(\)\*\+\,\.\:\/\;\=\?\[\]\^\`\{\|\}\~]{0,500}$/";
     switch (true) {
@@ -81,7 +81,7 @@ class TemporaryCommentController
 
     $feedbackResult = $this->handleFeedbackField($feedback)["feedback"];
     $temporaryCommentRepository = $this->temporaryComment;
-    return $temporaryCommentRepository->ValidationTemporaryComment($typeValidation, $idComment, $feedbackResult);
+    return $temporaryCommentRepository->validationTemporaryComment($typeValidation, $idComment, $feedbackResult);
   }
 
   public function handleinsertNotificationUserOfTemporaryComment(array $data): ?array

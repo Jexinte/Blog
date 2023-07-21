@@ -184,7 +184,7 @@ class TemporaryComment
     }
   }
 
-  public function ValidationTemporaryComment(string $valueOfValidation, int $idComment, string $feedback): ?array
+  public function validationTemporaryComment(string $valueOfValidation, int $idComment, string $feedback): ?array
   {
     $dbConnect = $this->connector->connect();
     switch (true) {
@@ -248,7 +248,7 @@ class TemporaryComment
         return ["temporary_comment_rejected" => 1, "id_comment" => $data["id_comment"]];
     }
   }
-  public function finalValidationOfTemporaryComment($sessionData): ?array
+  public function finalValidationOfTemporaryComment(array $sessionData): ?array
   {
 
     $dbConnect = $this->connector->connect();
