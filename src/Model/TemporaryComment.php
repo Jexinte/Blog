@@ -186,7 +186,7 @@ class TemporaryComment
 
   public function validationTemporaryComment(string $valueOfValidation, int $idComment, string $feedback): ?array
   {
-    var_dump($valueOfValidation);
+    
     $dbConnect = $this->connector->connect();
     switch (true) {
       case str_contains($valueOfValidation, "Accepter"):
