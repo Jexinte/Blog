@@ -229,4 +229,16 @@ readonly class UserController
       return $userRepository->logout($sessionData);
     }
   }
+
+  public function handleGetAllUserNotifications(array $sessionData): ?array
+  {
+    $userRepository = $this->user;
+    return $userRepository->getAllUserNotifications($sessionData);
+  }
+
+  public function handleDeleteNotification(int $idNotification)
+  {
+    $userRepository = $this->user;
+    return $userRepository->deleteNotification($idNotification);
+  }
 }

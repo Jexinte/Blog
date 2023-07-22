@@ -426,6 +426,14 @@ if (isset($_GET['action'])) {
                 ];
             }
             break;
+
+            case "delete_notification":
+                $template ="notification.twig";
+                $paramaters["notifications"] = $userController->handleGetAllUserNotifications($_SESSION);
+                if(array_key_exists("notification_delete",$userController->handleDeleteNotification($_GET["id_notification"]))){
+                    header("HTTP/1.1 302");
+                    header("Location:index.php?selection=notifications");
+                }
     }
 } elseif ((isset($_GET['selection']))) {
 
@@ -452,7 +460,8 @@ if (isset($_GET['action'])) {
 
             $paramaters = [
                 "articles" => $articleController->listOfAllArticles(),
-                "session" => $_SESSION
+                "session" => $_SESSION,
+                "total_notifications" => count($userController->handleGetAllUserNotifications($_SESSION))
             ];
             break;
         case "admin_panel":
@@ -479,11 +488,11 @@ if (isset($_GET['action'])) {
             }
             break;
         case "article":
-           
+
 
             $defaultValue = [
                 "data" => current($articleController->handleOneArticle($_GET['id']))
-                
+
             ];
             $template = "article.twig";
 
@@ -515,8 +524,11 @@ if (isset($_GET['action'])) {
             $paramaters = [
                 "article" => current($articleController->handleOneArticle($_GET["id"])),
             ];
-
             break;
+
+        case "notifications":
+            $template = "notification.twig";
+            $paramaters["notifications"] = $userController->handleGetAllUserNotifications($_SESSION);
     }
 }
 

@@ -8,12 +8,57 @@
 {% block title %}
 	<title>
 		Notification|Blog professionnel
-		
+
 	</title>
 {% endblock %}
 {% block css_page %}
-	{# <link rel="stylesheet" href="../public/assets/css/article.css"> #}
+	<link rel="stylesheet" href="../public/assets/css/notification.css">
+{% endblock %}
+{% block content %}
+	{% include "menu_article.twig" %}
+
+	<div class="container-fluid" id="notification">
+		<div class="container-fluid" id="banner">
+			<img src="../public/assets/images/notification_banner.jpg" alt="">
+		</div>
+		<h1 class="text-center">Notifications</h1>
+		<div class="row" id="notifications">
+			{% if notifications is empty %}
+				<h2 class="text-center" id="no-notifications">Rien à signaler pour le moment !</h2>
+			{% endif %}
+
+			{% for notification in notifications %}
+				<div class="text-center col-sm-12 col-md-12 col-lg-12 col-xl-12 notifications">
+
+					{% if notification.approved == 1  %}
+						<a href="index.php?selection=article&amp;id={{notification.idArticle}}" class=" notation">Votre commentaire
+							{{notification.title_article}}
+							a été accepté !</a>
+					{% else %}
+						<a href="index.php?selection=article&amp;id={{notification.idArticle}}" class=" notation">Votre commentaire
+							{{notification.title_article}}
+							a été rejeté !</a>
+						<p class="text-center raison">Raison :
+							<br><span id="feedback">{{notification.feedback_administrator is not null ? notification.feedback_administrator : 'Non communiquée !'}}
+							</span>
+						</p>
+					{% endif %}
+				</div>
+				<a href="index.php?action=delete_notification&amp;id_notification={{notification.id}}" class="text-center">
+					<i class="fa-solid fa-xmark" style="color: #f41f1f;"></i>
+				</a>
+
+			{% endfor %}
+		</div>
+
+	</div>
+
+	{% if session is defined and session.type_user == "admin" %}
+		{% include "admin_footer.twig" %}
+	{% else %}
+
+		{% include "footer.twig" %}
+
+	{% endif %}
 {% endblock %}
 
-{% block content %}
-{% endblock %}
