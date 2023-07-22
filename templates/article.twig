@@ -84,10 +84,18 @@
 					<p class="author-comment">{{comment.content}}</p>
 				</div>
 
+			</div>
 		{% endfor %}
 
-			</div>
 		</div>
+		
 	</div>
+		{% if session is defined and session.type_user == "admin" %}
+		{% include "admin_footer.twig" %}
+	{% else %}
+
+		{% include "footer.twig" %}
+
+	{% endif %}
 {% endblock %}
 
