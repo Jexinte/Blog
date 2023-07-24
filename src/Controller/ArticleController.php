@@ -136,7 +136,7 @@ class ArticleController
 
 
 
-  public function handleUpdateTitleValidation($title)
+  public function handleUpdateTitleValidation(string $title) : string|array
   {
     $expectedWord = ucfirst($title);
 
@@ -152,7 +152,7 @@ class ArticleController
   }
 
 
-  public function handleUpdateShortPhraseValidation(string $shortPhrase)
+  public function handleUpdateShortPhraseValidation(string $shortPhrase): string|array
   {
 
     $expectedWord = ucfirst($shortPhrase);
@@ -169,7 +169,7 @@ class ArticleController
     }
   }
 
-  public function handleUpdateContentValidation(string $content)
+  public function handleUpdateContentValidation(string $content): string|array
   {
     $expectedWord = ucfirst($content);
 
