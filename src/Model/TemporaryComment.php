@@ -157,7 +157,7 @@ class TemporaryComment
 
     $mail->Body = "Cher administrateur, <br><br>
       Un nouveau commentaire a été publié sur le site par l'utilisateur <strong>$usernameSession</strong>. <br><br>
-      Pour modérer ou répondre à ce commentaire, veuillez vous connecter à l'interface d'administration du site. <br><br>
+      Pour modérer ou répondre à ce commentaire, veuillez vous connecter à l'interface d'administration du site : http://localhost/P5_Créez%20votre%20premier%20blog%20en%20PHP%20-%20Dembele%20Mamadou/public/index.php?selection=sign_in. <br><br>
       Cordialement,<br><br>
       L'équipe du site";
     $mail->send();

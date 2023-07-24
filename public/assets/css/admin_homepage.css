@@ -58,6 +58,7 @@ a {
 #no-article{
   color: var(--black);
   font-weight: var(--900);
+  margin: 3em 0;
 }
 .comments .comment {
   text-decoration: none;

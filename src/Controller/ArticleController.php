@@ -39,7 +39,7 @@ class ArticleController
 
   public function handleTitleField(string $title): array|string
   {
-    $titleRegex = "/^(?=.{1,500}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ -']*$/";
+    $titleRegex = "/^(?=.{1,500}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ, .'-]*$/u";
     switch (true) {
       case empty($title):
         throw new TitleErrorEmptyException();
@@ -76,7 +76,7 @@ class ArticleController
   }
   public function handleShortPhraseField(string $shortPhrase): array|string
   {
-    $shortPhraseRegex = "/^(?=.{1,500}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ -']*$/";
+    $shortPhraseRegex = "/^(?=.{1,5000}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ, .'-]*$/u";
     switch (true) {
       case empty($shortPhrase):
         throw new ShortPhraseErrorEmptyException();
@@ -136,12 +136,58 @@ class ArticleController
 
 
 
-  public function handleUpdateValidationOnCharacterLength(string $value, int $minimumLength, int $maximumLength): bool
+  public function handleUpdateTitleValidation($title)
   {
-    return strlen($value) >= $minimumLength && strlen($value) <= $maximumLength;
+    $expectedWord = ucfirst($title);
+
+    switch (true) {
+      case empty($title):
+        throw new TitleErrorEmptyException();
+      case $title != $expectedWord || strlen($title) > 500:
+        throw new TitleWrongFormatException();
+
+      default:
+        return ["title" => $title];
+    }
   }
 
-  public function handleUpdateValidationOnNumberOfTagsAuthorized(string $value, int $numberOfTagsAuthorized): bool
+
+  public function handleUpdateShortPhraseValidation(string $shortPhrase)
+  {
+
+    $expectedWord = ucfirst($shortPhrase);
+
+    switch (true) {
+      case empty($shortPhrase):
+        throw new ShortPhraseErrorEmptyException();
+      case $shortPhrase != $expectedWord:
+        throw new ShortPhraseWrongFormatException();
+      case strlen($shortPhrase) > 500:
+        throw new ShortPhraseWrongFormatException();
+      default:
+        return ["short_phrase" => $shortPhrase];
+    }
+  }
+
+  public function handleUpdateContentValidation(string $content)
+  {
+    $expectedWord = ucfirst($content);
+
+    switch (true) {
+      case empty($content):
+        throw new ContentArticleErrorEmptyException();
+      case $content != $expectedWord:
+        throw new ContentArticleWrongFormatException();
+      case strlen($content) > 500:
+        throw new ContentArticleWrongFormatException();
+      default:
+        return ["content" => $content];
+    }
+  }
+
+
+
+  public function handleUpdateValidationOnNumberOfTagsAuthorized(string $value, int $numberOfTagsAuthorized): string|array
   {
     $result = count(explode(" ", $value)) == 3 ? explode(' ', $value) : null;
     $counter = 0;
@@ -151,7 +197,7 @@ class ArticleController
       }
     }
 
-    return $counter === $numberOfTagsAuthorized;
+    return $counter === $numberOfTagsAuthorized ? ["tags" => $value] : throw new TagsWrongFormatException();
   }
 
   public function handleUpdateValidationOnFilePath(array $filePathFromForm, string $originalPathFromDatabase): string|array|null
@@ -175,67 +221,34 @@ class ArticleController
             $filenameGeneratedUpdateArticle = $bytesToStr . "." . $filenameAndExtensionUpdateArticle[1];
 
             return ["file" => "$filenameGeneratedUpdateArticle;$filenameTmpUpdateArticle;$dirImagesUpdateArticle"];
-          }
-
-          return ["failed_type" => "Seuls les fichiers de type : jpg, jpeg , png et webp sont acceptés !"];
+          } else throw new FileTypeException();
         }
         return null;
     }
   }
   public function handleUpdateArticleValidator(string $title, array $fileArticle, string $hiddenInputFileOriginalPath, string $shortPhrase, string $content, string $tags, array $sessionData, int $idArticle): ?array
   {
+
     $articleRepository = $this->article;
-
     $numberOfTagsAuthorized = 3;
-    $counterOfFieldsWithoutError = 0;
 
 
-    $errors = [];
-
-
-    $titleMinimumLength = 1;
-    $titleMaximumLength = 500;
-    $shortPhraseMinimumLength = 1;
-    $shortPhraseMaximumLength = 500;
-    $contentMinimumLength = 1;
-    $contentMaximumLength = 5000;
-
-    $this->handleUpdateValidationOnCharacterLength($title, $titleMinimumLength, $titleMaximumLength) ? $counterOfFieldsWithoutError++ : $errors["title_error"] = "Le titre doit minimum posséder 20 caractères et ne peut en excéder 50";
-
-    $this->handleUpdateValidationOnCharacterLength($shortPhrase, $shortPhraseMinimumLength, $shortPhraseMaximumLength) ?  $counterOfFieldsWithoutError++ : $errors["short_phrase_error"] = "Le chapô e doit minimum posséder 20 caractères et ne peut en excéder 100";
-
-    $this->handleUpdateValidationOnCharacterLength($content, $contentMinimumLength, $contentMaximumLength) ? $counterOfFieldsWithoutError++ :  $errors["content_error"] = "Le contenu doit minimum posséder 2000 caractères et ne peut en excéder 5000";
-
-    $this->handleUpdateValidationOnNumberOfTagsAuthorized($tags, $numberOfTagsAuthorized) ? $counterOfFieldsWithoutError++ : $errors["tags_error"] = "Le nombre de tags doit être au nombre de 3 et doit suivre le format suivant #Nomdutag #Nomdutag #Nomdutag";
-
-
-
+    $titleResult = $this->handleUpdateTitleValidation($title)["title"];
+    $shortPhraseResult = $this->handleUpdateShortPhraseValidation($shortPhrase)["short_phrase"];
+    $contentResult = $this->handleUpdateContentValidation($content)["content"];
     $fileResult =  $this->handleUpdateValidationOnFilePath($fileArticle, $hiddenInputFileOriginalPath);
+    $tagsResult = $this->handleUpdateValidationOnNumberOfTagsAuthorized($tags, $numberOfTagsAuthorized)["tags"];
 
-    switch (true) {
-      case $counterOfFieldsWithoutError == 4 && is_string($fileResult):
-      case $counterOfFieldsWithoutError == 4 && is_array($fileResult) && array_key_exists("file", $fileResult):
-        $counterOfFieldsWithoutError++;
-        break;
-      case $counterOfFieldsWithoutError == 4 && is_array($fileResult) && array_key_exists("failed_type", $fileResult):
-        $errors["file_error"] = "Seuls les fichiers de type : jpg, jpeg , png et webp sont acceptés !";
-        break;
-    }
+    $fields = [
+      "title" => $titleResult,
+      "short_phrase" => $shortPhraseResult,
+      "content" => $contentResult,
+      "tags" => $tagsResult,
+      "file" => $fileResult,
+      "id_article" => $idArticle
+    ];
 
-
-    if ($counterOfFieldsWithoutError === 5) {
-      $fields = [
-        "title" => $title,
-        "short_phrase" => $shortPhrase,
-        "content" => $content,
-        "tags" => $tags,
-        "file" => $fileResult,
-        "id_article" => $idArticle
-      ];
-
-      return $articleRepository->updateArticle($fields, $sessionData);
-    }
-    return $errors;
+    return $articleRepository->updateArticle($fields, $sessionData);
   }
 
 
