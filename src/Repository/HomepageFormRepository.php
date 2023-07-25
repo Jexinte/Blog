@@ -16,7 +16,7 @@ readonly class HomepageFormRepository
   {
   }
 
-  public function insertDataInDatabase(array $form_data): array
+  public function insertDataInDatabase(array $formData): array
   {
 
     $dbConnect = $this->connector->connect();
@@ -24,11 +24,11 @@ readonly class HomepageFormRepository
 
     $statement = $dbConnect->prepare("INSERT INTO form_message(firstname,lastname,email,subject,message) VALUES(?,?,?,?,?)");
     $values = [
-      $form_data["firstname"],
-      $form_data["lastname"],
-      $form_data["email"],
-      $form_data["subject"],
-      $form_data["message"]
+      $formData["firstname"],
+      $formData["lastname"],
+      $formData["email"],
+      $formData["subject"],
+      $formData["message"]
     ];
     $statement->execute($values);
     return ["data_saved" => 1];
