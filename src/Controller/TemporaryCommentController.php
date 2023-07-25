@@ -4,6 +4,8 @@ namespace Controller;
 
 use Exceptions\CommentEmptyException;
 use Exceptions\CommentWrongFormatException;
+use Exceptions\ValidationErrorEmptyException;
+use Exceptions\ValidationErrorWrongFormatException;
 use Model\TemporaryComment;
 use Model\TemporaryCommentModel;
 
@@ -26,6 +28,18 @@ class TemporaryCommentController
         throw new CommentWrongFormatException();
       default:
         return ["comment" => $comment];
+    }
+  }
+
+  public function handleFeedbackField(string $feedback):?array
+  {
+    $feedbackRegex = "/^[A-ZÀ-ÿa-zÀ-ÿ0-9\s\-_\!\@\#\$\%\&\'\(\)\*\+\,\.\:\/\;\=\?\[\]\^\`\{\|\}\~]{0,500}$/";
+    switch (true) {
+
+      case !preg_match($feedbackRegex, $feedback):
+        throw new ValidationErrorWrongFormatException();
+      default:
+        return ["feedback" => $feedback];
     }
   }
   public function handleInsertTemporaryCommentValidator(string $comment, int $idArticle, array $sessionData): array
@@ -60,5 +74,25 @@ class TemporaryCommentController
   {
     $temporaryCommentRepository = $this->temporaryComment;
     return $temporaryCommentRepository->getOneTemporaryComment($idComment);
+  }
+
+  public function handleValidationTemporaryComment(string $typeValidation, int $idComment, string $feedback): ?array
+  {
+
+    $feedbackResult = $this->handleFeedbackField($feedback)["feedback"];
+    $temporaryCommentRepository = $this->temporaryComment;
+    return $temporaryCommentRepository->validationTemporaryComment($typeValidation, $idComment, $feedbackResult);
+  }
+
+  public function handleinsertNotificationUserOfTemporaryComment(array $data): ?array
+  {
+    $temporaryCommentRepository = $this->temporaryComment;
+    return $temporaryCommentRepository->insertNotificationUserOfTemporaryComment($data);
+  }
+
+  public function handleFinalValidationOfTemporaryComment(array $data): ?array
+  {
+    $temporaryCommentRepository = $this->temporaryComment;
+    return $temporaryCommentRepository->finalValidationOfTemporaryComment($data);
   }
 }
