@@ -43,7 +43,7 @@ class TemporaryCommentModel
   {
     return $this->rejected;
   }
-  public function getFeedbackAdministrator()
+  public function getFeedbackAdministrator():string|null
   {
     return $this->feedbackAdministrator;
   }
