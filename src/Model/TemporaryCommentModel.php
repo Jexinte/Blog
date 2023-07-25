@@ -19,27 +19,27 @@ class TemporaryCommentModel
 
 
 
-  public function getIdArticle()
+  public function getIdArticle():int
   {
     return $this->idArticle;
   }
-  public function getIdUser()
+  public function getIdUser():int
   {
     return $this->idUser;
   }
-  public function getContent()
+  public function getContent():string
   {
     return $this->content;
   }
-  public function getDateCreation()
+  public function getDateCreation():string
   {
     return $this->dateCreation;
   }
-  public function getApproved()
+  public function getApproved() : bool|null
   {
     return $this->approved;
   }
-  public function getRejected()
+  public function getRejected() : bool|null
   {
     return $this->rejected;
   }

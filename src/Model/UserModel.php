@@ -2,7 +2,7 @@
 
 namespace Model;
 
-
+use BackedEnum;
 use Enumeration\UserType;
 
 class UserModel
@@ -17,23 +17,23 @@ class UserModel
   ) {
   }
 
-  public function getUsername()
+  public function getUsername():string
   {
     return $this->username;
   }
-  public function getProfileImage()
+  public function getProfileImage():string
   {
     return $this->profileImage;
   }
-  public function getEmail()
+  public function getEmail():string
   {
     return $this->email;
   }
-  public function getPassword()
+  public function getPassword():string
   {
     return $this->password;
   }
-  public function getUserType()
+  public function getUserType():BackedEnum
   {
     return $this->type;
   }

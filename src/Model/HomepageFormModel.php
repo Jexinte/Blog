@@ -17,23 +17,23 @@ class HomepageFormModel
 
 
 
-  public function getFirstname()
+  public function getFirstname():string
   {
     return $this->firstname;
   }
-  public function getLastname()
+  public function getLastname():string
   {
     return $this->lastname;
   }
-  public function getEmail()
+  public function getEmail():string
   {
     return $this->email;
   }
-  public function getSubject()
+  public function getSubject():string
   {
     return $this->subject;
   }
-  public function getMessage()
+  public function getMessage():string
   {
     return $this->message;
   }
