@@ -13,7 +13,7 @@ class CommentRepository
   ) {
   }
 
-  public function getAllComments(int $idArticle):?array
+  public function getAllComments(array $comments,int $idArticle):?array
   {
     $dbConnect = $this->connector->connect();
 
@@ -21,7 +21,7 @@ class CommentRepository
     $statementGetComments->bindParam("idArticle",$idArticle);
     $statementGetComments->execute();
 
-    $comments = [];
+   
 
 
     while ($row = $statementGetComments->fetch()) {

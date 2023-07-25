@@ -14,6 +14,7 @@ class CommentController
   public function handleGetAllComments(int $idArticle): ?array
   {
     $commentRepository = $this->comment;
-    return $commentRepository->getAllComments($idArticle);
+    $comments = $commentRepository->getAllComments([],$idArticle);
+   return $comments;
   }
 }
