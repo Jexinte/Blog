@@ -116,6 +116,11 @@ header {
   width: 80%;
 }
 
+ #comments #no-comments {
+  font-weight: var(--700);
+  color: var(--black);
+ }
+
 #comments {
   margin-top: 10em;
   margin-bottom: 5em;

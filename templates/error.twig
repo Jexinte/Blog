@@ -18,7 +18,7 @@
 
 	<header>
 		<nav class="menu">
-			<a href="?selection=homepage"><img class="logo" src="../public/assets/images/logo.png" height="60" alt=""></a>
+			<a href="?selection=homepage"><img class="logo" src="../public/assets/images/logo/logo.png" height="60" alt=""></a>
 
 		</nav>
 	</header>
@@ -29,13 +29,13 @@
 
 					<div class="error-box">
 						{% if code == 500 %}
-							<img src="../public/assets/images/500.jpg" alt="500 code error">		
+							<img src="../public/assets/images/code_error/500.jpg" alt="500 code error">		
 							</a>
 							{% elseif code == 401 %}
 							
-							<img src="../public/assets/images/401.jpg" alt="401 code error">
+							<img src="../public/assets/images/code_error/401.jpg" alt="401 code error">
 							{% elseif code == 403 %}
-							<img src="../public/assets/images/403.jpg" alt="403 code error">
+							<img src="../public/assets/images/code_error/403.jpg" alt="403 code error">
 						{% endif %}
 
 					{% endif %}

@@ -157,7 +157,7 @@ class TemporaryComment
 
     $mail->Body = "Cher administrateur, <br><br>
       Un nouveau commentaire a été publié sur le site par l'utilisateur <strong>$usernameSession</strong>. <br><br>
-      Pour modérer ou répondre à ce commentaire, veuillez vous connecter à l'interface d'administration du site. <br><br>
+      Pour modérer ou répondre à ce commentaire, veuillez vous connecter à l'interface d'administration du site : http://localhost/P5_Créez%20votre%20premier%20blog%20en%20PHP%20-%20Dembele%20Mamadou/public/index.php?selection=sign_in. <br><br>
       Cordialement,<br><br>
       L'équipe du site";
     $mail->send();
@@ -186,10 +186,11 @@ class TemporaryComment
 
   public function validationTemporaryComment(string $valueOfValidation, int $idComment, string $feedback): ?array
   {
+    
     $dbConnect = $this->connector->connect();
     switch (true) {
       case str_contains($valueOfValidation, "Accepter"):
-        $statement = $dbConnect->prepare("SELECT id,idUser FROM temporary_comment WHERE id = :idComment");
+        $statement = $dbConnect->prepare("SELECT id,idUser,idArticle FROM temporary_comment WHERE id = :idComment");
         $statement->bindParam("idComment", $idComment);
         $statement->execute();
         $resultIsAccepted = $statement->fetch();
@@ -200,12 +201,12 @@ class TemporaryComment
           $statementInsertAcceptedChoice->bindValue("idComment", $idComment);
           $statementInsertAcceptedChoice->bindValue("feedback", $feedbackResult);
           $statementInsertAcceptedChoice->execute();
-          return ["approved" => 1, "feedback" => $feedbackResult, "id_user" => $resultIsAccepted["idUser"], "id_comment" => $idComment];
+          return ["approved" => 1, "feedback" => $feedbackResult, "id_user" => $resultIsAccepted["idUser"], "id_comment" => $idComment,"id_article" => $resultIsAccepted["idArticle"]];
         }
         break;
 
       case str_contains($valueOfValidation, "Rejeter"):
-        $statementRejected = $dbConnect->prepare("SELECT id,idUser FROM temporary_comment WHERE id = :idComment");
+        $statementRejected = $dbConnect->prepare("SELECT id,idUser,idArticle FROM temporary_comment WHERE id = :idComment");
         $statementRejected->bindParam("idComment", $idComment);
         $statementRejected->execute();
         $resultIsRejected = $statementRejected->fetch();
@@ -216,7 +217,7 @@ class TemporaryComment
           $statementInsertRejectedChoice->bindValue("idComment", $idComment);
           $statementInsertRejectedChoice->bindValue("feedback", $feedbackResult);
           $statementInsertRejectedChoice->execute();
-          return ["rejected" => 1, "feedback" => $feedbackResult, "id_user" => $resultIsRejected["idUser"], "id_comment" => $idComment];
+          return ["rejected" => 1, "feedback" => $feedbackResult, "id_user" => $resultIsRejected["idUser"], "id_comment" => $idComment,"id_article" => $resultIsRejected["idArticle"]];
         }
         break;
     }
@@ -232,7 +233,8 @@ class TemporaryComment
     switch (true) {
       case array_key_exists("approved", $data):
 
-        $statementAccepted = $dbConnect->prepare("INSERT INTO user_notification (idUser,approved,feedback_administrator) VALUES(:idUser,:approved,:feedbackAdministrator)");
+        $statementAccepted = $dbConnect->prepare("INSERT INTO user_notification (idArticle,idUser,approved,feedback_administrator) VALUES(:idArticle,:idUser,:approved,:feedbackAdministrator)");
+        $statementAccepted->bindValue("idArticle", $data["id_article"]);
         $statementAccepted->bindValue("idUser", $data["id_user"]);
         $statementAccepted->bindValue("approved", $data["approved"]);
         $statementAccepted->bindValue("feedbackAdministrator", $data["feedback"]);
@@ -240,7 +242,8 @@ class TemporaryComment
         return ["temporary_comment_approved" => 1, "id_comment" => $data["id_comment"]];
 
       case array_key_exists("rejected", $data):
-        $statementRejected = $dbConnect->prepare("INSERT INTO user_notification (idUser,rejected,feedback_administrator) VALUES(:idUser,:rejected,:feedbackAdministrator)");
+        $statementRejected = $dbConnect->prepare("INSERT INTO user_notification (idArticle,idUser,rejected,feedback_administrator) VALUES(:idArticle,:idUser,:rejected,:feedbackAdministrator)");
+        $statementRejected->bindValue("idArticle", $data["id_article"]);
         $statementRejected->bindValue("idUser", $data["id_user"]);
         $statementRejected->bindValue("rejected", $data["rejected"]);
         $statementRejected->bindValue("feedbackAdministrator", $data["feedback"]);

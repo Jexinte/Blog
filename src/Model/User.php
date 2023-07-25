@@ -64,7 +64,7 @@ readonly class User
     $statement->bindParam(":email", $email);
     $statement->execute();
     $user = $statement->fetch();
-  
+
     switch (true) {
       case $user && $user["type"] == UserType::USER->value:
         $checkPassword = password_verify($password, $user['password']);
@@ -75,7 +75,7 @@ readonly class User
           return ["password_error" => 1];
         }
 
-        return ["username" => $username, "type_user" => $typeUser,"id_user" => $userId];
+        return ["username" => $username, "type_user" => $typeUser, "id_user" => $userId];
 
       case $user && $user["type"] == UserType::ADMIN->value:
         $checkPassword = password_verify($password, $user['password']);
@@ -85,7 +85,7 @@ readonly class User
         if (!$checkPassword) {
           return ["password_error" => 1];
         }
-        return ["username" => $username, "type_user" => $typeUser,"id_user" => $userId];
+        return ["username" => $username, "type_user" => $typeUser, "id_user" => $userId];
       default:
         return ["email_error" => 1];
     }
@@ -160,5 +160,26 @@ readonly class User
     return ["logout" => 1];
   }
 
-  
+  public function getAllUserNotifications(array $sessionData):?array
+  {
+    $dbConnect = $this->connector->connect();
+
+    //* L'objectif est de récupérer les notifications de l'utilisateur afin de lui afficher un message personnalisé en fonction de la validation de son commentaire.
+
+    $statementGetAllNotifications = $dbConnect->prepare("SELECT * FROM user_notification WHERE idUser = :idUserOfSession");
+
+    $statementGetAllNotifications->bindParam("idUserOfSession", $sessionData["id_user"]);
+    $statementGetAllNotifications->execute();
+
+    return $statementGetAllNotifications->fetchAll();
+  }
+
+  public function deleteNotification(int $idNotification): ?array
+  {
+    $dbConnect = $this->connector->connect();
+    $statementDeleteNotification = $dbConnect->prepare("DELETE FROM user_notification WHERE id = :idNotification");
+    $statementDeleteNotification->bindParam("idNotification", $idNotification);
+    $statementDeleteNotification->execute();
+    return ["notification_delete" => 1];
+  }
 }

@@ -72,7 +72,9 @@
 	<div class="container-fluid" id="comments">
 		<h2 class="h2">Commentaires</h2>
 		<div class="row">
-
+	{% if comments is empty %}
+	<h2 class="text-center" id="no-comments">Soyez le premier à commenter cette article !</h2>
+	{% else %}
 		{% for comment in comments %}
 			
 			<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 comments">
@@ -85,8 +87,9 @@
 				</div>
 
 			</div>
-		{% endfor %}
-
+		{% endfor %}	
+	{% endif %}
+	
 		</div>
 		
 	</div>

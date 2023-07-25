@@ -17,20 +17,18 @@
 	{# HEADER #}
 	<header>
 		<nav class="menu">
-			<a href="?selection=homepage"><img class="logo" src="../public/assets/images/logo.png" height="60" alt=""></a>
+			<a href="?selection=homepage"><img class="logo" src="../public/assets/images/logo/logo.png" height="60" alt=""></a>
 			<ul>
 
 
-				{% if session is defined and session.type_user is defined %}
+				{% if session is defined and session.type_user == "user" %}
+
 					<li>
-						<a href="?selection=profile">
-							<i class="fa-solid fa-user"></i>
-						</a>
-					</li>
-					<li>
-						<a href="?selection=notifications">
+						<a href="?selection=notifications" id="bell">
 							<i class="fa-solid fa-bell"></i>
-							<span id="total-notifications"></span>
+							{% if total_notifications is defined  and total_notifications >= 1 %}
+								<span id="total-notifications">{{total_notifications is defined ? total_notifications : ''}}</span>
+							{% endif %}
 						</a>
 					</li>
 					<li>
@@ -39,7 +37,12 @@
 						</a>
 					</li>
 
+				{% elseif session.type_user == "admin" %}
+					<a href="?action=logout">
+						<i class="fa-solid fa-right-from-bracket"></i>
+					</a>
 				{% else %}
+
 					<li>
 						<a href="?selection=sign_in">
 							<i class="fa-solid fa-key"></i>

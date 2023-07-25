@@ -72,7 +72,7 @@ class Article
       while ($row2 = $statement2->fetch()) {
 
         $data = [
-          "id" => $row["id"],
+          "id" => intval($row["id"]),
           "image" => $row['image'],
           "author_image" => $row2["profile_image"],
           "title" => $row['title'],
@@ -208,6 +208,7 @@ class Article
     $result = $statementSession->fetch();
 
     if ($result["user_type"] === UserType::ADMIN->value) {
+
       $statement = $dbConnect->prepare("DELETE FROM article WHERE id = :id");
       $statement->bindParam("id", $idArticle);
       $statement->execute();

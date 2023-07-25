@@ -40,7 +40,7 @@
 	<div class="container-fluid" id="homepage">
 
 		<div class="container-fluid" id="banner">
-			<img class="banner-img" src="../public/assets/images/admin_homepage.jpg" alt="admin homepage banner">
+			<img class="banner-img" src="../public/assets/images/banner/admin_homepage.jpg" alt="admin homepage banner">
 		</div>
 
 		<h1 id="h1">Bienvenue,  Administrateur</h1>
@@ -48,7 +48,7 @@
 
 		<div class="container-fluid" id="last-comments">
 			<h2 class="h2" id="h2">Derniers commentaires publiés récemments
-				<span id="total-comments">({{total_comments is defined ? total_comments : ""}})</span>
+				<span id="total-comments">({{total_comments is defined ? total_comments : 0}})</span>
 			</h2>
 
 			<div class="row">
