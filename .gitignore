@@ -5,3 +5,4 @@ vendor
 uploads
 stmp_credentials.json
 notes.md
+.vscode

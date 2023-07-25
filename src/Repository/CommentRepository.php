@@ -1,11 +1,11 @@
 <?php
 
-namespace Model;
+namespace Repository;
 
 use Config\DatabaseConnection;
 use DateTime;
 use IntlDateFormatter;
-class Comment
+class CommentRepository
 {
 
   public function __construct(

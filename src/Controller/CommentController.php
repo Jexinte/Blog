@@ -2,12 +2,12 @@
 
 namespace Controller;
 
-use Model\Comment;
+use Repository\CommentRepository;
 
 class CommentController
 {
 
-  public function __construct(private readonly Comment $comment)
+  public function __construct(private readonly CommentRepository $comment)
   {
   }
 

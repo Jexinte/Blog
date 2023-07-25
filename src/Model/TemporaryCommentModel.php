@@ -17,9 +17,34 @@ class TemporaryCommentModel
   ) {
   }
 
-  public function getData(): array
+
+
+  public function getIdArticle()
   {
-    return ["id_article" => $this->idArticle, "id_user" => $this->idUser, "content" => $this->content, "date_creation" => $this->dateCreation,"approved" => $this->approved,"rejected" => $this->rejected,"feedback_admin" => $this->feedbackAdministrator];
+    return $this->idArticle;
+  }
+  public function getIdUser()
+  {
+    return $this->idUser;
+  }
+  public function getContent()
+  {
+    return $this->content;
+  }
+  public function getDateCreation()
+  {
+    return $this->dateCreation;
+  }
+  public function getApproved()
+  {
+    return $this->approved;
+  }
+  public function getRejected()
+  {
+    return $this->rejected;
+  }
+  public function getFeedbackAdministrator()
+  {
+    return $this->feedbackAdministrator;
   }
 }
-

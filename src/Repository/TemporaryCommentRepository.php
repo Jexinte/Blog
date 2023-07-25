@@ -1,26 +1,28 @@
 <?php
 
-namespace Model;
+namespace Repository;
 
 use Config\DatabaseConnection;
 use DateTime;
 use IntlDateFormatter;
 use Enumeration\UserType;
-use Exceptions\FormMessageNotSentException;
 use PHPMailer\PHPMailer\PHPMailer;
 
-class TemporaryComment
+class TemporaryCommentRepository
 {
 
   public array $validation_details;
   public function __construct(
-    private readonly DatabaseConnection  $connector
+    private readonly DatabaseConnection  $connector,
+    private readonly string $username,
+    private readonly string $password,
+    private readonly string $smtp_address
   ) {
   }
 
-  public function insertTemporaryComment(object $data, array $sessionData): array
+  public function insertTemporaryComment(array $data, array $sessionData): array
   {
-    $commentsData = $data->getData();
+
     $dbConnect = $this->connector->connect();
     $idSession = $sessionData["session_id"];
     $usernameSession = $sessionData["username"];
@@ -36,13 +38,13 @@ class TemporaryComment
     if ($result) {
       $statementComment = $dbConnect->prepare("INSERT INTO temporary_comment (idArticle,idUser,content,date_creation,approved,rejected,feedback_administrator) VALUES(:idArticle,:idUser,:content,:date_creation,:approved,:rejected,:feedback_administrator)");
 
-      $statementComment->bindParam("idArticle", $commentsData["id_article"]);
-      $statementComment->bindParam("idUser", $commentsData["id_user"]);
-      $statementComment->bindParam("content", $commentsData["content"]);
-      $statementComment->bindParam("date_creation", $commentsData["date_creation"]);
-      $statementComment->bindParam("approved", $commentsData["approved"]);
-      $statementComment->bindParam("rejected", $commentsData["rejected"]);
-      $statementComment->bindParam("feedback_administrator", $commentsData["feedback_administrator"]);
+      $statementComment->bindParam("idArticle", $data["id_article"]);
+      $statementComment->bindParam("idUser", $data["id_user"]);
+      $statementComment->bindParam("content", $data["content"]);
+      $statementComment->bindParam("date_creation", $data["date_creation"]);
+      $statementComment->bindParam("approved", $data["approved"]);
+      $statementComment->bindParam("rejected", $data["rejected"]);
+      $statementComment->bindParam("feedback_administrator", $data["feedback_administrator"]);
       $statementComment->execute();
     }
     return ["temporary_comment_saved" => 1];
@@ -126,12 +128,11 @@ class TemporaryComment
   public function mailToAdmin(array $sessionData, string $titleOfArticle): void
   {
 
-    $key = file_get_contents("../config/stmp_credentials.json");
-    $key_2 = file_get_contents("../config/stmp_credentials.json");
-    $key_3 = file_get_contents("../config/stmp_credentials.json");
-    $username = json_decode($key, true);
-    $password = json_decode($key_2, true);
-    $gmail = json_decode($key_3, true);
+
+
+    $username = json_decode($this->username, true);
+    $password = json_decode($this->password, true);
+    $gmail = json_decode($this->smtp_address, true);
     $usernameSession = $sessionData["username"];
     $mail = new PHPMailer(true);
     $mail->isSMTP();
@@ -186,7 +187,7 @@ class TemporaryComment
 
   public function validationTemporaryComment(string $valueOfValidation, int $idComment, string $feedback): ?array
   {
-    
+
     $dbConnect = $this->connector->connect();
     switch (true) {
       case str_contains($valueOfValidation, "Accepter"):
@@ -201,7 +202,7 @@ class TemporaryComment
           $statementInsertAcceptedChoice->bindValue("idComment", $idComment);
           $statementInsertAcceptedChoice->bindValue("feedback", $feedbackResult);
           $statementInsertAcceptedChoice->execute();
-          return ["approved" => 1, "feedback" => $feedbackResult, "id_user" => $resultIsAccepted["idUser"], "id_comment" => $idComment,"id_article" => $resultIsAccepted["idArticle"]];
+          return ["approved" => 1, "feedback" => $feedbackResult, "id_user" => $resultIsAccepted["idUser"], "id_comment" => $idComment, "id_article" => $resultIsAccepted["idArticle"]];
         }
         break;
 
@@ -217,7 +218,7 @@ class TemporaryComment
           $statementInsertRejectedChoice->bindValue("idComment", $idComment);
           $statementInsertRejectedChoice->bindValue("feedback", $feedbackResult);
           $statementInsertRejectedChoice->execute();
-          return ["rejected" => 1, "feedback" => $feedbackResult, "id_user" => $resultIsRejected["idUser"], "id_comment" => $idComment,"id_article" => $resultIsRejected["idArticle"]];
+          return ["rejected" => 1, "feedback" => $feedbackResult, "id_user" => $resultIsRejected["idUser"], "id_comment" => $idComment, "id_article" => $resultIsRejected["idArticle"]];
         }
         break;
     }

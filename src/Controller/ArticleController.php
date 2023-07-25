@@ -3,7 +3,8 @@
 namespace Controller;
 
 
-use Model\Article;
+use Model\ArticleModel;
+use Repository\Article;
 
 use Exceptions\TitleErrorEmptyException;
 use Exceptions\TitleWrongFormatException;
@@ -15,11 +16,12 @@ use Exceptions\ContentArticleErrorEmptyException;
 use Exceptions\ContentArticleWrongFormatException;
 use Exceptions\TagsErrorEmptyException;
 use Exceptions\TagsWrongFormatException;
+use Repository\ArticleRepository;
 
 class ArticleController
 {
 
-  public function __construct(private readonly Article $article)
+  public function __construct(private readonly ArticleRepository $article)
   {
   }
   public function listOfAllArticles(): array
@@ -115,28 +117,35 @@ class ArticleController
   public function handleCreateArticleValidator(string $title, array $fileArticle, string $shortPhrase, string $content, string $tags, array $sessionData): ?array
   {
     $articleRepository = $this->article;
-    $titleField = $this->handleTitleField($title);
-    $fileField = $this->handleFileField($fileArticle);
-    $shortPhraseField = $this->handleShortPhraseField($shortPhrase);
-    $contentField = $this->handleContentField($content);
+    $titleField = $this->handleTitleField($title)["title"];
+    $fileField = $this->handleFileField($fileArticle)["file"];
+    $shortPhraseField = $this->handleShortPhraseField($shortPhrase)["short_phrase"];
+    $contentField = $this->handleContentField($content)["content"];
     $tagsField = $this->handleTagsField($tags);
 
 
-    $fields = [
-      "title" =>  $titleField["title"],
-      "file" =>  $fileField["file"],
-      "short_phrase" =>  $shortPhraseField["short_phrase"],
-      "content" =>  $contentField["content"],
-      "tags" =>  $tagsField["tags"],
+    $articleData = new ArticleModel($fileField, $titleField, $shortPhraseField, $contentField, $tagsField);
+
+    $titleInModel = $articleData->getTitle();
+    $fileInModel = $articleData->getImage();
+    $shortPhraseInModel = $articleData->getChapo();
+    $contentInModel = $articleData->getContent();
+    $tagsInModel = $articleData->getTags();
+
+    $articleDataFromModel = [
+      "title" => $titleInModel,
+      "file" => $fileInModel,
+      "short_phrase" => $shortPhraseInModel,
+      "content" => $contentInModel,
+      "tags" => $tagsInModel["tags"]
     ];
 
-
-    return $articleRepository->createArticle($fields, $sessionData);
+    return $articleRepository->createArticle($articleDataFromModel, $sessionData);
   }
 
 
 
-  public function handleUpdateTitleValidation(string $title) : string|array
+  public function handleUpdateTitleValidation(string $title): string|array
   {
     $expectedWord = ucfirst($title);
 

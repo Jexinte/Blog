@@ -6,13 +6,13 @@ use Exceptions\CommentEmptyException;
 use Exceptions\CommentWrongFormatException;
 use Exceptions\ValidationErrorEmptyException;
 use Exceptions\ValidationErrorWrongFormatException;
-use Model\TemporaryComment;
+use Repository\TemporaryCommentRepository;
 use Model\TemporaryCommentModel;
 
 class TemporaryCommentController
 {
 
-  public function __construct(private readonly TemporaryComment $temporaryComment)
+  public function __construct(private readonly TemporaryCommentRepository $temporaryComment)
   {
   }
 
@@ -47,9 +47,27 @@ class TemporaryCommentController
 
     $temporaryCommentRepository = $this->temporaryComment;
     $dateDay =  date('Y-m-d');
-    $commentResult = $this->handleCommentField($comment)["comment"];
-    $commentsData = new TemporaryCommentModel($idArticle, $sessionData["id_user"], $commentResult, $dateDay, null, null, null);
-    return $temporaryCommentRepository->insertTemporaryComment($commentsData, $sessionData);
+    $temporaryCommentResult = $this->handleCommentField($comment)["comment"];
+    
+    $temporaryCommentData = new TemporaryCommentModel($idArticle, $sessionData["id_user"], $temporaryCommentResult, $dateDay, null, null, null);
+    
+    $idArticleInModel = $temporaryCommentData->getIdArticle();
+    $idUserInModel = $temporaryCommentData->getIdUser();
+    $temporaryCommentInModel = $temporaryCommentData->getContent();
+    $dateInModel = $temporaryCommentData->getDateCreation();
+    $approvedInModel = $temporaryCommentData->getApproved();
+    $rejectedInModel = $temporaryCommentData->getRejected();
+    $feedbackAdmin = $temporaryCommentData->getFeedbackAdministrator();
+     $dataFromTemporaryCommentModel = [
+       "id_article" => $idArticleInModel,
+       "id_user" => $idUserInModel,
+       "content" => $temporaryCommentInModel,
+       "date_creation" => $dateInModel,
+       "approved" => $approvedInModel,
+       "rejected" => $rejectedInModel,
+       "feedback_administrator" => $feedbackAdmin
+     ];
+    return $temporaryCommentRepository->insertTemporaryComment($dataFromTemporaryCommentModel, $sessionData);
   }
 
   public function handlecheckCommentAlreadySentByUser(array $sessionData): ?array

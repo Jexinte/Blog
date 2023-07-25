@@ -1,6 +1,6 @@
 <?php
 
-namespace Model;
+namespace Repository;
 
 use Config\DatabaseConnection;
 use DateTime;
@@ -8,7 +8,7 @@ use Enumeration\UserType;
 use Exception;
 use IntlDateFormatter;
 
-class Article
+class ArticleRepository
 {
 
   public function __construct(private readonly DatabaseConnection   $connector)

@@ -1,13 +1,13 @@
 <?php
 
-namespace Model;
+namespace Repository;
 
 use Config\DatabaseConnection;
 use Enumeration\UserType;
 
 
 
-readonly class User
+readonly class UserRepository
 {
 
 
@@ -16,37 +16,33 @@ readonly class User
   }
 
 
-  public function createUser(object $user): ?array
+  public function createUser(array $user): ?array
   {
 
     $dbConnect = $this->connector->connect();
 
-    $userData = $user->getData();
-    $username = $userData["username"];
-    $file = $userData["profileImage"];
-    $email = $userData["email"];
-    $password = $userData["password"];
+
 
     $statement = $dbConnect->prepare('SELECT username,email FROM user WHERE username = :username OR  email = :email');
-    $statement->bindParam("username", $username);
-    $statement->bindParam("email", $email);
+    $statement->bindParam("username", $user["username"]);
+    $statement->bindParam("email", $user["email"]);
     $statement->execute();
     $result = $statement->fetch();
 
 
     if (!$result) {
-      $fileRequirements = explode(';', $file);
+      $fileRequirements = explode(';', $user["file"]);
       $fileSettings["file_name"] = $fileRequirements[0];
       $fileSettings["tmp_name"] = $fileRequirements[1];
       $fileSettings["directory"] = $fileRequirements[2];
       $filePath = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/" . $fileSettings["file_name"];
       $statement2 = $dbConnect->prepare("INSERT INTO user (username,profile_image,email,password,type) VALUES(?,?,?,?,?)");
       $values = [
-        $username,
+        $user["username"],
         $filePath,
-        $email,
-        $password,
-        UserType::USER->value
+        $user["email"],
+        $user["password"],
+        $user["type"]
       ];
       $statement2->execute($values);
       move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
@@ -160,7 +156,7 @@ readonly class User
     return ["logout" => 1];
   }
 
-  public function getAllUserNotifications(array $sessionData):?array
+  public function getAllUserNotifications(array $sessionData): ?array
   {
     $dbConnect = $this->connector->connect();
 

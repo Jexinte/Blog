@@ -1,8 +1,8 @@
 <?php
 
-namespace Model;
+namespace Repository;
 
-class SessionManager
+class SessionManagerRepository
 {
 
   public function startSession(): void

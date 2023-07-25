@@ -15,14 +15,14 @@ use Exceptions\FirstNameWrongFormatException;
 
 
 use Model\HomepageFormModel;
-use Model\HomepageForm;
+use Repository\HomepageFormRepository;
 
 
 
 readonly class HomepageFormController
 {
 
-  public function __construct(private HomepageForm $homepageForm)
+  public function __construct(private HomepageFormRepository $homepageForm)
   {
   }
 
@@ -93,19 +93,32 @@ readonly class HomepageFormController
   public function homepageFormValidator(string $firstname, string $lastname, string $email, string $subject, string $message): ?array
   {
 
-    $firstnameResult = $this->handleFirstNameField($firstname);
-    $lastnameResult = $this->handleLastNameField($lastname);
-    $emailResult = $this->handleEmailField($email);
-    $subjectResult = $this->handleSubjectField($subject);
-    $messageResult = $this->handleMessageField($message);
+    $firstnameResult = $this->handleFirstNameField($firstname)["firstname"];
+    $lastnameResult = $this->handleLastNameField($lastname)["lastname"];
+    $emailResult = $this->handleEmailField($email)["email"];
+    $subjectResult = $this->handleSubjectField($subject)["subject"];
+    $messageResult = $this->handleMessageField($message)["message"];
 
 
 
     $formRepository = $this->homepageForm;
 
-    $userDataFromForm = new HomepageFormModel(null, $firstnameResult["firstname"], $lastnameResult["lastname"], $emailResult["email"], $subjectResult["subject"], $messageResult["message"]);
+    $userDataFromForm = new HomepageFormModel($firstnameResult, $lastnameResult, $emailResult, $subjectResult, $messageResult);
+    $firstnameInModel = $userDataFromForm->getFirstname();
+    $lastnameInModel = $userDataFromForm->getLastname();
+    $emailInModel = $userDataFromForm->getEmail();
+    $subjectInModel = $userDataFromForm->getSubject();
+    $messageInModel = $userDataFromForm->getMessage();
 
-    $insertDataDb = $formRepository->insertDataInDatabase($userDataFromForm);
+    $dataFromHomepageFormModel = [
+      "firstname" => $firstnameInModel,
+      "lastname" => $lastnameInModel,
+      "email" => $emailInModel,
+      "subject" => $subjectInModel,
+      "message" => $messageInModel
+    ];
+
+    $insertDataDb = $formRepository->insertDataInDatabase($dataFromHomepageFormModel);
     $getDataFromDb = $formRepository->getDataFromDatabase($insertDataDb);
     return array_key_exists("data_retrieved", $getDataFromDb) && $getDataFromDb["data_retrieved"] == 1 ? $formRepository->sendMailAdmin($getDataFromDb) : null;
   }

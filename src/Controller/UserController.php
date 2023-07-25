@@ -17,7 +17,7 @@ use Exceptions\UsernameErrorEmptyException;
 use Exceptions\FileTypeException;
 use Exceptions\FileErrorEmptyException;
 
-use Model\User;
+use Repository\UserRepository;
 use Model\UserModel;
 
 
@@ -29,7 +29,7 @@ readonly class UserController
 {
 
 
-  public function __construct(private User $user)
+  public function __construct(private UserRepository $UserRepository)
   {
   }
 
@@ -114,30 +114,31 @@ readonly class UserController
   public function signUpValidator(string $username, array $file, string $email, string $password): array|string
   {
 
-    $usernameResult = $this->handleUsernameField($username);
-
-    $emailResult = $this->handleEmailField($email);
-    $passwordResult = $this->handlePasswordField($password);
-    $fileResult = $this->handleFileField($file);
-
-
-    $fields = [
-      "username" => $usernameResult,
-      "email" => $emailResult,
-      "password" => $passwordResult,
-      "file" => $fileResult
-    ];
-
-
-    $userRepository = $this->user;
-    $username = $fields["username"]["username"];
-    $fileSettings = $fields["file"];
-    $email = $fields["email"]["email"];
-    $password = $fields["password"]["password"];
+    $usernameResult = $this->handleUsernameField($username)["username"];
+    $emailResult = $this->handleEmailField($email)["email"];
+    $passwordResult = $this->handlePasswordField($password)["password"];
+    $fileResult = $this->handleFileField($file)["file"];
     $userType = UserType::USER;
-    $userData = new UserModel($username, $fileSettings["file"], $email, $password, $userType);
 
-    $userDb = $userRepository->createUser($userData);
+    
+    
+    $userData = new UserModel($usernameResult, $fileResult, $emailResult, $passwordResult, $userType);
+    $usernameInModel = $userData->getUsername();
+    $profileImageInModel = $userData->getProfileImage();
+    $emailInModel = $userData->getEmail();
+    $passwordInModel = $userData->getPassword();
+    $userTypeInModel = $userData->getUserType();
+
+     $userDataFromModel = [
+       "username" => $usernameInModel,
+       "file" => $profileImageInModel,
+       "email" => $emailInModel,
+       "password" => $passwordInModel,
+       "type" => $userTypeInModel->value
+     ];
+
+    $userRepository = $this->UserRepository;
+    $userDb = $userRepository->createUser($userDataFromModel);
 
 
 
@@ -182,7 +183,7 @@ readonly class UserController
 
   public function loginValidator(string $email, string $password): array|string|null
   {
-    $userRepository = $this->user;
+    $userRepository = $this->UserRepository;
     $emailResult = $this->verifyEmailOnLogin($email);
     $passwordResult = $this->verifyPasswordOnLogin($password);
 
@@ -209,21 +210,21 @@ readonly class UserController
 
   public function handleInsertSessionData(array $arr): void
   {
-    $userRepository = $this->user;
+    $userRepository = $this->UserRepository;
 
     $userRepository->insertSessionData($arr);
   }
 
   public function handleGetIdSessionData($arr): ?array
   {
-    $userRepository = $this->user;
+    $userRepository = $this->UserRepository;
 
     return $userRepository->getIdSessionData($arr);
   }
 
   public function handleLogout(array $sessionData): ?array
   {
-    $userRepository = $this->user;
+    $userRepository = $this->UserRepository;
 
     if (is_array($userRepository->logout($sessionData))) {
       return $userRepository->logout($sessionData);
@@ -232,13 +233,13 @@ readonly class UserController
 
   public function handleGetAllUserNotifications(array $sessionData): ?array
   {
-    $userRepository = $this->user;
+    $userRepository = $this->UserRepository;
     return $userRepository->getAllUserNotifications($sessionData);
   }
 
   public function handleDeleteNotification(int $idNotification)
   {
-    $userRepository = $this->user;
+    $userRepository = $this->UserRepository;
     return $userRepository->deleteNotification($idNotification);
   }
 }

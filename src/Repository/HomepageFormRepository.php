@@ -1,6 +1,6 @@
 <?php
 
-namespace Model;
+namespace Repository;
 
 use Config\DatabaseConnection;
 use Exceptions\FormMessageNotSentException;
@@ -9,32 +9,26 @@ use PHPMailer\PHPMailer\PHPMailer;
 
 
 
-readonly class HomepageForm
+readonly class HomepageFormRepository
 {
 
-  public function __construct(private DatabaseConnection $connector)
+  public function __construct(private DatabaseConnection $connector, private readonly string $username, private readonly string $password, private readonly string $smtp_address)
   {
   }
 
-  public function insertDataInDatabase(object $form_data): array
+  public function insertDataInDatabase(array $form_data): array
   {
 
     $dbConnect = $this->connector->connect();
-    $data = $form_data->getData();
-    $firstname = $data["firstname"];
-    $lastname = $data["lastname"];
-    $email = $data["email"];
-    $subject = $data["subject"];
-    $message = $data["message"];
 
-    $statement = $dbConnect->prepare("INSERT INTO form_message(idUser,firstname,lastname,email,subject,message) VALUES(?,?,?,?,?,?)");
+
+    $statement = $dbConnect->prepare("INSERT INTO form_message(firstname,lastname,email,subject,message) VALUES(?,?,?,?,?)");
     $values = [
-      null,
-      $firstname,
-      $lastname,
-      $email,
-      $subject,
-      $message
+      $form_data["firstname"],
+      $form_data["lastname"],
+      $form_data["email"],
+      $form_data["subject"],
+      $form_data["message"]
     ];
     $statement->execute($values);
     return ["data_saved" => 1];
@@ -62,12 +56,9 @@ readonly class HomepageForm
   {
 
 
-    $key = file_get_contents("../config/stmp_credentials.json");
-    $key_2 = file_get_contents("../config/stmp_credentials.json");
-    $key_3 = file_get_contents("../config/stmp_credentials.json");
-    $username = json_decode($key, true);
-    $password = json_decode($key_2, true);
-    $gmail = json_decode($key_3, true);
+    $username = json_decode($this->username, true);
+    $password = json_decode($this->password, true);
+    $gmail = json_decode($this->smtp_address, true);
 
     $mail = new PHPMailer(true);
     $result = !empty($data);

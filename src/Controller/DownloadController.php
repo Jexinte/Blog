@@ -2,14 +2,14 @@
 
 namespace Controller;
 
-use Model\Download;
+use Repository\DownloadRepository;
 
 class DownloadController
 {
 
   public function handleDownloadFile(): ?array
   {
-    $download = new Download();
+    $download = new DownloadRepository();
     return $download->downloadPdfFile();
   }
 }

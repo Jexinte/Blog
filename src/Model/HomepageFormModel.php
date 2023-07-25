@@ -6,7 +6,6 @@ class HomepageFormModel
 {
 
   public function __construct(
-    public null $idUser,
     public string $firstname,
     public string $lastname,
     public string $email,
@@ -15,15 +14,27 @@ class HomepageFormModel
   ) {
   }
 
-  public function getData(): array
+
+
+
+  public function getFirstname()
   {
-    return [
-      "idUser" => $this->idUser,
-      "firstname" => $this->firstname,
-      "lastname" => $this->lastname,
-      "email" => $this->email,
-      "subject" => $this->subject,
-      "message" => $this->message
-    ];
+    return $this->firstname;
+  }
+  public function getLastname()
+  {
+    return $this->lastname;
+  }
+  public function getEmail()
+  {
+    return $this->email;
+  }
+  public function getSubject()
+  {
+    return $this->subject;
+  }
+  public function getMessage()
+  {
+    return $this->message;
   }
 }

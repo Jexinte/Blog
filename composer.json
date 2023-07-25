@@ -12,7 +12,8 @@
       "Model\\":"src/Model/",
       "Controller\\":"src/Controller/",
       "Enumeration\\" : "src/Enumeration/",
-      "Exceptions\\" : "src/Exceptions/"
+      "Exceptions\\" : "src/Exceptions/",
+      "Repository\\" : "src/Repository/"
     }
   },
   "license": "ISC"

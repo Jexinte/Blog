@@ -1,16 +1,10 @@
 <?php
 
-
 require_once __DIR__ . "../../vendor/autoload.php";
 
-use Model\Article;
-use Model\TemporaryComment;
-use Model\Comment;
-use Model\User;
-use Model\HomepageForm;
-use Model\SessionManager;
+use Repository\SessionManagerRepository;
 
-$sessionRepository = new SessionManager();
+$sessionRepository = new SessionManagerRepository();
 $sessionRepository->startSession();
 
 use Config\DatabaseConnection;
@@ -57,6 +51,11 @@ use Controller\CommentController;
 
 use Enumeration\UserType;
 
+use Repository\ArticleRepository;
+use Repository\CommentRepository;
+use Repository\HomepageFormRepository;
+use Repository\TemporaryCommentRepository;
+use Repository\UserRepository;
 
 $action = "";
 $selection = "";
@@ -73,23 +72,37 @@ $twig = new \Twig\Environment(
     ]
 );
 $db = new DatabaseConnection("professional_blog", "root", "");
+$formCredentialUsername = file_get_contents("../config/stmp_credentials.json");
+$formCredentialsPassword = file_get_contents("../config/stmp_credentials.json");
+$formCredentialsSmtpAddress = file_get_contents("../config/stmp_credentials.json");
 
-
-$userRepository = new User($db);
+$userRepository = new UserRepository($db);
 $userController = new UserController($userRepository);
 
-$articleRepository = new Article($db);
+$articleRepository = new ArticleRepository($db);
 $articleController = new ArticleController($articleRepository);
 
 $downloadController = new DownloadController();
 
-$formRepository = new HomepageForm($db);
+$formRepository = new HomepageFormRepository(
+    $db,
+    $formCredentialUsername,
+    $formCredentialsPassword,
+    $formCredentialsSmtpAddress
+);
 $formController = new HomepageFormController($formRepository);
 
-$temporaryCommentRepository = new TemporaryComment($db);
+
+
+$temporaryCommentRepository = new TemporaryCommentRepository(
+    $db,
+    $formCredentialUsername,
+    $formCredentialsPassword,
+    $formCredentialsSmtpAddress
+);
 $temporaryCommentController = new TemporaryCommentController($temporaryCommentRepository);
 
-$commentRepository = new Comment($db);
+$commentRepository = new CommentRepository($db);
 $commentController = new CommentController($commentRepository);
 
 $template = "homepage.twig";

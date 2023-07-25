@@ -1,9 +1,9 @@
 <?php
 
-namespace Model;
+namespace Repository;
 
 
-class Download
+class DownloadRepository
 {
 
 

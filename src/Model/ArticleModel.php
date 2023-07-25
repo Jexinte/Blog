@@ -11,8 +11,23 @@ class ArticleModel
     public string $chapo,
     public string $content,
     public array  $tags,
-    public string $author,
-    public string $dateCreation
-  ) {
+ 
+  ) {}
+
+  public function getImage(){
+    return $this->image;
   }
+  public function getTitle(){
+    return $this->title;
+  }
+  public function getChapo(){
+    return $this->chapo;
+  }
+  public function getContent(){
+    return $this->content;
+  }
+  public function getTags(){
+    return $this->tags;
+  }
+
 }
