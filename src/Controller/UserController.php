@@ -25,11 +25,11 @@ use Enumeration\Regex;
 
 
 
-readonly class UserController
+class UserController
 {
 
 
-  public function __construct(private UserRepository $UserRepository)
+  public function __construct(private readonly UserRepository $UserRepository)
   {
   }
 
@@ -106,7 +106,7 @@ readonly class UserController
   }
 
 
-  public function signUpValidator(string $username, array $file, string $email, string $password):?string
+  public function signUpValidator(string $username, array $file, string $email, string $password): ?string
   {
 
     $usernameResult = $this->handleUsernameField($username)["username"];
@@ -115,8 +115,8 @@ readonly class UserController
     $fileResult = $this->handleFileField($file)["file"];
     $userType = UserType::USER;
 
-    
-    
+
+
     $userData = new UserModel($usernameResult, $fileResult, $emailResult, $passwordResult, $userType);
     $usernameInModel = $userData->getUsername();
     $profileImageInModel = $userData->getProfileImage();
@@ -124,9 +124,9 @@ readonly class UserController
     $passwordInModel = $userData->getPassword();
     $userTypeInModel = $userData->getUserType();
 
-   
+
     $userRepository = $this->UserRepository;
-    $userDb = $userRepository->createUser($usernameInModel,$profileImageInModel,$emailInModel,$passwordInModel,$userTypeInModel);
+    $userDb = $userRepository->createUser($usernameInModel, $profileImageInModel, $emailInModel, $passwordInModel, $userTypeInModel);
 
 
 
@@ -136,7 +136,7 @@ readonly class UserController
         throw new UsernameUnavailableException();
       case $userDb->getEmail() === $email:
         throw new EmailUnavailableException();
-        default:
+      default:
         return null;
     }
   }

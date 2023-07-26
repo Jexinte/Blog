@@ -66,7 +66,7 @@
 
 		{# BANNER #}
 		<div class="container-fluid" id="banner">
-			<img class"banner-img" src="../public/assets/images/blog_banner.jpg" alt="blog banner">
+			<img class"banner-img" src="../public/assets/images/banner/blog_banner.jpg" alt="blog banner">
 		</div>
 
 		{# ARTICLES #}
@@ -74,7 +74,10 @@
 			<h1 class="text-center" id="h1">Derniers articles publiés</h1>
 			<div
 				class="row mt-5">
-
+				{% if articles is empty %}
+				<h2 class="text-center" id="no-articles"> Nous n'avons actuellement aucun article publié. Restez à l'affût, de nouvelles publications passionnantes arrivent bientôt !</h2>
+				{% endif %}
+				
 				{# ARTICLE 1 #}
 				{% for article in articles %}
 					<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">

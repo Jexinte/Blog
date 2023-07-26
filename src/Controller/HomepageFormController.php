@@ -19,10 +19,10 @@ use Repository\HomepageFormRepository;
 use Enumeration\Regex;
 
 
-readonly class HomepageFormController
+ class HomepageFormController
 {
 
-  public function __construct(private HomepageFormRepository $homepageForm)
+  public function __construct(private readonly HomepageFormRepository $homepageForm)
   {
   }
 

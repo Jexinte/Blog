@@ -9,10 +9,10 @@ use PHPMailer\PHPMailer\PHPMailer;
 
 
 
-readonly class HomepageFormRepository
+ class HomepageFormRepository
 {
 
-  public function __construct(private DatabaseConnection $connector, private readonly string $username, private readonly string $password, private readonly string $smtp_address)
+  public function __construct(private readonly DatabaseConnection $connector, private readonly string $username, private readonly string $password, private readonly string $smtp_address)
   {
   }
 

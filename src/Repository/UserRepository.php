@@ -9,11 +9,11 @@ use Model\UserModel;
 
 
 
-readonly class UserRepository
+class UserRepository
 {
 
 
-  public function __construct(private DatabaseConnection $connector)
+  public function __construct(private readonly DatabaseConnection $connector)
   {
   }
 

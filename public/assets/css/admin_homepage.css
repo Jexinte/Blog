@@ -51,13 +51,13 @@ a {
 }
 #no-comments{
   color: var(--black);
-  font-weight: var(--900);
+  font-weight: var(--700);
   margin-top: 2.5em;
 }
 
 #no-article{
   color: var(--black);
-  font-weight: var(--900);
+  font-weight: var(--700);
   margin: 3em 0;
 }
 .comments .comment {

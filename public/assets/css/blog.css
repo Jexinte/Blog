@@ -155,7 +155,9 @@ header a:visited {
 }
 
 
-
+#no-articles{
+  font-weight: var(--700);
+}
 
 /* TABLET */
 @media (min-width:577px) and (max-width:991px) {
