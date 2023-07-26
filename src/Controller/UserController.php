@@ -19,7 +19,7 @@ use Exceptions\FileErrorEmptyException;
 
 use Repository\UserRepository;
 use Model\UserModel;
-
+use Enumeration\Regex;
 
 
 
@@ -37,12 +37,11 @@ readonly class UserController
   public function handleUsernameField(string $username): array|string
   {
 
-    $userRegex =  "/^[A-Z][A-Za-z\d]{2,10}$/";
     switch (true) {
       case empty($username):
 
         throw new UsernameErrorEmptyException();
-      case !preg_match($userRegex, $username):
+      case !preg_match(REGEX::USERNAME, $username):
 
         throw new UsernameWrongFormatException();
       default:
@@ -79,14 +78,11 @@ readonly class UserController
 
   public function handleEmailField(string $email): array|string
   {
-
-    $emailRegex = "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/";
-
     switch (true) {
       case empty($email):
 
         throw new EmailErrorEmptyException();
-      case !preg_match($emailRegex, $email):
+      case !preg_match(REGEX::EMAIL, $email):
 
         throw new EmailWrongFormatException();
       default:
@@ -96,12 +92,11 @@ readonly class UserController
   public function handlePasswordField(string $password): array|string
   {
 
-    $passwordRegex = "/^(?=.*[A-Z])(?=.*\d).{8,}$/";
     switch (true) {
       case empty($password):
 
         throw new PasswordErrorEmptyException();
-      case !preg_match($passwordRegex, $password):
+      case !preg_match(REGEX::PASSWORD, $password):
 
         throw new PasswordWrongFormatException();
       default:
@@ -111,7 +106,7 @@ readonly class UserController
   }
 
 
-  public function signUpValidator(string $username, array $file, string $email, string $password): array|string
+  public function signUpValidator(string $username, array $file, string $email, string $password):?string
   {
 
     $usernameResult = $this->handleUsernameField($username)["username"];
@@ -129,27 +124,20 @@ readonly class UserController
     $passwordInModel = $userData->getPassword();
     $userTypeInModel = $userData->getUserType();
 
-     $userDataFromModel = [
-       "username" => $usernameInModel,
-       "file" => $profileImageInModel,
-       "email" => $emailInModel,
-       "password" => $passwordInModel,
-       "type" => $userTypeInModel->value
-     ];
-
+   
     $userRepository = $this->UserRepository;
-    $userDb = $userRepository->createUser($userDataFromModel);
+    $userDb = $userRepository->createUser($usernameInModel,$profileImageInModel,$emailInModel,$passwordInModel,$userTypeInModel);
 
 
 
 
     switch (true) {
-      case isset($userDb["username"])  && $userDb["username"]  === $username:
+      case  $userDb->getUsername()  === $username:
         throw new UsernameUnavailableException();
-      case isset($userDb["email"]) && $userDb["email"] === $email:
+      case $userDb->getEmail() === $email:
         throw new EmailUnavailableException();
-      default:
-        return $userDb;
+        default:
+        return null;
     }
   }
 

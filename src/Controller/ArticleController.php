@@ -4,7 +4,7 @@ namespace Controller;
 
 
 use Model\ArticleModel;
-use Repository\Article;
+
 
 use Exceptions\TitleErrorEmptyException;
 use Exceptions\TitleWrongFormatException;
@@ -18,6 +18,7 @@ use Exceptions\TagsErrorEmptyException;
 use Exceptions\TagsWrongFormatException;
 use Repository\ArticleRepository;
 
+use Enumeration\Regex;
 class ArticleController
 {
 
@@ -41,11 +42,10 @@ class ArticleController
 
   public function handleTitleField(string $title): array|string
   {
-    $titleRegex = "/^(?=.{1,500}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ, .'-]*$/u";
     switch (true) {
       case empty($title):
         throw new TitleErrorEmptyException();
-      case !preg_match($titleRegex, $title):
+      case !preg_match(Regex::TITLE, $title):
         throw new TitleWrongFormatException();
       default:
         return ["title" => $title];
@@ -78,11 +78,10 @@ class ArticleController
   }
   public function handleShortPhraseField(string $shortPhrase): array|string
   {
-    $shortPhraseRegex = "/^(?=.{1,5000}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ, .'-]*$/u";
     switch (true) {
       case empty($shortPhrase):
         throw new ShortPhraseErrorEmptyException();
-      case !preg_match($shortPhraseRegex, $shortPhrase):
+      case !preg_match(Regex::SHORT_PHRASE, $shortPhrase):
         throw new ShortPhraseWrongFormatException();
       default:
         return ["short_phrase" => $shortPhrase];
@@ -90,11 +89,11 @@ class ArticleController
   }
   public function handleContentField(string $content): array|string
   {
-    $contentRegex = "/^(?=.{1,5000}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ, .'-]*$/u";
+
     switch (true) {
       case empty($content):
         throw new ContentArticleErrorEmptyException();
-      case !preg_match($contentRegex, $content):
+      case !preg_match(REGEX::CONTENT_ARTICLE, $content):
         throw new ContentArticleWrongFormatException();
       default:
         return ["content" => $content];
@@ -102,11 +101,11 @@ class ArticleController
   }
   public function handleTagsField(string $tags): array|string
   {
-    $tagsRegex = "/^(#([\p{L} '-]{1,20})(?:\s|$)){1,3}$/";
+
     switch (true) {
       case empty($tags):
         throw new TagsErrorEmptyException();
-      case !preg_match($tagsRegex, $tags):
+      case !preg_match(REGEX::TAGS, $tags):
         throw new TagsWrongFormatException();
       default:
         return ["tags" => $tags];

@@ -16,7 +16,7 @@ use Exceptions\FirstNameWrongFormatException;
 
 use Model\HomepageFormModel;
 use Repository\HomepageFormRepository;
-
+use Enumeration\Regex;
 
 
 readonly class HomepageFormController
@@ -28,11 +28,11 @@ readonly class HomepageFormController
 
   public function handleFirstNameField(string $firstname): array|string
   {
-    $firstnameRegex = "/^[A-Z][a-zA-ZÀ-ÖØ-öø-ſ\s'-]*$/";
+    
     switch (true) {
       case empty($firstname):
         throw new FirstNameErrorEmptyException();
-      case !preg_match($firstnameRegex, $firstname):
+      case !preg_match(REGEX::FIRSTNAME, $firstname):
         throw new FirstNameWrongFormatException();
       default:
         return ["firstname" => $firstname];
@@ -40,11 +40,10 @@ readonly class HomepageFormController
   }
   public function handleLastNameField(string $lastname): array|string
   {
-    $lastnameRegex = "/^[A-Z][a-zA-ZÀ-ÖØ-öø-ſ\s'-]*$/";
     switch (true) {
       case empty($lastname):
         throw new LastnameErrorEmptyException();
-      case !preg_match($lastnameRegex, $lastname):
+      case !preg_match(REGEX::LASTNAME, $lastname):
         throw new LastnameWrongFormatException();
       default:
         return ["lastname" => $lastname];
@@ -52,11 +51,10 @@ readonly class HomepageFormController
   }
   public function handleEmailField(string $email): array|string
   {
-    $emailRegex = "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/";
     switch (true) {
       case empty($email):
         throw new EmailErrorEmptyException();
-      case !preg_match($emailRegex, $email):
+      case !preg_match(REGEX::EMAIL, $email):
         throw new EmailWrongFormatException();
       default:
         return ["email" => $email];
@@ -65,11 +63,10 @@ readonly class HomepageFormController
 
   public function handleSubjectField(string $subject): array|string
   {
-    $subjectRegex = "/^.{20,100}$/";
     switch (true) {
       case empty($subject):
         throw new SubjectErrorEmptyException();
-      case !preg_match($subjectRegex, $subject):
+      case !preg_match(REGEX::SUBJECT, $subject):
 
         throw new SubjectWrongFormatException();
       default:
@@ -78,11 +75,10 @@ readonly class HomepageFormController
   }
   public function handleMessageField(string $message): array|string
   {
-    $messageRegex = "/^.{20,500}$/";
     switch (true) {
       case empty($message):
         throw new ContentMessageErrorEmptyException();
-      case !preg_match($messageRegex, $message):
+      case !preg_match(REGEX::FORM_MESSAGE, $message):
         throw new ContentMessageWrongFormatException();
       default:
         return ["message" => $message];

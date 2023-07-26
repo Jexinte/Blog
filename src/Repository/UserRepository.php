@@ -2,8 +2,10 @@
 
 namespace Repository;
 
+use BackedEnum;
 use Config\DatabaseConnection;
 use Enumeration\UserType;
+use Model\UserModel;
 
 
 
@@ -16,40 +18,50 @@ readonly class UserRepository
   }
 
 
-  public function createUser(array $user): ?array
+  public function createUser(string $username,string $file,string $email, string $password, BackedEnum $userType): ?object
   {
 
     $dbConnect = $this->connector->connect();
-
+    $test = new UserModel($username,
+    $file,
+    $email,
+    $password,
+    $userType);
+  
 
 
     $statement = $dbConnect->prepare('SELECT username,email FROM user WHERE username = :username OR  email = :email');
-    $statement->bindParam("username", $user["username"]);
-    $statement->bindParam("email", $user["email"]);
+    $statement->bindParam("username", $username);
+    $statement->bindParam("email", $email);
     $statement->execute();
     $result = $statement->fetch();
 
+    switch(true){
+      case !$result:
+        $fileRequirements = explode(';', $file);
+        $fileSettings["file_name"] = $fileRequirements[0];
+        $fileSettings["tmp_name"] = $fileRequirements[1];
+        $fileSettings["directory"] = $fileRequirements[2];
+        $filePath = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/" . $fileSettings["file_name"];
+        $statement2 = $dbConnect->prepare("INSERT INTO user (username,profile_image,email,password,type) VALUES(?,?,?,?,?)");
+        $values = [
+          $username,
+          $filePath,
+          $email,
+          $password,
+          $userType->value
+        ];
+        $statement2->execute($values);
+        move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
+        return null;
 
-    if (!$result) {
-      $fileRequirements = explode(';', $user["file"]);
-      $fileSettings["file_name"] = $fileRequirements[0];
-      $fileSettings["tmp_name"] = $fileRequirements[1];
-      $fileSettings["directory"] = $fileRequirements[2];
-      $filePath = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/" . $fileSettings["file_name"];
-      $statement2 = $dbConnect->prepare("INSERT INTO user (username,profile_image,email,password,type) VALUES(?,?,?,?,?)");
-      $values = [
-        $user["username"],
-        $filePath,
-        $user["email"],
-        $user["password"],
-        $user["type"]
-      ];
-      $statement2->execute($values);
-      move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
-      return ["user_created" => 1];
+  
+      default:
+      return $test;
     }
 
-    return !empty($result) ? $result : null;
+
+   // return !empty($result) ? $result : null;
   }
 
   public function loginUser(string $email, string $password): ?array
@@ -61,31 +73,25 @@ readonly class UserRepository
     $statement->execute();
     $user = $statement->fetch();
 
-    switch (true) {
-      case $user && $user["type"] == UserType::USER->value:
-        $checkPassword = password_verify($password, $user['password']);
-        $username = $user["username"];
-        $typeUser = $user["type"];
-        $userId = $user["id"];
-        if (!$checkPassword) {
-          return ["password_error" => 1];
-        }
+    if($user && $user["type"] == UserType::USER->value || $user && $user["type"] == UserType::ADMIN->value ){
+      $checkPassword = password_verify($password, $user['password']);
+      $username = $user["username"];
+      $typeUser = $user["type"];
+      $userId = $user["id"];
+      if (!$checkPassword) {
+        return ["password_error" => 1];
+      }
 
-        return ["username" => $username, "type_user" => $typeUser, "id_user" => $userId];
+      return ["username" => $username, "type_user" => $typeUser, "id_user" => $userId];
 
-      case $user && $user["type"] == UserType::ADMIN->value:
-        $checkPassword = password_verify($password, $user['password']);
-        $username = $user["username"];
-        $typeUser = $user["type"];
-        $userId = $user["id"];
-        if (!$checkPassword) {
-          return ["password_error" => 1];
-        }
-        return ["username" => $username, "type_user" => $typeUser, "id_user" => $userId];
-      default:
-        return ["email_error" => 1];
+    } else{
+      return ["email_error" => 1];
     }
+
   }
+
+    
+  
 
   public function insertSessionData(array $sessionData): ?array
   {
@@ -178,4 +184,5 @@ readonly class UserRepository
     $statementDeleteNotification->execute();
     return ["notification_delete" => 1];
   }
+
 }

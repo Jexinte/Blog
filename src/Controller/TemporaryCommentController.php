@@ -4,11 +4,10 @@ namespace Controller;
 
 use Exceptions\CommentEmptyException;
 use Exceptions\CommentWrongFormatException;
-use Exceptions\ValidationErrorEmptyException;
 use Exceptions\ValidationErrorWrongFormatException;
 use Repository\TemporaryCommentRepository;
 use Model\TemporaryCommentModel;
-
+use Enumeration\Regex;
 class TemporaryCommentController
 {
 
@@ -19,12 +18,12 @@ class TemporaryCommentController
 
   public function handleCommentField(string $comment): array|string
   {
-    $commentRegex = "/^[A-ZÀ-ÿ][A-ZÀ-ÿa-zÀ-ÿ0-9\s\-\_\!\@\#\$\%\&\'\(\)\*\+\,\.\:\/\;\=\?\[\]\^\`\{\|\}\~]{0,498}[A-ZÀ-ÿa-zÀ-ÿ0-9\s\-\_\!\@\#\$\%\&\'\(\)\*\+\,\.\:\/\;\=\?\[\]\^\`\{\|\}\~]$/";
+
 
     switch (true) {
       case empty($comment):
         throw new CommentEmptyException();
-      case !preg_match($commentRegex, $comment):
+      case !preg_match(REGEX::COMMENT, $comment):
         throw new CommentWrongFormatException();
       default:
         return ["comment" => $comment];
@@ -33,10 +32,9 @@ class TemporaryCommentController
 
   public function handleFeedbackField(string $feedback):?array
   {
-    $feedbackRegex = "/^[A-ZÀ-ÿa-zÀ-ÿ0-9\s\-_\!\@\#\$\%\&\'\(\)\*\+\,\.\:\/\;\=\?\[\]\^\`\{\|\}\~]{0,500}$/";
     switch (true) {
 
-      case !preg_match($feedbackRegex, $feedback):
+      case !preg_match(REGEX::FEEDBACK, $feedback):
         throw new ValidationErrorWrongFormatException();
       default:
         return ["feedback" => $feedback];
