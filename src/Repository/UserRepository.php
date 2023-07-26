@@ -161,7 +161,7 @@ class UserRepository
   {
     $dbConnect = $this->connector->connect();
 
-    //* L'objectif est de récupérer les notifications de l'utilisateur afin de lui afficher un message personnalisé en fonction de la validation de son commentaire.
+    
 
     $statementGetAllNotifications = $dbConnect->prepare("SELECT * FROM user_notification WHERE idUser = :idUserOfSession");
 

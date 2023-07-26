@@ -291,18 +291,20 @@ if (isset($_GET['action'])) {
             break;
 
         case "add_article":
-            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
-                header("Location: index.php?action=error&code=403");
-            }
-            $template = "admin_add_article.twig";
+
             try {
-                $paramaters = [
-                    "session" => $_SESSION,
-                ];
-                $articleIsCreated = $articleController->handleCreateArticleValidator($_POST["title"], $_FILES["image_file"], $_POST["short-phrase"], $_POST["content"], $_POST["tags"], $_SESSION);
-                if (is_array($articleIsCreated)) {
-                    header("HTTP/1.1 302");
-                    header("Location: index.php?selection=admin_panel");
+                if ($_SESSION["type_user"] == UserType::ADMIN->value) {
+                    $template = "admin_add_article.twig";
+                    $paramaters = [
+                        "session" => $_SESSION,
+                    ];
+                    $articleIsCreated = $articleController->handleCreateArticleValidator($_POST["title"], $_FILES["image_file"], $_POST["short-phrase"], $_POST["content"], $_POST["tags"], $_SESSION);
+                    if (is_array($articleIsCreated)) {
+                        header("HTTP/1.1 302");
+                        header("Location: index.php?selection=admin_panel");
+                    }
+                } else {
+                    header("Location: index.php?action=error&code=403");
                 }
             } catch (TitleErrorEmptyException $e) {
                 header("HTTP/1.1 400");
@@ -339,29 +341,30 @@ if (isset($_GET['action'])) {
 
         case "update_article":
             try {
-                if ($_SESSION["type_user"] != UserType::ADMIN->value) {
+                if ($_SESSION["type_user"] == UserType::ADMIN->value) {
+                    $originalData = [];
+                    $postData = [
+                        $_POST["title"], $_POST["short_phrase"], $_POST["content"], $_POST["tags"], $_POST["original_file_path"],
+                        $_POST['id_article']
+                    ];
+
+                    foreach ($labelsUpdateArticle as $k => $v) {
+                        $originalData[$v] = $postData[$k];
+                    }
+
+                    $template = "admin_update_article.twig";
+                    $updatedData = $articleController->handleUpdateArticleValidator($_POST["title"], $_FILES["image_file"], $_POST["original_file_path"], $_POST["short_phrase"], $_POST["content"], $_POST["tags"], $_SESSION, $_POST["id_article"]);
+                    $paramaters = [
+                        "message" => $updatedData,
+                        "original_data" => $originalData,
+                    ];
+
+                    if (is_array($updatedData)) {
+                        header("HTTP/1.1 302");
+                        header("Location: index.php?selection=admin_panel");
+                    }
+                } else {
                     header("Location: index.php?action=error&code=403");
-                }
-                $originalData = [];
-                $postData = [
-                    $_POST["title"], $_POST["short_phrase"], $_POST["content"], $_POST["tags"], $_POST["original_file_path"],
-                    $_POST['id_article']
-                ];
-
-                foreach ($labelsUpdateArticle as $k => $v) {
-                    $originalData[$v] = $postData[$k];
-                }
-
-                $template = "admin_update_article.twig";
-                $updatedData = $articleController->handleUpdateArticleValidator($_POST["title"], $_FILES["image_file"], $_POST["original_file_path"], $_POST["short_phrase"], $_POST["content"], $_POST["tags"], $_SESSION, $_POST["id_article"]);
-                $paramaters = [
-                    "message" => $updatedData,
-                    "original_data" => $originalData,
-                ];
-
-                if (is_array($updatedData)) {
-                    header("HTTP/1.1 302");
-                    header("Location: index.php?selection=admin_panel");
                 }
             } catch (TitleErrorEmptyException $e) {
                 $paramaters["title_exception"] = TitleErrorEmptyException::TITLE_MESSAGE_ERROR_EMPTY;
@@ -391,14 +394,16 @@ if (isset($_GET['action'])) {
 
             break;
         case "delete_article":
-            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
+            if ($_SESSION["type_user"] === UserType::ADMIN->value) {
+                $article = $articleController->handleDeleteArticle($_GET["id"], $_SESSION);
+                if (is_array($article)) {
+                    header("HTTP/1.1 302");
+                    header("Location: index.php?selection=admin_panel");
+                }
+            } else {
                 header("Location: index.php?action=error&code=403");
             }
-            $article = $articleController->handleDeleteArticle($_GET["id"], $_SESSION);
-            if (is_array($article)) {
-                header("HTTP/1.1 302");
-                header("Location: index.php?selection=admin_panel");
-            }
+
             break;
         case "logout":
             $logout = $userController->handleLogout($_SESSION);
@@ -410,21 +415,24 @@ if (isset($_GET['action'])) {
             break;
 
         case "add_comment":
-            $article = current($articleController->handleOneArticle($_GET["idArticle"]));
-            foreach ($labels as $k => $v) {
-                $defaultValues[$v] = $article[$v];
-            }
-
 
             try {
-                $template = "article.twig";
+                if ($_SESSION["type_user"] === UserType::ADMIN->value || $_SESSION["type_user"] == UserType::USER->value) {
+                    $article = current($articleController->handleOneArticle($_GET["idArticle"]));
+                    foreach ($labels as $k => $v) {
+                        $defaultValues[$v] = $article[$v];
+                    }
+                    $template = "article.twig";
 
-                $paramaters["default"] = $defaultValues;
-                $temporaryComment = $temporaryCommentController->handleInsertTemporaryCommentValidator($_POST["comment"], $_POST["id_article"], $_SESSION);
-                if (is_array($temporaryComment)) {
-                    header("HTTP/1.1 302");
-                    header("Location: index.php?selection=article&id=" . $defaultValues["id"]);
-                    $temporaryCommentController->handleMailToAdmin($_SESSION, $defaultValues["title"]);
+                    $paramaters["default"] = $defaultValues;
+                    $temporaryComment = $temporaryCommentController->handleInsertTemporaryCommentValidator($_POST["comment"], $_POST["id_article"], $_SESSION);
+                    if (is_array($temporaryComment)) {
+                        header("HTTP/1.1 302");
+                        header("Location: index.php?selection=article&id=" . $defaultValues["id"]);
+                        $temporaryCommentController->handleMailToAdmin($_SESSION, $defaultValues["title"]);
+                    }
+                } else {
+                    header("Location: index.php?action=error&code=403");
                 }
             } catch (CommentEmptyException $e) {
                 $paramaters = [
@@ -441,35 +449,38 @@ if (isset($_GET['action'])) {
         case "validation":
 
             try {
+                if ($_SESSION["type_user"] === UserType::ADMIN->value) {
+                    $template = "admin_validation_commentary.twig";
 
-                $template = "admin_validation_commentary.twig";
-
-                $defaultValues = [];
-                $defaultValues["idComment"] = $_GET["idComment"];
-                $temporaryComment = $temporaryCommentController->handleGetOneTemporaryComment($defaultValues["idComment"]);
-                foreach ($labelsTemporaryComments as $k => $v) {
-                    $defaultValuesTemporaryComments[$v] = $temporaryComment[$v];
-                }
-                $paramaters["comment"] = $defaultValues;
-                $paramaters["com"] = $temporaryCommentController->handleGetOneTemporaryComment($defaultValues["idComment"]);
-
-
-                $finalPost = isset($_POST["accepted"]) ? $_POST["accepted"] : $_POST["rejected"];
-
-                $validation = $temporaryCommentController->handleValidationTemporaryComment($finalPost, $_GET["idComment"], $_POST["feedback"]);
-                if (array_key_exists("approved", $validation) || array_key_exists("rejected", $validation)) {
-                    header("HTTP/1.1 302");
-                    header("Location:index.php?selection=admin_panel");
-
-                    $_SESSION[array_key_first($temporaryCommentController->handleinsertNotificationUserOfTemporaryComment($temporaryCommentController->handleValidationTemporaryComment($finalPost, $_GET["idComment"], $_POST["feedback"])))] = 1;
-                    $_SESSION["id_comment"] = $defaultValues["idComment"];
-
-                    $finalValidation = $temporaryCommentController->handleFinalValidationOfTemporaryComment($_SESSION);
-                    if (array_key_exists("temporary_comment_approved", $finalValidation)) {
-                        unset($_SESSION["temporary_comment_approved"]);
-                    } else {
-                        unset($_SESSION["temporary_comment_rejected"]);
+                    $defaultValues = [];
+                    $defaultValues["idComment"] = $_GET["idComment"];
+                    $temporaryComment = $temporaryCommentController->handleGetOneTemporaryComment($defaultValues["idComment"]);
+                    foreach ($labelsTemporaryComments as $k => $v) {
+                        $defaultValuesTemporaryComments[$v] = $temporaryComment[$v];
                     }
+                    $paramaters["comment"] = $defaultValues;
+                    $paramaters["com"] = $temporaryCommentController->handleGetOneTemporaryComment($defaultValues["idComment"]);
+
+
+                    $finalPost = isset($_POST["accepted"]) ? $_POST["accepted"] : $_POST["rejected"];
+
+                    $validation = $temporaryCommentController->handleValidationTemporaryComment($finalPost, $_GET["idComment"], $_POST["feedback"]);
+                    if (array_key_exists("approved", $validation) || array_key_exists("rejected", $validation)) {
+                        header("HTTP/1.1 302");
+                        header("Location:index.php?selection=admin_panel");
+
+                        $_SESSION[array_key_first($temporaryCommentController->handleinsertNotificationUserOfTemporaryComment($temporaryCommentController->handleValidationTemporaryComment($finalPost, $_GET["idComment"], $_POST["feedback"])))] = 1;
+                        $_SESSION["id_comment"] = $defaultValues["idComment"];
+
+                        $finalValidation = $temporaryCommentController->handleFinalValidationOfTemporaryComment($_SESSION);
+                        if (array_key_exists("temporary_comment_approved", $finalValidation)) {
+                            unset($_SESSION["temporary_comment_approved"]);
+                        } else {
+                            unset($_SESSION["temporary_comment_rejected"]);
+                        }
+                    }
+                } else {
+                    header("Location: index.php?action=error&code=403");
                 }
             } catch (ValidationErrorWrongFormatException $e) {
                 $paramaters = [
@@ -480,12 +491,16 @@ if (isset($_GET['action'])) {
             break;
 
         case "delete_notification":
-            $template = "notification.twig";
-            $paramaters["notifications"] = $userController->handleGetAllUserNotifications($_SESSION);
-            $article = $userController->handleDeleteNotification($_GET["id_notification"]);
-            if (array_key_exists("notification_delete", $article)) {
-                header("HTTP/1.1 302");
-                header("Location:index.php?selection=notifications");
+            if ($_SESSION["type_user"] === UserType::ADMIN->value) {
+                $template = "notification.twig";
+                $paramaters["notifications"] = $userController->handleGetAllUserNotifications($_SESSION);
+                $article = $userController->handleDeleteNotification($_GET["id_notification"]);
+                if (array_key_exists("notification_delete", $article)) {
+                    header("HTTP/1.1 302");
+                    header("Location:index.php?selection=notifications");
+                }
+            } else {
+                header("Location: index.php?action=error&code=403");
             }
     }
 } elseif ((isset($_GET['selection']))) {
@@ -520,29 +535,30 @@ if (isset($_GET['action'])) {
             ];
             break;
         case "admin_panel":
-            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
+            if ($_SESSION["type_user"] == UserType::ADMIN->value) {
+                $template = "admin_homepage.twig";
+                $totalTemporaryComment =  $temporaryCommentController->handlegetTemporaryCommentsForAdministrators($_SESSION);
+                $paramaters = [
+                    "articles" => $articleController->listOfAllArticles(),
+                    "session" => $_SESSION,
+                    "comments" => $totalTemporaryComment,
+                    "total_comments" => is_array($totalTemporaryComment) ? count($totalTemporaryComment) : 0
+                ];
+            } else {
                 header("Location: index.php?action=error&code=403");
             }
-            $template = "admin_homepage.twig";
-            $totalTemporaryComment =  $temporaryCommentController->handlegetTemporaryCommentsForAdministrators($_SESSION);
-            $paramaters = [
-                "articles" => $articleController->listOfAllArticles(),
-                "session" => $_SESSION,
-                "comments" => $totalTemporaryComment,
-                "total_comments" => is_array($totalTemporaryComment) ? count($totalTemporaryComment) : 0
-            ];
-
-
             break;
         case "comment_details":
-            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
+            if ($_SESSION["type_user"] == UserType::ADMIN->value) {
+                $template = "admin_validation_commentary.twig";
+                $theTemporaryComment = $temporaryCommentController->handleGetOneTemporaryComment($_GET["idComment"]);
+                if (is_array($theTemporaryComment)) {
+                    $paramaters["comment"] = $theTemporaryComment;
+                }
+            } else {
                 header("Location: index.php?action=error&code=403");
             }
-            $template = "admin_validation_commentary.twig";
-            $theTemporaryComment = $temporaryCommentController->handleGetOneTemporaryComment($_GET["idComment"]);
-            if (is_array($theTemporaryComment)) {
-                $paramaters["comment"] = $theTemporaryComment;
-            }
+
             break;
         case "article":
             $article = current($articleController->handleOneArticle($_GET["id"]));
@@ -567,21 +583,25 @@ if (isset($_GET['action'])) {
             }
             break;
         case "add_article":
-            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
+            if ($_SESSION["type_user"] == UserType::ADMIN->value) {
+                $template = "admin_add_article.twig";
+                $paramaters["session"] =  $_SESSION;
+            } else {
                 header("Location: index.php?action=error&code=403");
             }
-            $template = "admin_add_article.twig";
-            $paramaters["session"] =  $_SESSION;
+
             break;
         case "view_update_article":
-            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
+            if ($_SESSION["type_user"] == UserType::ADMIN->value) {
+                $template = "admin_update_article.twig";
+                $article = current($articleController->handleOneArticle($_GET["id"]));
+                $paramaters = [
+                    "article" => $article,
+                ];
+            } else {
                 header("Location: index.php?action=error&code=403");
             }
-            $template = "admin_update_article.twig";
-            $article = current($articleController->handleOneArticle($_GET["id"]));
-            $paramaters = [
-                "article" => $article,
-            ];
+
             break;
 
         case "notifications":

@@ -7,7 +7,7 @@
 
 {% block title %}
 	<title>
-		Article - Blog professionnel
+		Article|Blog Professionel
 		
 	</title>
 {% endblock %}
@@ -26,7 +26,7 @@
 					<article>
 						<div class="author-box">
 							<img class="author-img" src="{{article.author_image is defined ? article.author_image : default.author_image}}" alt="avatar author1">
-							<h2 class="author-name">{{article.author is defined ? article.author : default.author}}</h2>
+							<h2 class="text-center author-name">{{article.author is defined ? article.author : default.author}}</h2>
 						</div>
 
 						<h1 class="article-title" id="h1">{{article.title is defined ? article.title : default.title}}</h1>
@@ -48,7 +48,7 @@
 		{% if count_of_comments is defined ? count_of_comments == 1 %}
 		<h2 class="text-center" id="comment-already-sent">Oops ! Il semblerait que vous ayez déjà posté un commentaire pour cet article dès qu'un administrateur l'aura validé vous pourrez à nouveau en poster un !</h2>
 		{% elseif no_user_connected is defined ? no_user_connected == 1 %}
-		<h2 class="text-center" id="user-not-connected">Afin de pouvoir publier un commentaire , veuillez vous connecter !</h2>		
+		<h2 class="text-center" id="user-not-connected">Afin de pouvoir publier un commentaire , veuillez vous <a href="index.php?selection=sign_in">connecter !</a></h2>		
 		{% else %}
 		<h2 class="h2" id="comment-main-title">Ajouter un commentaire</h2>
 
@@ -80,7 +80,7 @@
 			<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 comments">
 				<div class="author-box">
 					<img src="{{comment.profile_image}}" alt="author comment img">
-					<h3 class="author-name">{{comment.username}} ,
+					<h3 class="text-center author-name">{{comment.username}} ,
 						<span class="date-comment">le {{comment.date_of_publication}}</span>
 					</h3>
 					<p class="author-comment">{{comment.content}}</p>
