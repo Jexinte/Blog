@@ -18,7 +18,7 @@ class UserRepository
   }
 
 
-  public function createUser(string $username,string $file,string $email, string $password, BackedEnum $userType): ?array
+  public function createUser(string $username, string $file, string $email, string $password, BackedEnum $userType): ?array
   {
 
     $dbConnect = $this->connector->connect();
@@ -27,7 +27,7 @@ class UserRepository
     // $email,
     // $password,
     // $userType);
-  
+
 
 
     $statement = $dbConnect->prepare('SELECT username,email FROM user WHERE username = :username OR  email = :email');
@@ -36,7 +36,7 @@ class UserRepository
     $statement->execute();
     $result = $statement->fetch();
 
-    switch(true){
+    switch (true) {
       case !$result:
         $fileRequirements = explode(';', $file);
         $fileSettings["file_name"] = $fileRequirements[0];
@@ -55,13 +55,10 @@ class UserRepository
         move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
         return null;
 
-  
+
       default:
-      return $result;
+        return $result;
     }
-
-
-   // return !empty($result) ? $result : null;
   }
 
   public function loginUser(string $email, string $password): ?array
@@ -73,7 +70,7 @@ class UserRepository
     $statement->execute();
     $user = $statement->fetch();
 
-    if($user && $user["type"] == UserType::USER->value || $user && $user["type"] == UserType::ADMIN->value ){
+    if ($user && $user["type"] == UserType::USER->value || $user && $user["type"] == UserType::ADMIN->value) {
       $checkPassword = password_verify($password, $user['password']);
       $username = $user["username"];
       $typeUser = $user["type"];
@@ -83,15 +80,13 @@ class UserRepository
       }
 
       return ["username" => $username, "type_user" => $typeUser, "id_user" => $userId];
-
-    } else{
+    } else {
       return ["email_error" => 1];
     }
-
   }
 
-    
-  
+
+
 
   public function insertSessionData(array $sessionData): ?array
   {
@@ -184,5 +179,4 @@ class UserRepository
     $statementDeleteNotification->execute();
     return ["notification_delete" => 1];
   }
-
 }

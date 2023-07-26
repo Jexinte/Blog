@@ -203,7 +203,7 @@ class UserController
     $userRepository->insertSessionData($arr);
   }
 
-  public function handleGetIdSessionData($arr): ?array
+  public function handleGetIdSessionData(array $arr): ?array
   {
     $userRepository = $this->UserRepository;
 
@@ -225,7 +225,7 @@ class UserController
     return $userRepository->getAllUserNotifications($sessionData);
   }
 
-  public function handleDeleteNotification(int $idNotification)
+  public function handleDeleteNotification(int $idNotification) :?array
   {
     $userRepository = $this->UserRepository;
     return $userRepository->deleteNotification($idNotification);
