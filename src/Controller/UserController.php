@@ -132,9 +132,9 @@ class UserController
 
 
     switch (true) {
-      case  $userDb->getUsername()  === $username:
+      case  isset($userDb) && $userDb["username"]  === $username:
         throw new UsernameUnavailableException();
-      case $userDb->getEmail() === $email:
+      case isset($userDb) && $userDb["email"] === $email:
         throw new EmailUnavailableException();
       default:
         return null;

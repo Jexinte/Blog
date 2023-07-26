@@ -151,7 +151,7 @@ if (isset($_GET['action'])) {
 
                 $paramaters["message"] = $signUp;
 
-                if (is_array($signUp)) {
+                if (is_null($signUp)) {
                     header("HTTP/1.1 302");
                     header("Location: index.php?selection=sign_in");
                 }

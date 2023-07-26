@@ -18,15 +18,15 @@ class UserRepository
   }
 
 
-  public function createUser(string $username,string $file,string $email, string $password, BackedEnum $userType): ?object
+  public function createUser(string $username,string $file,string $email, string $password, BackedEnum $userType): ?array
   {
 
     $dbConnect = $this->connector->connect();
-    $test = new UserModel($username,
-    $file,
-    $email,
-    $password,
-    $userType);
+    // $test = new UserModel($username,
+    // $file,
+    // $email,
+    // $password,
+    // $userType);
   
 
 
@@ -57,7 +57,7 @@ class UserRepository
 
   
       default:
-      return $test;
+      return $result;
     }
 
 
