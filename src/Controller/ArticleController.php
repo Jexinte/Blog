@@ -19,6 +19,7 @@ use Exceptions\TagsWrongFormatException;
 use Repository\ArticleRepository;
 
 use Enumeration\Regex;
+
 class ArticleController
 {
 
@@ -131,15 +132,9 @@ class ArticleController
     $contentInModel = $articleData->getContent();
     $tagsInModel = $articleData->getTags();
 
-    $articleDataFromModel = [
-      "title" => $titleInModel,
-      "file" => $fileInModel,
-      "short_phrase" => $shortPhraseInModel,
-      "content" => $contentInModel,
-      "tags" => $tagsInModel["tags"]
-    ];
 
-    return $articleRepository->createArticle($articleDataFromModel, $sessionData);
+
+    return $articleRepository->createArticle($titleInModel, $fileInModel, $shortPhraseInModel, $contentInModel, $tagsInModel["tags"], $sessionData);
   }
 
 

@@ -117,7 +117,7 @@ class UserController
 
 
 
-    $userData = new UserModel($usernameResult, $fileResult, $emailResult, $passwordResult, $userType);
+    $userData = new UserModel($usernameResult, $fileResult, $emailResult, $passwordResult, $userType, null, null);
     $usernameInModel = $userData->getUsername();
     $profileImageInModel = $userData->getProfileImage();
     $emailInModel = $userData->getEmail();
@@ -128,16 +128,14 @@ class UserController
     $userRepository = $this->UserRepository;
     $userDb = $userRepository->createUser($usernameInModel, $profileImageInModel, $emailInModel, $passwordInModel, $userTypeInModel);
 
-
-
-
+    if (is_null($userDb)) {
+      return $userDb;
+    }
     switch (true) {
-      case  isset($userDb) && $userDb["username"]  === $username:
+      case !is_null($userDb->isUsernameAvailable()):
         throw new UsernameUnavailableException();
-      case isset($userDb) && $userDb["email"] === $email:
+      case !is_null($userDb->isEmailAvailable()):
         throw new EmailUnavailableException();
-      default:
-        return null;
     }
   }
 
@@ -225,7 +223,7 @@ class UserController
     return $userRepository->getAllUserNotifications($sessionData);
   }
 
-  public function handleDeleteNotification(int $idNotification) :?array
+  public function handleDeleteNotification(int $idNotification): ?array
   {
     $userRepository = $this->UserRepository;
     return $userRepository->deleteNotification($idNotification);

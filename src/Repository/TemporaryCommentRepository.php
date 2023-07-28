@@ -20,7 +20,7 @@ class TemporaryCommentRepository
   ) {
   }
 
-  public function insertTemporaryComment(array $data, array $sessionData): array
+  public function insertTemporaryComment(int $idArticle, int $idUser, string $temporaryComment, string $date, null $approved, null $rejected, null $feedback, array $sessionData): null
   {
 
     $dbConnect = $this->connector->connect();
@@ -38,16 +38,16 @@ class TemporaryCommentRepository
     if ($result) {
       $statementComment = $dbConnect->prepare("INSERT INTO temporary_comment (idArticle,idUser,content,date_creation,approved,rejected,feedback_administrator) VALUES(:idArticle,:idUser,:content,:date_creation,:approved,:rejected,:feedback_administrator)");
 
-      $statementComment->bindParam("idArticle", $data["id_article"]);
-      $statementComment->bindParam("idUser", $data["id_user"]);
-      $statementComment->bindParam("content", $data["content"]);
-      $statementComment->bindParam("date_creation", $data["date_creation"]);
-      $statementComment->bindParam("approved", $data["approved"]);
-      $statementComment->bindParam("rejected", $data["rejected"]);
-      $statementComment->bindParam("feedback_administrator", $data["feedback_administrator"]);
+      $statementComment->bindParam("idArticle", $idArticle);
+      $statementComment->bindParam("idUser", $idUser);
+      $statementComment->bindParam("content", $temporaryComment);
+      $statementComment->bindParam("date_creation", $date);
+      $statementComment->bindParam("approved", $approved);
+      $statementComment->bindParam("rejected", $rejected);
+      $statementComment->bindParam("feedback_administrator", $feedback);
       $statementComment->execute();
     }
-    return ["temporary_comment_saved" => 1];
+    return null;
   }
 
   public function checkCommentAlreadySentByUser(array $sessionData): ?array
@@ -167,22 +167,14 @@ class TemporaryCommentRepository
   public function getOneTemporaryComment(int $idComment): ?array
   {
     $dbConnect = $this->connector->connect();
-    $statement = $dbConnect->prepare("SELECT id,idArticle,idUser,content,DATE_FORMAT(date_creation, '%d %M %Y') AS date_of_publication FROM temporary_comment WHERE id=:idComment");
+    $statement = $dbConnect->prepare("SELECT tc.id, tc.idUser ,idArticle,content,DATE_FORMAT(date_creation, '%d %M %Y') AS date_of_publication, u.username FROM temporary_comment AS tc JOIN user u ON tc.idUser = u.id WHERE tc.id = :idComment");
     $statement->bindParam("idComment", $idComment);
     $statement->execute();
-    $result = $statement->fetch();
-    if ($result) {
-      $statementUser = $dbConnect->prepare("SELECT id,username FROM user WHERE id = :idUser");
-      $statementUser->bindParam("idUser", $result["idUser"]);
-      $statementUser->execute();
-      $resultUser = $statementUser->fetch();
-      if ($resultUser)
-        $frenchDateFormat = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
-      $date = $frenchDateFormat->format(new DateTime($result["date_of_publication"]));
-      $result["date_of_publication"] = $date;
-      $result["username"] = $resultUser["username"];
-      return $result;
+    $thereIsComment = $statement->fetch();
+    if ($thereIsComment) {
+      return $thereIsComment;
     }
+    return null;
   }
 
   public function validationTemporaryComment(string $valueOfValidation, int $idComment, string $feedback): ?array
@@ -191,7 +183,7 @@ class TemporaryCommentRepository
     $dbConnect = $this->connector->connect();
     switch (true) {
       case str_contains($valueOfValidation, "Accepter"):
-        $statement = $dbConnect->prepare("SELECT id,idUser,idArticle FROM temporary_comment WHERE id = :idComment");
+        $statement = $dbConnect->prepare("SELECT id,idUser,idArticle,content,DATE_FORMAT(date_creation, '%d %M %Y') AS date_of_publication FROM temporary_comment WHERE id = :idComment");
         $statement->bindParam("idComment", $idComment);
         $statement->execute();
         $resultIsAccepted = $statement->fetch();
@@ -202,7 +194,7 @@ class TemporaryCommentRepository
           $statementInsertAcceptedChoice->bindValue("idComment", $idComment);
           $statementInsertAcceptedChoice->bindValue("feedback", $feedbackResult);
           $statementInsertAcceptedChoice->execute();
-          return ["approved" => 1, "feedback" => $feedbackResult, "id_user" => $resultIsAccepted["idUser"], "id_comment" => $idComment, "id_article" => $resultIsAccepted["idArticle"]];
+          return ["approved" => 1, "id_comment" => $resultIsAccepted["id"], "id_user" => $resultIsAccepted["idUser"], "id_article" => $resultIsAccepted["idArticle"], "content" => $resultIsAccepted["content"], "date_creation" => $resultIsAccepted["date_of_publication"]];
         }
         break;
 
@@ -218,77 +210,17 @@ class TemporaryCommentRepository
           $statementInsertRejectedChoice->bindValue("idComment", $idComment);
           $statementInsertRejectedChoice->bindValue("feedback", $feedbackResult);
           $statementInsertRejectedChoice->execute();
-          return ["rejected" => 1, "feedback" => $feedbackResult, "id_user" => $resultIsRejected["idUser"], "id_comment" => $idComment, "id_article" => $resultIsRejected["idArticle"]];
+          return ["rejected" => 1, "id_comment" => $resultIsRejected["id"]];
         }
         break;
     }
   }
 
-
-  public function insertNotificationUserOfTemporaryComment(array $data): ?array
+  public function deleteTemporaryComment(array $rejectedValidation): void
   {
-
     $dbConnect = $this->connector->connect();
-
-
-    switch (true) {
-      case array_key_exists("approved", $data):
-
-        $statementAccepted = $dbConnect->prepare("INSERT INTO user_notification (idArticle,idUser,approved,feedback_administrator) VALUES(:idArticle,:idUser,:approved,:feedbackAdministrator)");
-        $statementAccepted->bindValue("idArticle", $data["id_article"]);
-        $statementAccepted->bindValue("idUser", $data["id_user"]);
-        $statementAccepted->bindValue("approved", $data["approved"]);
-        $statementAccepted->bindValue("feedbackAdministrator", $data["feedback"]);
-        $statementAccepted->execute();
-        return ["temporary_comment_approved" => 1, "id_comment" => $data["id_comment"]];
-
-      case array_key_exists("rejected", $data):
-        $statementRejected = $dbConnect->prepare("INSERT INTO user_notification (idArticle,idUser,rejected,feedback_administrator) VALUES(:idArticle,:idUser,:rejected,:feedbackAdministrator)");
-        $statementRejected->bindValue("idArticle", $data["id_article"]);
-        $statementRejected->bindValue("idUser", $data["id_user"]);
-        $statementRejected->bindValue("rejected", $data["rejected"]);
-        $statementRejected->bindValue("feedbackAdministrator", $data["feedback"]);
-        $statementRejected->execute();
-        return ["temporary_comment_rejected" => 1, "id_comment" => $data["id_comment"]];
-    }
-  }
-  public function finalValidationOfTemporaryComment(array $sessionData): ?array
-  {
-
-    $dbConnect = $this->connector->connect();
-    switch (true) {
-      case array_key_exists("temporary_comment_approved", $sessionData):
-        $statementGetTemporaryComment = $dbConnect->prepare("SELECT id,idArticle,idUser,content,date_creation FROM temporary_comment WHERE id = :idComment");
-        $statementGetTemporaryComment->bindParam("idComment", $sessionData["id_comment"]);
-        $statementGetTemporaryComment->execute();
-        $resultGetTemporaryComment = $statementGetTemporaryComment->fetch();
-        if ($resultGetTemporaryComment) {
-          $statementInsertFinalComment = $dbConnect->prepare("INSERT INTO comment (idArticle,idUser,content,date_creation) VALUES(:idArticle,:idUser,:content,:date_creation)");
-          $statementInsertFinalComment->bindParam("idArticle", $resultGetTemporaryComment["idArticle"]);
-          $statementInsertFinalComment->bindParam("idUser", $resultGetTemporaryComment["idUser"]);
-          $statementInsertFinalComment->bindParam("content", $resultGetTemporaryComment["content"]);
-          $statementInsertFinalComment->bindParam("date_creation", $resultGetTemporaryComment["date_creation"]);
-          $statementInsertFinalComment->execute();
-
-          $statementDeleteTemporaryComment = $dbConnect->prepare("DELETE FROM temporary_comment WHERE id = :idComment");
-          $statementDeleteTemporaryComment->bindParam("idComment", $sessionData["id_comment"]);
-          $statementDeleteTemporaryComment->execute();
-          return ["temporary_comment_approved" => 1];
-        }
-        break;
-
-      case array_key_exists("temporary_comment_rejected", $sessionData):
-        $statementGetTemporaryComment = $dbConnect->prepare("SELECT id,idArticle,idUser,content,date_creation FROM temporary_comment WHERE id = :idComment");
-        $statementGetTemporaryComment->bindParam("idComment", $sessionData["id_comment"]);
-        $statementGetTemporaryComment->execute();
-        $resultGetTemporaryComment = $statementGetTemporaryComment->fetch();
-        if ($resultGetTemporaryComment) {
-          $statementDeleteTemporaryComment = $dbConnect->prepare("DELETE FROM temporary_comment WHERE id = :idComment");
-          $statementDeleteTemporaryComment->bindParam("idComment", $sessionData["id_comment"]);
-          $statementDeleteTemporaryComment->execute();
-          return ["temporary_comment_approved" => 1];
-        }
-        break;
-    }
+    $statementDeleteTemporaryComment = $dbConnect->prepare("DELETE FROM temporary_comment WHERE id = :idComment");
+    $statementDeleteTemporaryComment->bindParam("idComment", $rejectedValidation["id_comment"]);
+    $statementDeleteTemporaryComment->execute();
   }
 }

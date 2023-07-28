@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mar. 25 juil. 2023 à 16:21
+-- Généré le : mer. 26 juil. 2023 à 16:55
 -- Version du serveur : 10.4.28-MariaDB
 -- Version de PHP : 8.2.4
 
@@ -43,7 +43,7 @@ CREATE TABLE `article` (
 --
 
 INSERT INTO `article` (`id`, `image`, `title`, `chapô`, `content`, `tags`, `author`, `date_creation`) VALUES
-(8, 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/Hl2eMWYKn3Oy.png', 'Vsdfsfsfsdf', 'Asdfsfsdfsfsdfuse Repository\\SessionManagerRepository;', 'Asdfsfsdfsfsdfuse Repository\\SessionManagerRepository;\r\nuse Repository\\SessionManagerRepository;\r\nuse Repository\\SessionManagerRepository;\r\nuse Repository\\SessionManagerRepository;\r\n', '#Lsdfsfdf #Ldfdfdf #Lafdf', 'Admin', '2023-07-25');
+(11, 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/DgmAJtcEMzW7.png', 'Vax', 'Vax', 'Vax', '#Var #Lax #Max', 'Admin', '2023-07-26');
 
 -- --------------------------------------------------------
 
@@ -64,8 +64,8 @@ CREATE TABLE `comment` (
 --
 
 INSERT INTO `comment` (`id`, `idArticle`, `idUser`, `content`, `date_creation`) VALUES
-(1, 8, 1, 'Ares', '2023-07-25'),
-(2, 8, 4, 'Tu es un crack !', '2023-07-25');
+(5, 11, 1, 'Vaxsdf', '2023-07-26'),
+(6, 11, 1, 'Asdfsff', '2023-07-26');
 
 -- --------------------------------------------------------
 
@@ -82,14 +82,6 @@ CREATE TABLE `form_message` (
   `message` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Déchargement des données de la table `form_message`
---
-
-INSERT INTO `form_message` (`id`, `firstname`, `lastname`, `email`, `subject`, `message`) VALUES
-(8, 'John', 'Doe', 'trains78@live.fr', 'Collaborationfffffff', 'CollaborationfffffffCollaborationfffffffCollaborationfffffff'),
-(9, 'John', 'Doe', 'john@live.fr', 'Collaborationfffffff', 'CollaborationfffffffCollaborationfffffff');
-
 -- --------------------------------------------------------
 
 --
@@ -102,13 +94,6 @@ CREATE TABLE `session` (
   `username` varchar(255) NOT NULL,
   `user_type` enum('admin','user') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `session`
---
-
-INSERT INTO `session` (`id`, `id_session`, `username`, `user_type`) VALUES
-(11, 'u4qRtwKHYyYFeDxSW3V4MU+vKWnPR7VANWBQ8RxWKM7DigPX8JdbNvtUy2uuWqT8KyY=', 'Admin', 'admin');
 
 -- --------------------------------------------------------
 
@@ -147,10 +132,13 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `username`, `profile_image`, `email`, `password`, `type`) VALUES
-(1, 'Admin', 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/dxabo0CfiTpn.jpg', 'mdembelepro@gmail.com', '$2y$10$OBndb21bE3fLFo1aTfn36.FlVkaHDPtLNsmiBS10eB9xxwK.be.oy', 'admin'),
+(1, 'Admin', 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/admin.jpg', 'mdembelepro@gmail.com', '$2y$10$OBndb21bE3fLFo1aTfn36.FlVkaHDPtLNsmiBS10eB9xxwK.be.oy', 'admin'),
 (2, 'Testuser', 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/v48RMUXQD901.jpg', 'tes2@gmail.com', '$2y$10$Ky/qmzf/IcHowKKct7emeOft.xnwS5rHO/A5JpV4t6LgEn2d6gZVq', 'user'),
 (3, 'Testv', 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/', 'va@live.fr', '$2y$10$2STAbphVuJ6gHd6GTISepucvlAiyuz6dE0vZyAYSeve9bLQaeHhW2', 'user'),
-(5, 'Test', 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/K6Naz2PzP+kG.png', 'test@gmail.com', '$2y$10$OshLZmZApr5IZF63B0nNQuxql0g8bsUpv6wOVOEf1HJ0ZWCDWIPuq', 'user');
+(5, 'Test', 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/K6Naz2PzP+kG.png', 'test@gmail.com', '$2y$10$OshLZmZApr5IZF63B0nNQuxql0g8bsUpv6wOVOEf1HJ0ZWCDWIPuq', 'user'),
+(6, 'Admina', 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/mcRtGoB2rO8L.jpg', 'sdfsf@live.fr', '$2y$10$0txL5PjD7812z933y4oDr.o5QWSc3e6E13mt94nFLmDQUbDBdPbn.', 'user'),
+(7, 'Vax', 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/JVchqWmeBju.jpg', 'vax@gmail.com', '$2y$10$HYS5cLB5RTdZqQ3XLfFHru..luMQWTlED4WkNzlxuJKOUdQ7qqVQS', 'user'),
+(8, 'Adxa', 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/NC+63oK4K5Ud.jpg', 'dsfsff@live.fr', '$2y$10$VPU4H4na3z4IaUhva9oUZepBAXPkeon24MWCtOmoD3RXI3BSoHjUW', 'user');
 
 -- --------------------------------------------------------
 
@@ -166,13 +154,6 @@ CREATE TABLE `user_notification` (
   `rejected` tinyint(4) DEFAULT NULL,
   `feedback_administrator` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `user_notification`
---
-
-INSERT INTO `user_notification` (`id`, `idArticle`, `idUser`, `approved`, `rejected`, `feedback_administrator`) VALUES
-(4, 8, 1, NULL, 1, NULL);
 
 --
 -- Index pour les tables déchargées
@@ -229,13 +210,13 @@ ALTER TABLE `user_notification`
 -- AUTO_INCREMENT pour la table `article`
 --
 ALTER TABLE `article`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT pour la table `comment`
 --
 ALTER TABLE `comment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT pour la table `form_message`
@@ -247,25 +228,25 @@ ALTER TABLE `form_message`
 -- AUTO_INCREMENT pour la table `session`
 --
 ALTER TABLE `session`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT pour la table `temporary_comment`
 --
 ALTER TABLE `temporary_comment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT pour la table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT pour la table `user_notification`
 --
 ALTER TABLE `user_notification`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Contraintes pour les tables déchargées

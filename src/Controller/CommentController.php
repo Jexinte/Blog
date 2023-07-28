@@ -2,6 +2,8 @@
 
 namespace Controller;
 
+use DateTime;
+use Model\CommentModel;
 use Repository\CommentRepository;
 
 class CommentController
@@ -14,7 +16,25 @@ class CommentController
   public function handleGetAllComments(int $idArticle): ?array
   {
     $commentRepository = $this->comment;
-    $comments = $commentRepository->getAllComments([],$idArticle);
-   return $comments;
+    $comments = $commentRepository->getAllComments([], $idArticle);
+    return $comments;
+  }
+
+  public function handleCreateComment(array $commentsDetails, array $sessionData): null
+  {
+    $commentRepository = $this->comment;
+
+    if (array_key_exists("approved", $commentsDetails)) {
+      $new_date_format = DateTime::createFromFormat("d F Y", $commentsDetails["date_creation"]);
+      $date = $new_date_format->format("Y-m-d");
+      $commentModel = new CommentModel($commentsDetails["id_article"], $commentsDetails["id_user"], $commentsDetails["content"], $date);
+      $idArticleInModel = $commentModel->getIdArticle();
+      $idUserInModel = $commentModel->getIdUser();
+      $contentInModel = $commentModel->getContent();
+      $dateCreationInModel = $commentModel->getDateCreation();
+      $commentResult = $commentRepository->createComment($idArticleInModel, $idUserInModel, $contentInModel, $dateCreationInModel, $sessionData);
+      return $commentResult;
+    }
+    return null;
   }
 }

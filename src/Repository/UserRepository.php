@@ -18,16 +18,11 @@ class UserRepository
   }
 
 
-  public function createUser(string $username, string $file, string $email, string $password, BackedEnum $userType): ?array
+  public function createUser(string $username, string $file, string $email, string $password, BackedEnum $userType): ?UserModel
   {
 
     $dbConnect = $this->connector->connect();
-    // $test = new UserModel($username,
-    // $file,
-    // $email,
-    // $password,
-    // $userType);
-
+    $userModel = new UserModel($username, $file, $email, $password, $userType, null, null);
 
 
     $statement = $dbConnect->prepare('SELECT username,email FROM user WHERE username = :username OR  email = :email');
@@ -55,9 +50,13 @@ class UserRepository
         move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
         return null;
 
+      case $result["username"] == $userModel->getUsername():
+        $userModel->setUsernameAvailability(false);
+        return $userModel;
 
-      default:
-        return $result;
+      case $result["email"] == $userModel->getEmail():
+        $userModel->setEmailAvailability(false);
+        return $userModel;
     }
   }
 

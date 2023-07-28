@@ -299,7 +299,7 @@ if (isset($_GET['action'])) {
                         "session" => $_SESSION,
                     ];
                     $articleIsCreated = $articleController->handleCreateArticleValidator($_POST["title"], $_FILES["image_file"], $_POST["short-phrase"], $_POST["content"], $_POST["tags"], $_SESSION);
-                    if (is_array($articleIsCreated)) {
+                    if (is_null($articleIsCreated)) {
                         header("HTTP/1.1 302");
                         header("Location: index.php?selection=admin_panel");
                     }
@@ -426,7 +426,7 @@ if (isset($_GET['action'])) {
 
                     $paramaters["default"] = $defaultValues;
                     $temporaryComment = $temporaryCommentController->handleInsertTemporaryCommentValidator($_POST["comment"], $_POST["id_article"], $_SESSION);
-                    if (is_array($temporaryComment)) {
+                    if (is_null($temporaryComment)) {
                         header("HTTP/1.1 302");
                         header("Location: index.php?selection=article&id=" . $defaultValues["id"]);
                         $temporaryCommentController->handleMailToAdmin($_SESSION, $defaultValues["title"]);
@@ -455,29 +455,31 @@ if (isset($_GET['action'])) {
                     $defaultValues = [];
                     $defaultValues["idComment"] = $_GET["idComment"];
                     $temporaryComment = $temporaryCommentController->handleGetOneTemporaryComment($defaultValues["idComment"]);
+
                     foreach ($labelsTemporaryComments as $k => $v) {
                         $defaultValuesTemporaryComments[$v] = $temporaryComment[$v];
                     }
+
                     $paramaters["comment"] = $defaultValues;
-                    $paramaters["com"] = $temporaryCommentController->handleGetOneTemporaryComment($defaultValues["idComment"]);
+                    $paramaters["default"] = $temporaryCommentController->handleGetOneTemporaryComment($defaultValues["idComment"]);
 
 
                     $finalPost = isset($_POST["accepted"]) ? $_POST["accepted"] : $_POST["rejected"];
 
-                    $validation = $temporaryCommentController->handleValidationTemporaryComment($finalPost, $_GET["idComment"], $_POST["feedback"]);
-                    if (array_key_exists("approved", $validation) || array_key_exists("rejected", $validation)) {
+                    $validation = $temporaryCommentController->handleValidationTemporaryComment($finalPost, $_GET['idComment'], $_POST["feedback"]);
+                    $notation = array_key_exists("approved", $validation)  ? "approved" : "rejected";
+
+                    if (str_contains("approved", $notation)) {
                         header("HTTP/1.1 302");
-                        header("Location:index.php?selection=admin_panel");
-
-                        $_SESSION[array_key_first($temporaryCommentController->handleinsertNotificationUserOfTemporaryComment($temporaryCommentController->handleValidationTemporaryComment($finalPost, $_GET["idComment"], $_POST["feedback"])))] = 1;
-                        $_SESSION["id_comment"] = $defaultValues["idComment"];
-
-                        $finalValidation = $temporaryCommentController->handleFinalValidationOfTemporaryComment($_SESSION);
-                        if (array_key_exists("temporary_comment_approved", $finalValidation)) {
-                            unset($_SESSION["temporary_comment_approved"]);
-                        } else {
-                            unset($_SESSION["temporary_comment_rejected"]);
-                        }
+                        header("Location: index.php?selection=admin_panel");
+                        $_SESSION["approved"] = 1;
+                        $_SESSION["id_comment"] = $validation["id_comment"];
+                        $commentController->handleCreateComment($validation, $_SESSION);
+                        unset($_SESSION["approved"]);
+                    } else {
+                        header("HTTP/1.1 302");
+                        header("Location: index.php?selection=admin_panel");
+                        $temporaryCommentController->handleDeleteTemporaryComment($validation);
                     }
                 } else {
                     header("Location: index.php?action=error&code=403");

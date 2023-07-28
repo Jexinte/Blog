@@ -88,7 +88,7 @@ class ArticleRepository
     return $article;
   }
 
-  public function createArticle(array $articleData, array $sessionData): ?array
+  public function createArticle(string $title, string $file, string $shortPhrase, string $content, string $tags, array $sessionData): ?array
   {
 
     $dbConnect = $this->connector->connect();
@@ -103,13 +103,13 @@ class ArticleRepository
 
     $statementSession->execute();
     $result = $statementSession->fetch();
-    if ($result["user_type"] === UserType::ADMIN->value) {
+    if ($result["user_type"] === UserType::ADMIN->value && $result["username"] == $sessionData["username"]) {
 
-      $titleArticle = $articleData["title"];
-      $fileArticle = $articleData["file"];
-      $shortPhraseArticle = $articleData["short_phrase"];
-      $contentArticle = $articleData["content"];
-      $tagsArticle = $articleData["tags"];
+      $titleArticle = $title;
+      $fileArticle = $file;
+      $shortPhraseArticle = $shortPhrase;
+      $contentArticle = $content;
+      $tagsArticle = $tags;
 
       $fileRequirements = explode(';', $fileArticle);
       $fileSettings["file_name"] = $fileRequirements[0];
@@ -128,7 +128,7 @@ class ArticleRepository
       $statementArticle->bindValue(':dateArticle', date('Y-m-d'));
       $statementArticle->execute();
       move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
-      return ["article_created" => 1];
+      return null;
     }
   }
 

@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block title %}
-	<title>Validation de commentaire|Administration</title>
+	<title>Validation de commentaire | Administration</title>
 {% endblock %}
 {% block css_page %}
 	<link rel="stylesheet" href="../public/assets/css/admin_validation_commentary.css">
@@ -23,9 +23,9 @@
 	<div class="container-fluid" id="comment">
 		<h2 id="comment-main-title">Commentaire</h2>
 		<div class="commentary-box">
-			<h3 class="author-comment">{{comment.username is defined ? comment.username : com.username}}, le {{comment.date_of_publication is defined ? comment.date_of_publication : com.date_of_publication}} :</h3>
+			<h3 class="author-comment">{{comment.username is defined ? comment.username : default.username}}, le {{comment.date_of_publication is defined ? comment.date_of_publication : default.date_of_publication}} :</h3>
 			
-			<p class="text-center content-comment">{{comment.content is defined ? comment.content : com.content}}</p>
+			<p class="text-center content-comment">{{comment.content is defined ? comment.content : default.content}}</p>
 		</div>
 		<form action="?action=validation&amp;idComment={{comment.id is defined ? comment.id : comment.idComment}}" method="post">
 			<label for="feedback">Explication (facultatif) :</label>
