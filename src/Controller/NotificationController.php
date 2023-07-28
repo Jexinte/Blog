@@ -15,7 +15,6 @@ class NotificationController
   public function handleCreateNotification(array $sessionData): void
   {
     $notificationRepository = $this->notificationRepository;
-    var_dump($sessionData);
     switch (true) {
       case array_key_exists("approved", $sessionData):
         $notificationModel = new NotificationModel($sessionData["id_article"], $sessionData["id_user"], $sessionData["approved"], null, $sessionData["feedback"]);

@@ -14,19 +14,19 @@ class CommentModel
   ) {
   }
 
-  public function getIdArticle()
+  public function getIdArticle():int
   {
     return $this->idArticle;
   }
-  public function getIdUser()
+  public function getIdUser():int
   {
     return $this->idUser;
   }
-  public function getContent()
+  public function getContent():string
   {
     return $this->content;
   }
-  public function getDateCreation()
+  public function getDateCreation():string
   {
     return $this->dateCreation;
   }

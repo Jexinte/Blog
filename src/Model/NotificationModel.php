@@ -14,23 +14,23 @@ class NotificationModel
   ) {
   }
 
-  public function getIdArticle()
+  public function getIdArticle():int
   {
     return $this->idArticle;
   }
-  public function getIdUser()
+  public function getIdUser():int
   {
     return $this->idUser;
   }
-  public function getApproved()
+  public function getApproved():null|bool
   {
     return $this->approved;
   }
-  public function getRejected()
+  public function getRejected():null|bool
   {
     return $this->rejected;
   }
-  public function getFeedbackAdministrator()
+  public function getFeedbackAdministrator():string
   {
     return $this->feedbackAdministrator;
   }

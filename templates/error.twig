@@ -29,20 +29,19 @@
 
 					<div class="error-box">
 						{% if code == 500 %}
-							<img src="../public/assets/images/code_error/500.jpg" alt="500 code error">		
-							</a>
-							{% elseif code == 401 %}
-							
-							<img src="../public/assets/images/code_error/401.jpg" alt="401 code error">
-							{% elseif code == 403 %}
-							<img src="../public/assets/images/code_error/403.jpg" alt="403 code error">
-						{% endif %}
+							<img src="../public/assets/images/code_error/500.jpg" alt="500 code error">
+						</a>
+					{% elseif code == 401 %}
 
+						<img src="../public/assets/images/code_error/401.jpg" alt="401 code error">
+					{% elseif code == 403 %}
+						<img src="../public/assets/images/code_error/403.jpg" alt="403 code error">
 					{% endif %}
-							<a href="index.php?selection=homepage">Retour vers la page d'accueil</a>
-				</div>
-			</div>
 
+				{% endif %}
+				<a href="index.php?selection=homepage">Retour vers la page d'accueil</a>
+			</div>
 		</div>
+
 	</div>
-</div>{% endblock %}
+</div></div>{% endblock %}

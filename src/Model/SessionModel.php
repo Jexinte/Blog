@@ -10,20 +10,20 @@ class SessionModel
   {
   }
 
-  public function getIdSession()
+  public function getIdSession():string
   {
     return $this->idSession;
   }
-  public function getUsername()
+  public function getUsername():string
   {
     return $this->username;
   }
-  public function getUserType()
+  public function getUserType():string
   {
     return $this->userType;
   }
 
-  public function setIdSession($sessionId)
+  public function setIdSession(string $sessionId)
   {
     $this->idSession = $sessionId;
   }

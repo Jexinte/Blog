@@ -39,20 +39,20 @@ class UserModel
   {
     return $this->type;
   }
-  public function isUsernameAvailable()
+  public function isUsernameAvailable():bool
   {
     return $this->usernameStatus;
   }
-  public function isEmailAvailable()
+  public function isEmailAvailable():bool
   {
     return $this->emailStatus;
   }
 
-  public function setUsernameAvailability(bool $status)
+  public function setUsernameAvailability(bool $status):void
   {
     $this->usernameStatus = $status;
   }
-  public function setEmailAvailability(bool $status)
+  public function setEmailAvailability(bool $status):void
   {
     $this->emailStatus = $status;
   }
