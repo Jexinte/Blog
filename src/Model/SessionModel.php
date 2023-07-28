@@ -10,7 +10,7 @@ class SessionModel
   {
   }
 
-  public function getIdSession():string
+  public function getIdSession():?string
   {
     return $this->idSession;
   }
@@ -23,7 +23,7 @@ class SessionModel
     return $this->userType;
   }
 
-  public function setIdSession(string $sessionId)
+  public function setIdSession(string $sessionId):void
   {
     $this->idSession = $sessionId;
   }
