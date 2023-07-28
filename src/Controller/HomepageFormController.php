@@ -19,7 +19,7 @@ use Repository\HomepageFormRepository;
 use Enumeration\Regex;
 
 
- class HomepageFormController
+class HomepageFormController
 {
 
   public function __construct(private readonly HomepageFormRepository $homepageForm)
@@ -28,7 +28,7 @@ use Enumeration\Regex;
 
   public function handleFirstNameField(string $firstname): array|string
   {
-    
+
     switch (true) {
       case empty($firstname):
         throw new FirstNameErrorEmptyException();
@@ -106,15 +106,14 @@ use Enumeration\Regex;
     $subjectInModel = $userDataFromForm->getSubject();
     $messageInModel = $userDataFromForm->getMessage();
 
-    $dataFromHomepageFormModel = [
-      "firstname" => $firstnameInModel,
-      "lastname" => $lastnameInModel,
-      "email" => $emailInModel,
-      "subject" => $subjectInModel,
-      "message" => $messageInModel
-    ];
 
-    $insertDataDb = $formRepository->insertDataInDatabase($dataFromHomepageFormModel);
+    $insertDataDb = $formRepository->insertDataInDatabase(
+      $firstnameInModel,
+      $lastnameInModel,
+      $emailInModel,
+      $subjectInModel,
+      $messageInModel
+    );
     $getDataFromDb = $formRepository->getDataFromDatabase($insertDataDb);
     return array_key_exists("data_retrieved", $getDataFromDb) && $getDataFromDb["data_retrieved"] == 1 ? $formRepository->sendMailAdmin($getDataFromDb) : null;
   }

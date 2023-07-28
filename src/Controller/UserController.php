@@ -194,19 +194,7 @@ class UserController
     return $login ?? null;
   }
 
-  public function handleInsertSessionData(array $arr): void
-  {
-    $userRepository = $this->UserRepository;
 
-    $userRepository->insertSessionData($arr);
-  }
-
-  public function handleGetIdSessionData(array $arr): ?array
-  {
-    $userRepository = $this->UserRepository;
-
-    return $userRepository->getIdSessionData($arr);
-  }
 
   public function handleLogout(array $sessionData): ?array
   {

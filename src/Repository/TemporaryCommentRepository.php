@@ -158,7 +158,7 @@ class TemporaryCommentRepository
 
     $mail->Body = "Cher administrateur, <br><br>
       Un nouveau commentaire a été publié sur le site par l'utilisateur <strong>$usernameSession</strong>. <br><br>
-      Pour modérer ou répondre à ce commentaire, veuillez vous connecter à l'interface d'administration du site : http://localhost/P5_Créez%20votre%20premier%20blog%20en%20PHP%20-%20Dembele%20Mamadou/public/index.php?selection=sign_in. <br><br>
+      Pour modérer ou répondre à ce commentaire, veuillez vous connecter à l'interface d'administration du site : <a href='http://localhost/P5_Créez%20votre%20premier%20blog%20en%20PHP%20-%20Dembele%20Mamadou/public/index.php?selection=sign_in'. <br><br>
       Cordialement,<br><br>
       L'équipe du site";
     $mail->send();
@@ -194,7 +194,7 @@ class TemporaryCommentRepository
           $statementInsertAcceptedChoice->bindValue("idComment", $idComment);
           $statementInsertAcceptedChoice->bindValue("feedback", $feedbackResult);
           $statementInsertAcceptedChoice->execute();
-          return ["approved" => 1, "id_comment" => $resultIsAccepted["id"], "id_user" => $resultIsAccepted["idUser"], "id_article" => $resultIsAccepted["idArticle"], "content" => $resultIsAccepted["content"], "date_creation" => $resultIsAccepted["date_of_publication"]];
+          return ["approved" => 1, "id_comment" => $resultIsAccepted["id"], "id_user" => $resultIsAccepted["idUser"], "id_article" => $resultIsAccepted["idArticle"], "content" => $resultIsAccepted["content"], "date_creation" => $resultIsAccepted["date_of_publication"], "feedback" => $feedback];
         }
         break;
 
@@ -210,7 +210,7 @@ class TemporaryCommentRepository
           $statementInsertRejectedChoice->bindValue("idComment", $idComment);
           $statementInsertRejectedChoice->bindValue("feedback", $feedbackResult);
           $statementInsertRejectedChoice->execute();
-          return ["rejected" => 1, "id_comment" => $resultIsRejected["id"]];
+          return ["rejected" => 1, "id_comment" => $resultIsRejected["id"], "id_user" => $resultIsRejected["idUser"], "id_article" => $resultIsRejected["idArticle"], "feedback" => $feedback];
         }
         break;
     }

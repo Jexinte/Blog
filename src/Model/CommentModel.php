@@ -7,7 +7,7 @@ class CommentModel
 {
 
   public function __construct(
-    private int $idArticle,
+    public int $idArticle,
     private int $idUser,
     public string $content,
     public string $dateCreation,

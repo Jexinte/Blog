@@ -9,14 +9,14 @@ use PHPMailer\PHPMailer\PHPMailer;
 
 
 
- class HomepageFormRepository
+class HomepageFormRepository
 {
 
   public function __construct(private readonly DatabaseConnection $connector, private readonly string $username, private readonly string $password, private readonly string $smtp_address)
   {
   }
 
-  public function insertDataInDatabase(array $formData): array
+  public function insertDataInDatabase(string $firstname, string $lastname, string $email, $subject, string $message): array
   {
 
     $dbConnect = $this->connector->connect();
@@ -24,11 +24,11 @@ use PHPMailer\PHPMailer\PHPMailer;
 
     $statement = $dbConnect->prepare("INSERT INTO form_message(firstname,lastname,email,subject,message) VALUES(?,?,?,?,?)");
     $values = [
-      $formData["firstname"],
-      $formData["lastname"],
-      $formData["email"],
-      $formData["subject"],
-      $formData["message"]
+      $firstname,
+      $lastname,
+      $email,
+      $subject,
+      $message
     ];
     $statement->execute($values);
     return ["data_saved" => 1];

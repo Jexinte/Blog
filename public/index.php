@@ -2,12 +2,14 @@
 
 require_once __DIR__ . "../../vendor/autoload.php";
 
+use Config\DatabaseConnection;
 use Repository\SessionManagerRepository;
 
-$sessionRepository = new SessionManagerRepository();
+$db = new DatabaseConnection("professional_blog", "root", "");
+
+$sessionRepository = new SessionManagerRepository($db);
 $sessionRepository->startSession();
 
-use Config\DatabaseConnection;
 
 use Exceptions\UsernameErrorEmptyException;
 use Exceptions\UsernameWrongFormatException;
@@ -48,12 +50,15 @@ use Controller\DownloadController;
 use Controller\HomepageFormController;
 use Controller\TemporaryCommentController;
 use Controller\CommentController;
+use Controller\NotificationController;
+use Controller\SessionController;
 
 use Enumeration\UserType;
 
 use Repository\ArticleRepository;
 use Repository\CommentRepository;
 use Repository\HomepageFormRepository;
+use Repository\NotificationRepository;
 use Repository\TemporaryCommentRepository;
 use Repository\UserRepository;
 
@@ -71,13 +76,15 @@ $twig = new \Twig\Environment(
         'cache' => false
     ]
 );
-$db = new DatabaseConnection("professional_blog", "root", "");
 $formCredentialUsername = file_get_contents("../config/stmp_credentials.json");
 $formCredentialsPassword = file_get_contents("../config/stmp_credentials.json");
 $formCredentialsSmtpAddress = file_get_contents("../config/stmp_credentials.json");
 
 $userRepository = new UserRepository($db);
 $userController = new UserController($userRepository);
+
+$sessionRepository = new SessionManagerRepository($db);
+$sessionController = new SessionController($sessionRepository);
 
 $articleRepository = new ArticleRepository($db);
 $articleController = new ArticleController($articleRepository);
@@ -104,6 +111,9 @@ $temporaryCommentController = new TemporaryCommentController($temporaryCommentRe
 
 $commentRepository = new CommentRepository($db);
 $commentController = new CommentController($commentRepository);
+
+$notificationRepository = new NotificationRepository($db);
+$notificationController = new NotificationController($notificationRepository);
 
 $template = "homepage.twig";
 $paramaters = [];
@@ -200,7 +210,7 @@ if (isset($_GET['action'])) {
                     $_SESSION["username"] = $login["username"];
                     $_SESSION["type_user"] = $login["type_user"];
                     $_SESSION["id_user"] = $login["id_user"];
-                    $userController->handleInsertSessionData($_SESSION);
+                    $sessionController->handleInsertSessionData($_SESSION);
                     header("HTTP/1.1 302");
                     header("Location: index.php?selection=blog");
                 }
@@ -468,18 +478,39 @@ if (isset($_GET['action'])) {
 
                     $validation = $temporaryCommentController->handleValidationTemporaryComment($finalPost, $_GET['idComment'], $_POST["feedback"]);
                     $notation = array_key_exists("approved", $validation)  ? "approved" : "rejected";
+                    switch (true) {
+                        case str_contains("approved", $notation):
+                            header("HTTP/1.1 302");
+                            header("Location: index.php?selection=admin_panel");
+                            $_SESSION["approved"] = 1;
+                            $_SESSION["id_comment"] = $validation["id_comment"];
+                            $_SESSION["id_article"] = $validation["id_article"];
+                            $_SESSION["id_user"] = $validation["id_user"];
+                            $_SESSION["feedback"] = $validation["feedback"];
+                            $notificationController->handleCreateNotification($_SESSION);
+                            $commentController->handleCreateComment($validation, $_SESSION);
+                            $keys = ["approved", "id_comment", "id_article", "feedback"];
 
-                    if (str_contains("approved", $notation)) {
-                        header("HTTP/1.1 302");
-                        header("Location: index.php?selection=admin_panel");
-                        $_SESSION["approved"] = 1;
-                        $_SESSION["id_comment"] = $validation["id_comment"];
-                        $commentController->handleCreateComment($validation, $_SESSION);
-                        unset($_SESSION["approved"]);
-                    } else {
-                        header("HTTP/1.1 302");
-                        header("Location: index.php?selection=admin_panel");
-                        $temporaryCommentController->handleDeleteTemporaryComment($validation);
+                            foreach ($keys as $key) {
+                                unset($_SESSION[$key]);
+                            }
+                            break;
+
+                        case str_contains("rejected", $notation):
+                            header("HTTP/1.1 302");
+                            header("Location: index.php?selection=admin_panel");
+                            $_SESSION["rejected"] = 1;
+                            $_SESSION["id_comment"] = $validation["id_comment"];
+                            $_SESSION["id_article"] = $validation["id_article"];
+                            $_SESSION["feedback"] = $validation["feedback"];
+                            $notificationController->handleCreateNotification($_SESSION);
+                            $temporaryCommentController->handleDeleteTemporaryComment($validation);
+                            $keys = ["rejected", "id_comment", "id_article", "feedback"];
+
+                            foreach ($keys as $key) {
+                                unset($_SESSION[$key]);
+                            }
+                            break;
                     }
                 } else {
                     header("Location: index.php?action=error&code=403");
@@ -493,11 +524,11 @@ if (isset($_GET['action'])) {
             break;
 
         case "delete_notification":
-            if ($_SESSION["type_user"] === UserType::ADMIN->value) {
+            if ($_SESSION["type_user"] === UserType::USER->value) {
                 $template = "notification.twig";
-                $paramaters["notifications"] = $userController->handleGetAllUserNotifications($_SESSION);
-                $article = $userController->handleDeleteNotification($_GET["id_notification"]);
-                if (array_key_exists("notification_delete", $article)) {
+                $paramaters["notifications"] = $notificationController->handleGetAllUserNotifications($_SESSION);
+                $article = $notificationController->handleDeleteNotification($_GET["id_notification"]);
+                if (is_null($article)) {
                     header("HTTP/1.1 302");
                     header("Location:index.php?selection=notifications");
                 }
@@ -523,9 +554,9 @@ if (isset($_GET['action'])) {
             break;
         case "blog":
             $template = "blog.twig";
-
-            if (is_array($userController->handleGetIdSessionData($_SESSION)) && array_key_exists("session_id", $userController->handleGetIdSessionData($_SESSION))) {
-                $_SESSION["session_id"] = $userController->handleGetIdSessionData($_SESSION)["session_id"];
+            $sessionCreated = $sessionController->handleGetIdSessionData($_SESSION);
+            if (is_array($sessionCreated) && array_key_exists("session_id", $sessionCreated)) {
+                $_SESSION["session_id"] = $sessionCreated["session_id"];
             }
 
             $totalNotifications = $userController->handleGetAllUserNotifications($_SESSION);
