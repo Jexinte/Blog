@@ -11,6 +11,7 @@ class ArticleModel
     public string $chapo,
     public string $content,
     public array  $tags,
+    public ?bool $articleCreated
 
   ) {
   }
@@ -34,5 +35,15 @@ class ArticleModel
   public function getTags(): array
   {
     return $this->tags;
+  }
+
+  public function getArticleCreated(): ?bool
+  {
+    return $this->articleCreated;
+  }
+
+  public function isArticleCreated($articleCreated): void
+  {
+    $this->articleCreated = $articleCreated;
   }
 }

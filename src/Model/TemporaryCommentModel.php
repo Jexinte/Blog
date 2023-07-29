@@ -14,6 +14,7 @@ class TemporaryCommentModel
     public ?bool $approved,
     public ?bool $rejected,
     private ?string $feedbackAdministrator,
+    public ?bool $temporaryCommentCreated
   ) {
   }
 
@@ -35,16 +36,25 @@ class TemporaryCommentModel
   {
     return $this->dateCreation;
   }
-  public function getApproved() : bool|null
+  public function getApproved() :?bool
   {
     return $this->approved;
   }
-  public function getRejected() : bool|null
+  public function getRejected() :?bool
   {
     return $this->rejected;
   }
-  public function getFeedbackAdministrator():string|null
+  public function getFeedbackAdministrator():?string
   {
     return $this->feedbackAdministrator;
+  }
+
+  public function getTemporaryCommentCreated():?bool
+  {
+    return $this->temporaryCommentCreated;
+  }
+  public function isTemporaryCommentCreated($temporaryCommentCreated):void
+  {
+  $this->temporaryCommentCreated = $temporaryCommentCreated;
   }
 }

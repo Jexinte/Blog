@@ -11,6 +11,7 @@ class CommentModel
     private int $idUser,
     public string $content,
     public string $dateCreation,
+  
   ) {
   }
 
@@ -30,4 +31,6 @@ class CommentModel
   {
     return $this->dateCreation;
   }
+
+
 }

@@ -11,6 +11,7 @@ class HomepageFormModel
     public string $email,
     public string $subject,
     public string $message,
+    public ?bool $formDataSaved
   ) {
   }
 
@@ -36,5 +37,13 @@ class HomepageFormModel
   public function getMessage():string
   {
     return $this->message;
+  }
+
+  public function getFormDataSaved():?bool{
+    return $this->formDataSaved;
+  }
+
+  public function isFormDataSaved($formDataSaved):void {
+    $this->formDataSaved = $formDataSaved;
   }
 }

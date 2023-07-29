@@ -5,6 +5,7 @@ namespace Repository;
 use Config\DatabaseConnection;
 use DateTime;
 use IntlDateFormatter;
+use Model\CommentModel;
 
 class CommentRepository
 {
@@ -13,10 +14,16 @@ class CommentRepository
     private readonly DatabaseConnection  $connector
   ) {
   }
-  public function createComment(int $idArticle, int $idUser, string $content, string $dateCreation, array $sessionData): null
+  public function createComment(int $idArticle, int $idUser, string $content, string $dateCreation, array $sessionData): void
   {
 
     $dbConnect = $this->connector->connect();
+    $commentModel = new CommentModel($idArticle, $idUser, $content, $dateCreation);
+    $idOfArticle = $commentModel->getIdArticle();
+    $idOfUser = $commentModel->getIdUser();
+    $contentOfArticle = $commentModel->getContent();
+    $dateOfArticle = $commentModel->getDateCreation();
+
     switch (true) {
       case array_key_exists("approved", $sessionData):
         $statementGetTemporaryComment = $dbConnect->prepare("SELECT id,idArticle,idUser,content,date_creation FROM temporary_comment WHERE id = :idComment");
@@ -25,10 +32,10 @@ class CommentRepository
         $resultGetTemporaryComment = $statementGetTemporaryComment->fetch();
         if ($resultGetTemporaryComment) {
           $statementInsertFinalComment = $dbConnect->prepare("INSERT INTO comment (idArticle,idUser,content,date_creation) VALUES(:idArticle,:idUser,:content,:date_creation)");
-          $statementInsertFinalComment->bindParam("idArticle", $idArticle);
-          $statementInsertFinalComment->bindParam("idUser", $idUser);
-          $statementInsertFinalComment->bindParam("content", $content);
-          $statementInsertFinalComment->bindParam("date_creation", $dateCreation);
+          $statementInsertFinalComment->bindParam("idArticle", $idOfArticle);
+          $statementInsertFinalComment->bindParam("idUser", $idOfUser);
+          $statementInsertFinalComment->bindParam("content", $contentOfArticle);
+          $statementInsertFinalComment->bindParam("date_creation", $dateOfArticle);
           $statementInsertFinalComment->execute();
 
           $statementDeleteTemporaryComment = $dbConnect->prepare("DELETE FROM temporary_comment WHERE id = :idComment");
@@ -36,7 +43,6 @@ class CommentRepository
           $statementDeleteTemporaryComment->execute();
         }
     }
-    return null;
   }
   public function getAllComments(array $comments, int $idArticle): ?array
   {

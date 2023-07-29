@@ -4,6 +4,7 @@ namespace Controller;
 
 use Repository\SessionManagerRepository;
 use Model\SessionModel;
+
 class SessionController
 {
 
@@ -15,13 +16,13 @@ class SessionController
   public function handleInsertSessionData(array $sessionData): void
   {
     $sessionManagerRepository = $this->sessionManagerRepository;
-    
-    $sessionModel = new SessionModel(null,$sessionData["username"],$sessionData["type_user"]);
+
+    $sessionModel = new SessionModel(null, $sessionData["username"], $sessionData["type_user"]);
     $idSessionInModel = $sessionModel->getIdSession();
     $usernameInModel = $sessionModel->getUsername();
     $userTypeInModel = $sessionModel->getUserType();
 
-    $sessionManagerRepository->insertSessionData($idSessionInModel,$usernameInModel,$userTypeInModel);
+    $sessionManagerRepository->insertSessionData($idSessionInModel, $usernameInModel, $userTypeInModel);
   }
 
   public function handleGetIdSessionData(array $arr): ?array

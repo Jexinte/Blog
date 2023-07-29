@@ -41,14 +41,14 @@ class TemporaryCommentController
         return ["feedback" => $feedback];
     }
   }
-  public function handleInsertTemporaryCommentValidator(string $comment, int $idArticle, array $sessionData): null
+  public function handleInsertTemporaryCommentValidator(string $comment, int $idArticle, array $sessionData): ?TemporaryCommentModel
   {
 
     $temporaryCommentRepository = $this->temporaryComment;
     $dateDay =  date('Y-m-d');
     $temporaryCommentResult = $this->handleCommentField($comment)["comment"];
 
-    $temporaryCommentData = new TemporaryCommentModel($idArticle, $sessionData["id_user"], $temporaryCommentResult, $dateDay, null, null, null);
+    $temporaryCommentData = new TemporaryCommentModel($idArticle, $sessionData["id_user"], $temporaryCommentResult, $dateDay, null, null, null, null);
 
     $idArticleInModel = $temporaryCommentData->getIdArticle();
     $idUserInModel = $temporaryCommentData->getIdUser();
@@ -57,8 +57,7 @@ class TemporaryCommentController
     $approvedInModel = $temporaryCommentData->getApproved();
     $rejectedInModel = $temporaryCommentData->getRejected();
     $feedbackAdmin = $temporaryCommentData->getFeedbackAdministrator();
-
-    return $temporaryCommentRepository->insertTemporaryComment(
+    $temporaryCommentResult = $temporaryCommentRepository->insertTemporaryComment(
       $idArticleInModel,
       $idUserInModel,
       $temporaryCommentInModel,
@@ -68,6 +67,8 @@ class TemporaryCommentController
       $feedbackAdmin,
       $sessionData
     );
+    if ($temporaryCommentResult->getTemporaryCommentCreated())
+      return $temporaryCommentResult;
   }
 
   public function handlecheckCommentAlreadySentByUser(array $sessionData): ?array

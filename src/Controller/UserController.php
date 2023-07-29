@@ -106,7 +106,7 @@ class UserController
   }
 
 
-  public function signUpValidator(string $username, array $file, string $email, string $password): ?string
+  public function signUpValidator(string $username, array $file, string $email, string $password): ?UserModel
   {
 
     $usernameResult = $this->handleUsernameField($username)["username"];
@@ -117,7 +117,7 @@ class UserController
 
 
 
-    $userData = new UserModel($usernameResult, $fileResult, $emailResult, $passwordResult, $userType, null, null);
+    $userData = new UserModel($usernameResult, $fileResult, $emailResult, $passwordResult, $userType, null, null, null);
     $usernameInModel = $userData->getUsername();
     $profileImageInModel = $userData->getProfileImage();
     $emailInModel = $userData->getEmail();
@@ -128,7 +128,7 @@ class UserController
     $userRepository = $this->UserRepository;
     $userDb = $userRepository->createUser($usernameInModel, $profileImageInModel, $emailInModel, $passwordInModel, $userTypeInModel);
 
-    if (is_null($userDb)) {
+    if ($userDb->getSuccessSignUp()) {
       return $userDb;
     }
     switch (true) {

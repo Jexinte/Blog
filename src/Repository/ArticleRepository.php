@@ -3,8 +3,9 @@
 namespace Repository;
 
 use Config\DatabaseConnection;
-use DateTime;
 use Enumeration\UserType;
+use Model\ArticleModel;
+use DateTime;
 use Exception;
 use IntlDateFormatter;
 
@@ -88,10 +89,11 @@ class ArticleRepository
     return $article;
   }
 
-  public function createArticle(string $title, string $file, string $shortPhrase, string $content, string $tags, array $sessionData): ?array
+  public function createArticle(string $title, string $file, string $shortPhrase, string $content, array $tags, array $sessionData): ?ArticleModel
   {
 
     $dbConnect = $this->connector->connect();
+    $articleModel = new ArticleModel($file, $title, $shortPhrase, $content, $tags, null);
     $idSession = $sessionData["session_id"];
     $usernameSession = $sessionData["username"];
     $typeUserSession = $sessionData["type_user"];
@@ -105,11 +107,11 @@ class ArticleRepository
     $result = $statementSession->fetch();
     if ($result["user_type"] === UserType::ADMIN->value && $result["username"] == $sessionData["username"]) {
 
-      $titleArticle = $title;
-      $fileArticle = $file;
-      $shortPhraseArticle = $shortPhrase;
-      $contentArticle = $content;
-      $tagsArticle = $tags;
+      $titleArticle = $articleModel->getTitle();
+      $fileArticle = $articleModel->getImage();
+      $shortPhraseArticle = $articleModel->getChapo();
+      $contentArticle = $articleModel->getContent();
+      $tagsArticle = $articleModel->getTags()["tags"];
 
       $fileRequirements = explode(';', $fileArticle);
       $fileSettings["file_name"] = $fileRequirements[0];
@@ -128,7 +130,8 @@ class ArticleRepository
       $statementArticle->bindValue(':dateArticle', date('Y-m-d'));
       $statementArticle->execute();
       move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
-      return null;
+      $articleModel->isArticleCreated(true);
+      return $articleModel;
     }
   }
 

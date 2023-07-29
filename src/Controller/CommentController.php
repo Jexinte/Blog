@@ -20,7 +20,7 @@ class CommentController
     return $comments;
   }
 
-  public function handleCreateComment(array $commentsDetails, array $sessionData): null
+  public function handleCreateComment(array $commentsDetails, array $sessionData): void
   {
     $commentRepository = $this->comment;
 
@@ -32,9 +32,7 @@ class CommentController
       $idUserInModel = $commentModel->getIdUser();
       $contentInModel = $commentModel->getContent();
       $dateCreationInModel = $commentModel->getDateCreation();
-      $commentResult = $commentRepository->createComment($idArticleInModel, $idUserInModel, $contentInModel, $dateCreationInModel, $sessionData);
-      return $commentResult;
+      $commentRepository->createComment($idArticleInModel, $idUserInModel, $contentInModel, $dateCreationInModel, $sessionData);
     }
-    return null;
   }
 }

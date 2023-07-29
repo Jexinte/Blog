@@ -22,7 +22,7 @@ class UserRepository
   {
 
     $dbConnect = $this->connector->connect();
-    $userModel = new UserModel($username, $file, $email, $password, $userType, null, null);
+    $userModel = new UserModel($username, $file, $email, $password, $userType, null, null, null);
 
 
     $statement = $dbConnect->prepare('SELECT username,email FROM user WHERE username = :username OR  email = :email');
@@ -48,7 +48,8 @@ class UserRepository
         ];
         $statement2->execute($values);
         move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
-        return null;
+        $userModel->isSignUpSuccessful(true);
+        return $userModel;
 
       case $result["username"] == $userModel->getUsername():
         $userModel->setUsernameAvailability(false);

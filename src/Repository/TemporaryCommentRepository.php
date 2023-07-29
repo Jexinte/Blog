@@ -7,6 +7,7 @@ use DateTime;
 use IntlDateFormatter;
 use Enumeration\UserType;
 use PHPMailer\PHPMailer\PHPMailer;
+use Model\TemporaryCommentModel;
 
 class TemporaryCommentRepository
 {
@@ -20,13 +21,22 @@ class TemporaryCommentRepository
   ) {
   }
 
-  public function insertTemporaryComment(int $idArticle, int $idUser, string $temporaryComment, string $date, null $approved, null $rejected, null $feedback, array $sessionData): null
+  public function insertTemporaryComment(int $idArticle, int $idUser, string $temporaryComment, string $date, ?bool $approved, ?bool $rejected, ?string $feedback, array $sessionData): ?TemporaryCommentModel
   {
 
     $dbConnect = $this->connector->connect();
     $idSession = $sessionData["session_id"];
     $usernameSession = $sessionData["username"];
     $typeUserSession = $sessionData["type_user"];
+    $temporaryCommentModel = new TemporaryCommentModel($idArticle, $idUser, $temporaryComment, $date, $approved, $rejected, $feedback, null);
+    $idArticleInTemporaryCommentModel = $temporaryCommentModel->getIdArticle();
+    $idUserInTemporaryCommentModel = $temporaryCommentModel->getIdUser();
+    $temporaryCommentInModel = $temporaryCommentModel->getContent();
+    $dateInTemporaryCommentModel = $temporaryCommentModel->getDateCreation();
+    $approvedInTemporaryCommentModel = $temporaryCommentModel->getApproved();
+    $rejectedInTemporaryCommentModel = $temporaryCommentModel->getRejected();
+    $feedbackInTemporaryCommentModel = $temporaryCommentModel->getFeedbackAdministrator();
+
     $statementSession = $dbConnect->prepare("SELECT id_session,username,user_type FROM session WHERE id_session = :id_from_session_variable AND username = :username_from_session_variable AND user_type = :type_user_from_session_variable");
 
     $statementSession->bindParam("id_from_session_variable", $idSession);
@@ -38,16 +48,17 @@ class TemporaryCommentRepository
     if ($result) {
       $statementComment = $dbConnect->prepare("INSERT INTO temporary_comment (idArticle,idUser,content,date_creation,approved,rejected,feedback_administrator) VALUES(:idArticle,:idUser,:content,:date_creation,:approved,:rejected,:feedback_administrator)");
 
-      $statementComment->bindParam("idArticle", $idArticle);
-      $statementComment->bindParam("idUser", $idUser);
-      $statementComment->bindParam("content", $temporaryComment);
-      $statementComment->bindParam("date_creation", $date);
-      $statementComment->bindParam("approved", $approved);
-      $statementComment->bindParam("rejected", $rejected);
-      $statementComment->bindParam("feedback_administrator", $feedback);
+      $statementComment->bindParam("idArticle", $idArticleInTemporaryCommentModel);
+      $statementComment->bindParam("idUser", $idUserInTemporaryCommentModel);
+      $statementComment->bindParam("content", $temporaryCommentInModel);
+      $statementComment->bindParam("date_creation", $dateInTemporaryCommentModel);
+      $statementComment->bindParam("approved", $approvedInTemporaryCommentModel);
+      $statementComment->bindParam("rejected", $rejectedInTemporaryCommentModel);
+      $statementComment->bindParam("feedback_administrator", $feedbackInTemporaryCommentModel);
       $statementComment->execute();
+      $temporaryCommentModel->isTemporaryCommentCreated(true);
+      return $temporaryCommentModel;
     }
-    return null;
   }
 
   public function checkCommentAlreadySentByUser(array $sessionData): ?array
@@ -76,8 +87,6 @@ class TemporaryCommentRepository
       while ($row = $statementTemporaryComments->fetch()) {
         $userComments[] = $row;
       }
-
-
 
       return count($userComments) == 1 ? ["user_already_commented" => 1] : null;
     }
@@ -158,7 +167,7 @@ class TemporaryCommentRepository
 
     $mail->Body = "Cher administrateur, <br><br>
       Un nouveau commentaire a été publié sur le site par l'utilisateur <strong>$usernameSession</strong>. <br><br>
-      Pour modérer ou répondre à ce commentaire, veuillez vous connecter à l'interface d'administration du site : <a href='http://localhost/P5_Créez%20votre%20premier%20blog%20en%20PHP%20-%20Dembele%20Mamadou/public/index.php?selection=sign_in'. <br><br>
+      Pour modérer ou répondre à ce commentaire, veuillez vous <a href='http://localhost/P5_Créez%20votre%20premier%20blog%20en%20PHP%20-%20Dembele%20Mamadou/public/index.php?selection=sign_in'>connecter</a> à l'interface d'administration du site : . <br><br>
       Cordialement,<br><br>
       L'équipe du site";
     $mail->send();

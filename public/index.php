@@ -161,7 +161,7 @@ if (isset($_GET['action'])) {
 
                 $paramaters["message"] = $signUp;
 
-                if (is_null($signUp)) {
+                if ($signUp) {
                     header("HTTP/1.1 302");
                     header("Location: index.php?selection=sign_in");
                 }
@@ -309,7 +309,7 @@ if (isset($_GET['action'])) {
                         "session" => $_SESSION,
                     ];
                     $articleIsCreated = $articleController->handleCreateArticleValidator($_POST["title"], $_FILES["image_file"], $_POST["short-phrase"], $_POST["content"], $_POST["tags"], $_SESSION);
-                    if (is_null($articleIsCreated)) {
+                    if ($articleIsCreated) {
                         header("HTTP/1.1 302");
                         header("Location: index.php?selection=admin_panel");
                     }
@@ -436,7 +436,7 @@ if (isset($_GET['action'])) {
 
                     $paramaters["default"] = $defaultValues;
                     $temporaryComment = $temporaryCommentController->handleInsertTemporaryCommentValidator($_POST["comment"], $_POST["id_article"], $_SESSION);
-                    if (is_null($temporaryComment)) {
+                    if ($temporaryComment) {
                         header("HTTP/1.1 302");
                         header("Location: index.php?selection=article&id=" . $defaultValues["id"]);
                         $temporaryCommentController->handleMailToAdmin($_SESSION, $defaultValues["title"]);

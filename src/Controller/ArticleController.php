@@ -114,7 +114,7 @@ class ArticleController
   }
 
 
-  public function handleCreateArticleValidator(string $title, array $fileArticle, string $shortPhrase, string $content, string $tags, array $sessionData): ?array
+  public function handleCreateArticleValidator(string $title, array $fileArticle, string $shortPhrase, string $content, string $tags, array $sessionData): ?ArticleModel
   {
     $articleRepository = $this->article;
     $titleField = $this->handleTitleField($title)["title"];
@@ -124,17 +124,18 @@ class ArticleController
     $tagsField = $this->handleTagsField($tags);
 
 
-    $articleData = new ArticleModel($fileField, $titleField, $shortPhraseField, $contentField, $tagsField);
+    $articleData = new ArticleModel($fileField, $titleField, $shortPhraseField, $contentField, $tagsField, null);
 
     $titleInModel = $articleData->getTitle();
     $fileInModel = $articleData->getImage();
     $shortPhraseInModel = $articleData->getChapo();
     $contentInModel = $articleData->getContent();
     $tagsInModel = $articleData->getTags();
+    $articleResult = $articleRepository->createArticle($titleInModel, $fileInModel, $shortPhraseInModel, $contentInModel, $tagsInModel, $sessionData);
 
-
-
-    return $articleRepository->createArticle($titleInModel, $fileInModel, $shortPhraseInModel, $contentInModel, $tagsInModel["tags"], $sessionData);
+    if ($articleResult) {
+      return $articleResult;
+    }
   }
 
 

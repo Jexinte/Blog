@@ -99,7 +99,7 @@ class HomepageFormController
 
     $formRepository = $this->homepageForm;
 
-    $userDataFromForm = new HomepageFormModel($firstnameResult, $lastnameResult, $emailResult, $subjectResult, $messageResult);
+    $userDataFromForm = new HomepageFormModel($firstnameResult, $lastnameResult, $emailResult, $subjectResult, $messageResult, null);
     $firstnameInModel = $userDataFromForm->getFirstname();
     $lastnameInModel = $userDataFromForm->getLastname();
     $emailInModel = $userDataFromForm->getEmail();
@@ -114,7 +114,9 @@ class HomepageFormController
       $subjectInModel,
       $messageInModel
     );
-    $getDataFromDb = $formRepository->getDataFromDatabase($insertDataDb);
-    return array_key_exists("data_retrieved", $getDataFromDb) && $getDataFromDb["data_retrieved"] == 1 ? $formRepository->sendMailAdmin($getDataFromDb) : null;
+    if ($insertDataDb->getFormDataSaved()) {
+      $getDataFromDb = $formRepository->getDataFromDatabase($insertDataDb);
+      return array_key_exists("data_retrieved", $getDataFromDb) && $getDataFromDb["data_retrieved"] == 1 ? $formRepository->sendMailAdmin($getDataFromDb) : null;
+    }
   }
 }

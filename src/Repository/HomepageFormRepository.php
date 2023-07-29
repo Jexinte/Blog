@@ -4,6 +4,7 @@ namespace Repository;
 
 use Config\DatabaseConnection;
 use Exceptions\FormMessageNotSentException;
+use Model\HomepageFormModel;
 use PHPMailer\PHPMailer\PHPMailer;
 
 
@@ -16,31 +17,35 @@ class HomepageFormRepository
   {
   }
 
-  public function insertDataInDatabase(string $firstname, string $lastname, string $email, $subject, string $message): array
+  public function insertDataInDatabase(string $firstname, string $lastname, string $email, $subject, string $message): ?HomepageFormModel
   {
 
     $dbConnect = $this->connector->connect();
-
-
+    $homepageFormModel = new HomepageFormModel($firstname, $lastname, $email, $subject, $message, null);
+    $firstnameFromForm = $homepageFormModel->getFirstname();
+    $lastnameFromForm = $homepageFormModel->getLastname();
+    $emailFromForm = $homepageFormModel->getEmail();
+    $subjectFromForm = $homepageFormModel->getSubject();
+    $messageFromForm = $homepageFormModel->getMessage();
     $statement = $dbConnect->prepare("INSERT INTO form_message(firstname,lastname,email,subject,message) VALUES(?,?,?,?,?)");
     $values = [
-      $firstname,
-      $lastname,
-      $email,
-      $subject,
-      $message
+      $firstnameFromForm,
+      $lastnameFromForm,
+      $emailFromForm,
+      $subjectFromForm,
+      $messageFromForm
     ];
     $statement->execute($values);
-    return ["data_saved" => 1];
+    $homepageFormModel->isFormDataSaved(true);
+    return $homepageFormModel;
   }
 
-  public function getDataFromDatabase(array $arr): ?array
+  public function getDataFromDatabase(object $dataFromModel): ?array
   {
 
     $dbConnect = $this->connector->connect();
-    $result =  array_key_exists("data_saved", $arr) && in_array(1, $arr) ? $arr : false;
 
-    if (is_array($result)) {
+    if ($dataFromModel->getFormDataSaved()) {
       $statement = $dbConnect->prepare("SELECT * FROM form_message ORDER BY id DESC LIMIT 1");
       $statement->execute();
       $resReq = $statement->fetch();
@@ -85,7 +90,13 @@ class HomepageFormRepository
       $mail->isHTML();
 
       $mail->Subject = $data["user"]["subject"];
-      $mail->Body = "Le message suivant a été envoyé par <strong>" . $data["user"]["firstname"] . " " . $data["user"]["lastname"] . "</strong> via le formulaire de contact  : <br><br><br>" . $data["user"]["message"];
+
+
+      $mail->Body = "Cher administrateur, <br><br>
+      Un message a été envoyé depuis le formulaire de contact de la part de <strong>{$data["user"]["firstname"]} {$data["user"]["lastname"]}</strong></strong> :  <br><br>
+      {$data["user"]["message"]}
+      Cordialement,<br><br>
+      L'équipe du site";
 
       $mail->send();
       return ["message_sent" => "Votre message a bien été envoyé !"];
