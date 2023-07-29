@@ -12,12 +12,12 @@ class NotificationController
   {
   }
 
-  public function handleCreateNotification(array $sessionData): void
+  public function handleCreateNotification(array $validation): void
   {
     $notificationRepository = $this->notificationRepository;
     switch (true) {
-      case array_key_exists("approved", $sessionData):
-        $notificationModel = new NotificationModel($sessionData["id_article"], $sessionData["id_user"], $sessionData["approved"], null, $sessionData["feedback"]);
+      case array_key_exists("approved", $validation):
+        $notificationModel = new NotificationModel($validation["id_article"], $validation["id_user"], $validation["approved"], null, $validation["feedback"]);
         $idArticleInModel = $notificationModel->getIdArticle();
         $idUserInModel = $notificationModel->getIdUser();
         $approvedInModel = $notificationModel->getApproved();
@@ -25,8 +25,8 @@ class NotificationController
         $feedbackInModel = $notificationModel->getFeedbackAdministrator();
         $notificationRepository->createNotification($idArticleInModel, $idUserInModel, $approvedInModel, $rejectedInModel, $feedbackInModel);
         break;
-      case array_key_exists("rejected", $sessionData):
-        $notificationModel = new NotificationModel($sessionData["id_article"], $sessionData["id_user"], null, $sessionData["rejected"], $sessionData["feedback"]);
+      case array_key_exists("rejected", $validation):
+        $notificationModel = new NotificationModel($validation["id_article"], $validation["id_user"], null, $validation["rejected"], $validation["feedback"]);
         $idArticleInModel = $notificationModel->getIdArticle();
         $idUserInModel = $notificationModel->getIdUser();
         $approvedInModel = $notificationModel->getApproved();
@@ -37,10 +37,10 @@ class NotificationController
     }
   }
 
-  public function handleGetAllUserNotifications(array $sessionData): ?array
+  public function handleGetAllUserNotifications(array $validation): ?array
   {
     $notificationRepository = $this->notificationRepository;
-    return $notificationRepository->getAllUserNotifications($sessionData);
+    return $notificationRepository->getAllUserNotifications($validation);
   }
 
   public function handleDeleteNotification(int $idNotification): null

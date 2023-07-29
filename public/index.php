@@ -487,7 +487,7 @@ if (isset($_GET['action'])) {
                             $_SESSION["id_article"] = $validation["id_article"];
                             $_SESSION["id_user"] = $validation["id_user"];
                             $_SESSION["feedback"] = $validation["feedback"];
-                            $notificationController->handleCreateNotification($_SESSION);
+                            $notificationController->handleCreateNotification($validation);
                             $commentController->handleCreateComment($validation, $_SESSION);
                             $keys = ["approved", "id_comment", "id_article", "feedback"];
 
@@ -503,7 +503,7 @@ if (isset($_GET['action'])) {
                             $_SESSION["id_comment"] = $validation["id_comment"];
                             $_SESSION["id_article"] = $validation["id_article"];
                             $_SESSION["feedback"] = $validation["feedback"];
-                            $notificationController->handleCreateNotification($_SESSION);
+                            $notificationController->handleCreateNotification($validation);
                             $temporaryCommentController->handleDeleteTemporaryComment($validation);
                             $keys = ["rejected", "id_comment", "id_article", "feedback"];
 
