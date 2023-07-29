@@ -53,7 +53,7 @@ class TemporaryCommentModel
   {
     return $this->temporaryCommentCreated;
   }
-  public function isTemporaryCommentCreated($temporaryCommentCreated):void
+  public function isTemporaryCommentCreated(?bool $temporaryCommentCreated):void
   {
   $this->temporaryCommentCreated = $temporaryCommentCreated;
   }

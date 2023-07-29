@@ -43,7 +43,7 @@ class HomepageFormModel
     return $this->formDataSaved;
   }
 
-  public function isFormDataSaved($formDataSaved):void {
+  public function isFormDataSaved(?bool $formDataSaved):void {
     $this->formDataSaved = $formDataSaved;
   }
 }

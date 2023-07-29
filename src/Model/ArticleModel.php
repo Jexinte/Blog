@@ -42,7 +42,7 @@ class ArticleModel
     return $this->articleCreated;
   }
 
-  public function isArticleCreated($articleCreated): void
+  public function isArticleCreated(?bool $articleCreated): void
   {
     $this->articleCreated = $articleCreated;
   }

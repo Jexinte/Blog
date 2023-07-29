@@ -63,7 +63,7 @@ class UserModel
     $this->emailStatus = $status;
   }
 
-  public function isSignUpSuccessful($successSignUp):void
+  public function isSignUpSuccessful(?bool $successSignUp):void
   {
     $this->successSignUp = $successSignUp;
   }
