@@ -53,7 +53,7 @@ class SessionManagerRepository
   }
 
 
-  public function getIdSessionData($sessionData): ?array
+  public function getIdSessionData(?string $sessionData): ?array
   {
     $dbConnect = $this->connector->connect();
     $statementToGetIdSession = $dbConnect->prepare("SELECT username,type FROM user WHERE username = :username AND type = :type_user");

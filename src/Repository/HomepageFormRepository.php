@@ -17,7 +17,7 @@ class HomepageFormRepository
   {
   }
 
-  public function insertDataInDatabase(string $firstname, string $lastname, string $email, $subject, string $message): ?HomepageFormModel
+  public function insertDataInDatabase(string $firstname, string $lastname, string $email, string $subject, string $message): ?HomepageFormModel
   {
 
     $dbConnect = $this->connector->connect();
