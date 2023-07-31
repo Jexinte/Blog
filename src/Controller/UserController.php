@@ -117,12 +117,12 @@ class UserController
 
 
 
-    $userData = new UserModel($usernameResult, $fileResult, $emailResult, $passwordResult, $userType, null, null, null);
-    $usernameInModel = $userData->getUsername();
-    $profileImageInModel = $userData->getProfileImage();
-    $emailInModel = $userData->getEmail();
-    $passwordInModel = $userData->getPassword();
-    $userTypeInModel = $userData->getUserType();
+    $userModel = new UserModel($usernameResult, $fileResult, $emailResult, $passwordResult, $userType, null, null, null);
+    $usernameInModel = $userModel->getUsername();
+    $profileImageInModel = $userModel->getProfileImage();
+    $emailInModel = $userModel->getEmail();
+    $passwordInModel = $userModel->getPassword();
+    $userTypeInModel = $userModel->getUserType();
 
 
     $userRepository = $this->UserRepository;

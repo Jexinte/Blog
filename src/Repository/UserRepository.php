@@ -25,11 +25,11 @@ class UserRepository
     $userModel = new UserModel($username, $file, $email, $password, $userType, null, null, null);
 
 
-    $statement = $dbConnect->prepare('SELECT username,email FROM user WHERE username = :username OR  email = :email');
-    $statement->bindParam("username", $username);
-    $statement->bindParam("email", $email);
-    $statement->execute();
-    $result = $statement->fetch();
+    $statementToCheckIfUserAlreadyExist = $dbConnect->prepare('SELECT username,email FROM user WHERE username = :username OR  email = :email');
+    $statementToCheckIfUserAlreadyExist->bindParam("username", $username);
+    $statementToCheckIfUserAlreadyExist->bindParam("email", $email);
+    $statementToCheckIfUserAlreadyExist->execute();
+    $result = $statementToCheckIfUserAlreadyExist->fetch();
 
     switch (true) {
       case !$result:
@@ -38,7 +38,7 @@ class UserRepository
         $fileSettings["tmp_name"] = $fileRequirements[1];
         $fileSettings["directory"] = $fileRequirements[2];
         $filePath = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/" . $fileSettings["file_name"];
-        $statement2 = $dbConnect->prepare("INSERT INTO user (username,profile_image,email,password,type) VALUES(?,?,?,?,?)");
+        $statementToCreateUser = $dbConnect->prepare("INSERT INTO user (username,profile_image,email,password,type) VALUES(?,?,?,?,?)");
         $values = [
           $username,
           $filePath,
@@ -46,7 +46,7 @@ class UserRepository
           $password,
           $userType->value
         ];
-        $statement2->execute($values);
+        $statementToCreateUser->execute($values);
         move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
         $userModel->isSignUpSuccessful(true);
         return $userModel;
@@ -65,10 +65,10 @@ class UserRepository
   {
 
     $dbConnect = $this->connector->connect();
-    $statement = $dbConnect->prepare("SELECT id,username,email,type,password FROM user WHERE email = :email  ");
-    $statement->bindParam(":email", $email);
-    $statement->execute();
-    $user = $statement->fetch();
+    $statementToCheckUserCredentials = $dbConnect->prepare("SELECT id,username,email,type,password FROM user WHERE email = :email");
+    $statementToCheckUserCredentials->bindParam(":email", $email);
+    $statementToCheckUserCredentials->execute();
+    $user = $statementToCheckUserCredentials->fetch();
 
     if ($user && $user["type"] == UserType::USER->value || $user && $user["type"] == UserType::ADMIN->value) {
       $checkPassword = password_verify($password, $user['password']);

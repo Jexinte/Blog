@@ -34,10 +34,10 @@ class SessionManagerRepository
 
     $dbConnect = $this->connector->connect();
 
-    $statement = $dbConnect->prepare("SELECT username FROM session WHERE username = :username");
-    $statement->bindParam("username", $username);
-    $statement->execute();
-    $result = $statement->fetch();
+    $statementToCreateSession = $dbConnect->prepare("SELECT username FROM session WHERE username = :username");
+    $statementToCreateSession->bindParam("username", $username);
+    $statementToCreateSession->execute();
+    $result = $statementToCreateSession->fetch();
 
     if (!$result) {
       $sessionModel = new SessionModel($idSession, $username, $userType);
@@ -56,21 +56,21 @@ class SessionManagerRepository
   public function getIdSessionData($sessionData): ?array
   {
     $dbConnect = $this->connector->connect();
-    $statement = $dbConnect->prepare("SELECT username,type FROM user WHERE username = :username AND type = :type_user");
+    $statementToGetIdSession = $dbConnect->prepare("SELECT username,type FROM user WHERE username = :username AND type = :type_user");
 
-    $statement->bindParam("username", $sessionData["username"]);
-    $statement->bindParam("type_user", $sessionData["type_user"]);
-    $statement->execute();
-    $result = $statement->fetch();
+    $statementToGetIdSession->bindParam("username", $sessionData["username"]);
+    $statementToGetIdSession->bindParam("type_user", $sessionData["type_user"]);
+    $statementToGetIdSession->execute();
+    $thereIsId = $statementToGetIdSession->fetch();
 
-    if ($result) {
-      $statementSession = $dbConnect->prepare("SELECT id_session,username,user_type FROM session WHERE username = :username AND user_type = :type_user");
-      $statementSession->bindParam("username", $sessionData["username"]);
-      $statementSession->bindParam("type_user", $sessionData["type_user"]);
+    if ($thereIsId) {
+      $statementToGetUserDataRegardlessToSessionData = $dbConnect->prepare("SELECT id_session,username,user_type FROM session WHERE username = :username AND user_type = :type_user");
+      $statementToGetUserDataRegardlessToSessionData->bindParam("username", $sessionData["username"]);
+      $statementToGetUserDataRegardlessToSessionData->bindParam("type_user", $sessionData["type_user"]);
 
-      $statementSession->execute();
-      $resultStatementSession = $statementSession->fetch();
-      $idSession = !empty($resultStatementSession) ?  $resultStatementSession["id_session"] : null;
+      $statementToGetUserDataRegardlessToSessionData->execute();
+      $sessionData = $statementToGetUserDataRegardlessToSessionData->fetch();
+      $idSession = !empty($sessionData) ?  $sessionData["id_session"] : null;
       if (!empty($idSession)) return ["session_id" => $idSession];
     }
     return  null;

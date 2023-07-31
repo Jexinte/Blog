@@ -27,7 +27,7 @@ class HomepageFormRepository
     $emailFromForm = $homepageFormModel->getEmail();
     $subjectFromForm = $homepageFormModel->getSubject();
     $messageFromForm = $homepageFormModel->getMessage();
-    $statement = $dbConnect->prepare("INSERT INTO form_message(firstname,lastname,email,subject,message) VALUES(?,?,?,?,?)");
+    $statementToSaveMessageFromFrom = $dbConnect->prepare("INSERT INTO form_message(firstname,lastname,email,subject,message) VALUES(?,?,?,?,?)");
     $values = [
       $firstnameFromForm,
       $lastnameFromForm,
@@ -35,7 +35,7 @@ class HomepageFormRepository
       $subjectFromForm,
       $messageFromForm
     ];
-    $statement->execute($values);
+    $statementToSaveMessageFromFrom->execute($values);
     $homepageFormModel->isFormDataSaved(true);
     return $homepageFormModel;
   }
@@ -46,9 +46,9 @@ class HomepageFormRepository
     $dbConnect = $this->connector->connect();
 
     if ($dataFromModel->getFormDataSaved()) {
-      $statement = $dbConnect->prepare("SELECT * FROM form_message ORDER BY id DESC LIMIT 1");
-      $statement->execute();
-      $resReq = $statement->fetch();
+      $statementToFormMessageAndDataAssociatedWith = $dbConnect->prepare("SELECT * FROM form_message ORDER BY id DESC LIMIT 1");
+      $statementToFormMessageAndDataAssociatedWith->execute();
+      $resReq = $statementToFormMessageAndDataAssociatedWith->fetch();
       return [
         "data_retrieved" => 1,
         "user" =>  $resReq
@@ -66,9 +66,9 @@ class HomepageFormRepository
     $gmail = json_decode($this->smtp_address, true);
 
     $mail = new PHPMailer(true);
-    $result = !empty($data);
+    $thereIsContentFromForm = !empty($data);
 
-    if ($result) {
+    if ($thereIsContentFromForm) {
       $mail->isSMTP();
       $mail->Host = $gmail["smtp_address"];
       $mail->SMTPAuth = true;

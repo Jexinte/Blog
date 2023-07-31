@@ -30,12 +30,17 @@
 					<div class="error-box">
 						{% if code == 500 %}
 							<img src="../public/assets/images/code_error/500.jpg" alt="500 code error">
+							<p>Désolé, une erreur interne du serveur est survenue.Veuillez réessayer ultérieurement. Merci de votre patience !</p>
 						</a>
 					{% elseif code == 401 %}
-
 						<img src="../public/assets/images/code_error/401.jpg" alt="401 code error">
+						<p>Vous n'êtes pas autorisée à accéder à cette ressource !</p>
 					{% elseif code == 403 %}
 						<img src="../public/assets/images/code_error/403.jpg" alt="403 code error">
+						<p>Vous n'êtes pas autorisée à accéder à cette ressource !</p>
+					{% elseif code == 404 %}
+						<img src="../public/assets/images/code_error/404.jpg" alt="404 code error">
+						<p>La page recherchée n'a pas été trouvée !</p>
 					{% endif %}
 
 				{% endif %}
@@ -45,3 +50,4 @@
 
 	</div>
 </div></div>{% endblock %}
+

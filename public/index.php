@@ -152,16 +152,16 @@ if (isset($_GET['action'])) {
         case "sign_up":
             try {
                 $template = "sign_up.twig";
-                $signUp = $userController->signUpValidator(
+                $signUpSucceed = $userController->signUpValidator(
                     $_POST['username'],
                     $_FILES['profile_image'],
                     $_POST["mail"],
                     $_POST["password"]
                 );
 
-                $paramaters["message"] = $signUp;
+                $paramaters["message"] = $signUpSucceed;
 
-                if ($signUp) {
+                if ($signUpSucceed) {
                     header("HTTP/1.1 302");
                     header("Location: index.php?selection=sign_in");
                 }
@@ -204,12 +204,12 @@ if (isset($_GET['action'])) {
                 $template = "sign_in.twig";
 
                 $paramaters["message"] = $userController->loginValidator($_POST['mail'], $_POST["password"]);
-                $login = $userController->loginValidator($_POST['mail'], $_POST["password"]);
+                $loginSucceed = $userController->loginValidator($_POST['mail'], $_POST["password"]);
 
-                if (is_array($login) && array_key_exists("username", $login) && array_key_exists("type_user", $login)) {
-                    $_SESSION["username"] = $login["username"];
-                    $_SESSION["type_user"] = $login["type_user"];
-                    $_SESSION["id_user"] = $login["id_user"];
+                if (is_array($loginSucceed) && array_key_exists("username", $loginSucceed) && array_key_exists("type_user", $loginSucceed)) {
+                    $_SESSION["username"] = $loginSucceed["username"];
+                    $_SESSION["type_user"] = $loginSucceed["type_user"];
+                    $_SESSION["id_user"] = $loginSucceed["id_user"];
                     $sessionController->handleInsertSessionData($_SESSION);
                     header("HTTP/1.1 302");
                     header("Location: index.php?selection=blog");
@@ -321,7 +321,7 @@ if (isset($_GET['action'])) {
                 $paramaters["title_exception"] = TitleErrorEmptyException::TITLE_MESSAGE_ERROR_EMPTY;
             } catch (TitleWrongFormatException $e) {
                 header("HTTP/1.1 400");
-                $paramaters["title_exception"] = TitleWrongFormatException::TITLE_MESSAGE_ERROR_MAX_500_CHARS;
+                $paramaters["title_exception"] = TitleWrongFormatException::TITLE_MESSAGE_ERROR_MAX_255_CHARS;
             } catch (FileErrorEmptyException $e) {
                 header("HTTP/1.1 400");
                 $paramaters["file_exception"] = FileErrorEmptyException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED;
@@ -333,7 +333,7 @@ if (isset($_GET['action'])) {
                 $paramaters["short_phrase_exception"] = ShortPhraseErrorEmptyException::SHORT_PHRASE_MESSAGE_ERROR_EMPTY;
             } catch (ShortPhraseWrongFormatException $e) {
                 header("HTTP/1.1 400");
-                $paramaters["short_phrase_exception"] = ShortPhraseWrongFormatException::SHORT_PHRASE_MESSAGE_ERROR_MAX_500_CHARS;
+                $paramaters["short_phrase_exception"] = ShortPhraseWrongFormatException::SHORT_PHRASE_MESSAGE_ERROR_MAX_255_CHARS;
             } catch (ContentArticleErrorEmptyException $e) {
                 header("HTTP/1.1 400");
                 $paramaters["content_article_exception"] = ContentArticleErrorEmptyException::CONTENT_ARTICLE_MESSAGE_ERROR_EMPTY;
@@ -380,13 +380,13 @@ if (isset($_GET['action'])) {
                 $paramaters["title_exception"] = TitleErrorEmptyException::TITLE_MESSAGE_ERROR_EMPTY;
                 $paramaters["original_data"] = $originalData;
             } catch (TitleWrongFormatException $e) {
-                $paramaters["title_exception"] = TitleWrongFormatException::TITLE_MESSAGE_ERROR_MAX_500_CHARS;
+                $paramaters["title_exception"] = TitleWrongFormatException::TITLE_MESSAGE_ERROR_MAX_255_CHARS;
                 $paramaters["original_data"] = $originalData;
             } catch (ShortPhraseErrorEmptyException $e) {
                 $paramaters["short_phrase_exception"] = ShortPhraseErrorEmptyException::SHORT_PHRASE_MESSAGE_ERROR_EMPTY;
                 $paramaters["original_data"] = $originalData;
             } catch (ShortPhraseWrongFormatException $e) {
-                $paramaters["short_phrase_exception"] = ShortPhraseWrongFormatException::SHORT_PHRASE_MESSAGE_ERROR_MAX_500_CHARS;
+                $paramaters["short_phrase_exception"] = ShortPhraseWrongFormatException::SHORT_PHRASE_MESSAGE_ERROR_MAX_255_CHARS;
                 $paramaters["original_data"] = $originalData;
             } catch (ContentArticleErrorEmptyException $e) {
                 $paramaters["content_exception"] = ContentArticleErrorEmptyException::CONTENT_ARTICLE_MESSAGE_ERROR_EMPTY;
@@ -435,8 +435,8 @@ if (isset($_GET['action'])) {
                     $template = "article.twig";
 
                     $paramaters["default"] = $defaultValues;
-                    $temporaryComment = $temporaryCommentController->handleInsertTemporaryCommentValidator($_POST["comment"], $_POST["id_article"], $_SESSION);
-                    if ($temporaryComment) {
+                    $temporaryCommentIsCreated = $temporaryCommentController->handleInsertTemporaryCommentValidator($_POST["comment"], $_POST["id_article"], $_SESSION);
+                    if ($temporaryCommentIsCreated) {
                         header("HTTP/1.1 302");
                         header("Location: index.php?selection=article&id=" . $defaultValues["id"]);
                         $temporaryCommentController->handleMailToAdmin($_SESSION, $defaultValues["title"]);
@@ -476,19 +476,19 @@ if (isset($_GET['action'])) {
 
                     $finalPost = isset($_POST["accepted"]) ? $_POST["accepted"] : $_POST["rejected"];
 
-                    $validation = $temporaryCommentController->handleValidationTemporaryComment($finalPost, $_GET['idComment'], $_POST["feedback"]);
-                    $notation = array_key_exists("approved", $validation)  ? "approved" : "rejected";
+                    $temporaryCommentIsAcceptedOrRejected = $temporaryCommentController->handleValidationTemporaryComment($finalPost, $_GET['idComment'], $_POST["feedback"]);
+                    $notation = array_key_exists("approved", $temporaryCommentIsAcceptedOrRejected)  ? "approved" : "rejected";
                     switch (true) {
                         case str_contains("approved", $notation):
                             header("HTTP/1.1 302");
                             header("Location: index.php?selection=admin_panel");
                             $_SESSION["approved"] = 1;
-                            $_SESSION["id_comment"] = $validation["id_comment"];
-                            $_SESSION["id_article"] = $validation["id_article"];
-                            $_SESSION["id_user"] = $validation["id_user"];
-                            $_SESSION["feedback"] = $validation["feedback"];
-                            $notificationController->handleCreateNotification($validation);
-                            $commentController->handleCreateComment($validation, $_SESSION);
+                            $_SESSION["id_comment"] = $temporaryCommentIsAcceptedOrRejected["id_comment"];
+                            $_SESSION["id_article"] = $temporaryCommentIsAcceptedOrRejected["id_article"];
+                            $_SESSION["id_user"] = $temporaryCommentIsAcceptedOrRejected["id_user"];
+                            $_SESSION["feedback"] = $temporaryCommentIsAcceptedOrRejected["feedback"];
+                            $notificationController->handleCreateNotification($temporaryCommentIsAcceptedOrRejected);
+                            $commentController->handleCreateComment($temporaryCommentIsAcceptedOrRejected, $_SESSION);
                             $keys = ["approved", "id_comment", "id_article", "feedback"];
 
                             foreach ($keys as $key) {
@@ -500,11 +500,11 @@ if (isset($_GET['action'])) {
                             header("HTTP/1.1 302");
                             header("Location: index.php?selection=admin_panel");
                             $_SESSION["rejected"] = 1;
-                            $_SESSION["id_comment"] = $validation["id_comment"];
-                            $_SESSION["id_article"] = $validation["id_article"];
-                            $_SESSION["feedback"] = $validation["feedback"];
-                            $notificationController->handleCreateNotification($validation);
-                            $temporaryCommentController->handleDeleteTemporaryComment($validation);
+                            $_SESSION["id_comment"] = $temporaryCommentIsAcceptedOrRejected["id_comment"];
+                            $_SESSION["id_article"] = $temporaryCommentIsAcceptedOrRejected["id_article"];
+                            $_SESSION["feedback"] = $temporaryCommentIsAcceptedOrRejected["feedback"];
+                            $notificationController->handleCreateNotification($temporaryCommentIsAcceptedOrRejected);
+                            $temporaryCommentController->handleDeleteTemporaryComment($temporaryCommentIsAcceptedOrRejected);
                             $keys = ["rejected", "id_comment", "id_article", "feedback"];
 
                             foreach ($keys as $key) {
@@ -595,7 +595,10 @@ if (isset($_GET['action'])) {
             break;
         case "article":
             $article = current($articleController->handleOneArticle($_GET["id"]));
-
+            if (!$article) {
+                $template = "error.twig";
+                header("Location:index.php?action=error&code=404");
+            }
             $defaultValue = ["data" => $article];
 
             $template = "article.twig";

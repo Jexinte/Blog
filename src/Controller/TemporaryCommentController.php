@@ -45,18 +45,18 @@ class TemporaryCommentController
   {
 
     $temporaryCommentRepository = $this->temporaryComment;
-    $dateDay =  date('Y-m-d');
+    $dateOfCreation =  date('Y-m-d');
     $temporaryCommentResult = $this->handleCommentField($comment)["comment"];
 
-    $temporaryCommentData = new TemporaryCommentModel($idArticle, $sessionData["id_user"], $temporaryCommentResult, $dateDay, null, null, null, null);
+    $temporaryCommentModel = new TemporaryCommentModel($idArticle, $sessionData["id_user"], $temporaryCommentResult, $dateOfCreation, null, null, null, null);
 
-    $idArticleInModel = $temporaryCommentData->getIdArticle();
-    $idUserInModel = $temporaryCommentData->getIdUser();
-    $temporaryCommentInModel = $temporaryCommentData->getContent();
-    $dateInModel = $temporaryCommentData->getDateCreation();
-    $approvedInModel = $temporaryCommentData->getApproved();
-    $rejectedInModel = $temporaryCommentData->getRejected();
-    $feedbackAdmin = $temporaryCommentData->getFeedbackAdministrator();
+    $idArticleInModel = $temporaryCommentModel->getIdArticle();
+    $idUserInModel = $temporaryCommentModel->getIdUser();
+    $temporaryCommentInModel = $temporaryCommentModel->getContent();
+    $dateInModel = $temporaryCommentModel->getDateCreation();
+    $approvedInModel = $temporaryCommentModel->getApproved();
+    $rejectedInModel = $temporaryCommentModel->getRejected();
+    $feedbackAdmin = $temporaryCommentModel->getFeedbackAdministrator();
     $temporaryCommentResult = $temporaryCommentRepository->insertTemporaryComment(
       $idArticleInModel,
       $idUserInModel,

@@ -6,14 +6,14 @@ use PDO;
 use PDOException;
 
 
-readonly class DatabaseConnection
+ class DatabaseConnection
 {
 
 
     public function __construct(
-    private string $dbName,
-    private string $user,
-    private string $password
+    private readonly string $dbName,
+    private readonly string $user,
+    private readonly string $password
   ) {
   }
 

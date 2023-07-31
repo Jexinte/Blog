@@ -99,12 +99,12 @@ class HomepageFormController
 
     $formRepository = $this->homepageForm;
 
-    $userDataFromForm = new HomepageFormModel($firstnameResult, $lastnameResult, $emailResult, $subjectResult, $messageResult, null);
-    $firstnameInModel = $userDataFromForm->getFirstname();
-    $lastnameInModel = $userDataFromForm->getLastname();
-    $emailInModel = $userDataFromForm->getEmail();
-    $subjectInModel = $userDataFromForm->getSubject();
-    $messageInModel = $userDataFromForm->getMessage();
+    $homepageFormModel = new HomepageFormModel($firstnameResult, $lastnameResult, $emailResult, $subjectResult, $messageResult, null);
+    $firstnameInModel = $homepageFormModel->getFirstname();
+    $lastnameInModel = $homepageFormModel->getLastname();
+    $emailInModel = $homepageFormModel->getEmail();
+    $subjectInModel = $homepageFormModel->getSubject();
+    $messageInModel = $homepageFormModel->getMessage();
 
 
     $insertDataDb = $formRepository->insertDataInDatabase(

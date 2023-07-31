@@ -53,18 +53,18 @@ class CommentRepository
     $statementGetComments->execute();
 
 
-    while ($row = $statementGetComments->fetch()) {
+    while ($rowOfComment = $statementGetComments->fetch()) {
       $frenchDateFormat = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
 
-      $date = $frenchDateFormat->format(new DateTime($row["date_publication"]));
-      $statement2 = $dbConnect->prepare("SELECT id,username,profile_image FROM user WHERE id = :idUserComment");
-      $statement2->bindParam("idUserComment", $row["idUser"]);
-      $statement2->execute();
-      while ($row2 = $statement2->fetch()) {
+      $date = $frenchDateFormat->format(new DateTime($rowOfComment["date_publication"]));
+      $statementToGetUserData = $dbConnect->prepare("SELECT id,username,profile_image FROM user WHERE id = :idUserComment");
+      $statementToGetUserData->bindParam("idUserComment", $rowOfComment["idUser"]);
+      $statementToGetUserData->execute();
+      while ($rowOfUserData = $statementToGetUserData->fetch()) {
         $data = [
-          "username" => $row2["username"],
-          "profile_image" => $row2["profile_image"],
-          "content" => $row['content'],
+          "username" => $rowOfUserData["username"],
+          "profile_image" => $rowOfUserData["profile_image"],
+          "content" => $rowOfComment['content'],
           "date_of_publication" => ucfirst($date)
         ];
       }

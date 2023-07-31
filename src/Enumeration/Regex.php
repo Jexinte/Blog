@@ -7,9 +7,9 @@ enum Regex: string
   const USERNAME = "/^[A-Z][A-Za-z\d]{2,10}$/";
 
   const PASSWORD ="/^(?=.*[A-Z])(?=.*\d).{8,}$/";
-  const TITLE = "/^(?=.{1,500}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ, .'-]*$/u";
+  const TITLE = "/^(?=.{1,255}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ, .'-]*$/u";
 
-  const SHORT_PHRASE = "/^(?=.{1,5000}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ, .'-]*$/u";
+  const SHORT_PHRASE = "/^(?=.{1,255}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ, .'-]*$/u";
 
   const CONTENT_ARTICLE = "/^(?=.{1,5000}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ, .'-]*$/u";
   const TAGS = "/^(#([\p{L} '-]{1,20})(?:\s|$)){1,3}$/";

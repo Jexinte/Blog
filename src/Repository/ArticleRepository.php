@@ -6,7 +6,6 @@ use Config\DatabaseConnection;
 use Enumeration\UserType;
 use Model\ArticleModel;
 use DateTime;
-use Exception;
 use IntlDateFormatter;
 
 class ArticleRepository
@@ -22,34 +21,34 @@ class ArticleRepository
 
     $dbConnect = $this->connector->connect();
 
-    $statement = $dbConnect->prepare("SELECT id,title,chapô,content,tags,author,DATE_FORMAT(date_creation,'%d %M %Y') AS date_article  FROM article ORDER BY id DESC");
-    $statement->execute();
+    $statementToGetArticles = $dbConnect->prepare("SELECT id,title,chapô,content,tags,author,DATE_FORMAT(date_creation,'%d %M %Y') AS date_article  FROM article ORDER BY id DESC");
+    $statementToGetArticles->execute();
 
     $articles = [];
 
 
-    while ($row = $statement->fetch()) {
+    while ($rowOfArticle = $statementToGetArticles->fetch()) {
       $frenchDateFormat = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
 
-      $date = $frenchDateFormat->format(new DateTime($row["date_article"]));
-      $statement2 = $dbConnect->prepare("SELECT profile_image AS image, username FROM user WHERE username = :author");
-      $statement2->bindParam("author", $row["author"]);
-      $statement2->execute();
-      while ($row2 = $statement2->fetch()) {
+      $dateOfCreation = $frenchDateFormat->format(new DateTime($rowOfArticle["date_article"]));
+      $statementToGetUserProfileImageRegardlessToAuthorNameOfArticle = $dbConnect->prepare("SELECT profile_image AS image, username FROM user WHERE username = :author");
+      $statementToGetUserProfileImageRegardlessToAuthorNameOfArticle->bindParam("author", $rowOfArticle["author"]);
+      $statementToGetUserProfileImageRegardlessToAuthorNameOfArticle->execute();
+      $data = [];
+      while ($rowOfUserData = $statementToGetUserProfileImageRegardlessToAuthorNameOfArticle->fetch()) {
         $data = [
-          "id" => $row["id"],
-          "image" => $row2['image'],
-          "title" => $row['title'],
-          "short_phrase" => $row['chapô'],
-          "content" => substr($row['content'], 0, 250) . '...',
-          "tags" => $row['tags'],
-          "author" => $row['author'],
-          "date_of_publication" => ucfirst($date)
+          "id" => $rowOfArticle["id"],
+          "image_user" => $rowOfUserData['image'],
+          "title" => $rowOfArticle['title'],
+          "short_phrase" => $rowOfArticle['chapô'],
+          "content" => substr($rowOfArticle['content'], 0, 250) . '...',
+          "tags" => $rowOfArticle['tags'],
+          "author" => $rowOfArticle['author'],
+          "date_of_publication" => ucfirst($dateOfCreation)
         ];
       }
       $articles[] = $data;
     }
-
 
 
     return $articles;
@@ -59,29 +58,29 @@ class ArticleRepository
   public function getArticle(int $id): array
   {
     $dbConnect = $this->connector->connect();
-    $statement = $dbConnect->prepare("SELECT id, image,title,chapô,content,tags,author,DATE_FORMAT(date_creation,'%d %M %Y') AS date_article FROM article WHERE id = :id");
-    $statement->bindParam("id", $id);
-    $statement->execute();
+    $statementToGetArticle = $dbConnect->prepare("SELECT id, image,title,chapô,content,tags,author,DATE_FORMAT(date_creation,'%d %M %Y') AS date_article FROM article WHERE id = :id");
+    $statementToGetArticle->bindParam("id", $id);
+    $statementToGetArticle->execute();
     $article = [];
-    while ($row = $statement->fetch()) {
+    while ($rowOfArticle = $statementToGetArticle->fetch()) {
       $french_date_format = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
 
-      $date = $french_date_format->format(new DateTime($row["date_article"]));
-      $statement2 = $dbConnect->prepare("SELECT profile_image, username FROM user WHERE username = :author");
-      $statement2->bindParam("author", $row["author"]);
-      $statement2->execute();
-      while ($row2 = $statement2->fetch()) {
+      $dateOfArticleCreation = $french_date_format->format(new DateTime($rowOfArticle["date_article"]));
+      $statementToGetUserDataRegardlessToAuthorNameOfArticle = $dbConnect->prepare("SELECT profile_image, username FROM user WHERE username = :author");
+      $statementToGetUserDataRegardlessToAuthorNameOfArticle->bindParam("author", $rowOfArticle["author"]);
+      $statementToGetUserDataRegardlessToAuthorNameOfArticle->execute();
+      while ($rowOfUserData = $statementToGetUserDataRegardlessToAuthorNameOfArticle->fetch()) {
 
         $data = [
-          "id" => intval($row["id"]),
-          "image" => $row['image'],
-          "author_image" => $row2["profile_image"],
-          "title" => $row['title'],
-          "short_phrase" => $row['chapô'],
-          "content" => $row["content"],
-          "tags" => $row['tags'],
-          "author" => $row['author'],
-          "date_of_publication" => ucfirst($date)
+          "id" => intval($rowOfArticle["id"]),
+          "image" => $rowOfArticle['image'],
+          "author_image" => $rowOfUserData["profile_image"],
+          "title" => $rowOfArticle['title'],
+          "short_phrase" => $rowOfArticle['chapô'],
+          "content" => $rowOfArticle["content"],
+          "tags" => $rowOfArticle['tags'],
+          "author" => $rowOfArticle['author'],
+          "date_of_publication" => ucfirst($dateOfArticleCreation)
         ];
       }
       $article[] = $data;
@@ -97,15 +96,15 @@ class ArticleRepository
     $idSession = $sessionData["session_id"];
     $usernameSession = $sessionData["username"];
     $typeUserSession = $sessionData["type_user"];
-    $statementSession = $dbConnect->prepare("SELECT id_session,username,user_type FROM session WHERE id_session = :id_from_session_variable AND username = :username_from_session_variable AND user_type = :type_user_from_session_variable");
+    $statementToCheckIfAdminIsCreatingArticle = $dbConnect->prepare("SELECT id_session,username,user_type FROM session WHERE id_session = :id_from_session_variable AND username = :username_from_session_variable AND user_type = :type_user_from_session_variable");
 
-    $statementSession->bindParam("id_from_session_variable", $idSession);
-    $statementSession->bindParam("username_from_session_variable", $usernameSession);
-    $statementSession->bindParam("type_user_from_session_variable", $typeUserSession);
+    $statementToCheckIfAdminIsCreatingArticle->bindParam("id_from_session_variable", $idSession);
+    $statementToCheckIfAdminIsCreatingArticle->bindParam("username_from_session_variable", $usernameSession);
+    $statementToCheckIfAdminIsCreatingArticle->bindParam("type_user_from_session_variable", $typeUserSession);
 
-    $statementSession->execute();
-    $result = $statementSession->fetch();
-    if ($result["user_type"] === UserType::ADMIN->value && $result["username"] == $sessionData["username"]) {
+    $statementToCheckIfAdminIsCreatingArticle->execute();
+    $admin = $statementToCheckIfAdminIsCreatingArticle->fetch();
+    if ($admin["user_type"] === UserType::ADMIN->value && $admin["username"] == $sessionData["username"]) {
 
       $titleArticle = $articleModel->getTitle();
       $fileArticle = $articleModel->getImage();
@@ -119,16 +118,16 @@ class ArticleRepository
       $fileSettings["directory"] = $fileRequirements[2];
       $filePath = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/" . $fileSettings["file_name"];
 
-      $statementArticle = $dbConnect->prepare("INSERT INTO article (image,title,chapô,content,tags,author,date_creation) VALUES(:fileArticle,:titleArticle,:shortPhraseArticle,:contentArticle,:tagsArticle,:authorArticle,:dateArticle)");
+      $statementToCreateArticle = $dbConnect->prepare("INSERT INTO article (image,title,chapô,content,tags,author,date_creation) VALUES(:fileArticle,:titleArticle,:shortPhraseArticle,:contentArticle,:tagsArticle,:authorArticle,:dateArticle)");
 
-      $statementArticle->bindParam(':fileArticle', $filePath);
-      $statementArticle->bindParam(':titleArticle', $titleArticle);
-      $statementArticle->bindParam(':shortPhraseArticle', $shortPhraseArticle);
-      $statementArticle->bindParam(':contentArticle', $contentArticle);
-      $statementArticle->bindParam(':tagsArticle', $tagsArticle);
-      $statementArticle->bindParam(':authorArticle', $usernameSession);
-      $statementArticle->bindValue(':dateArticle', date('Y-m-d'));
-      $statementArticle->execute();
+      $statementToCreateArticle->bindParam(':fileArticle', $filePath);
+      $statementToCreateArticle->bindParam(':titleArticle', $titleArticle);
+      $statementToCreateArticle->bindParam(':shortPhraseArticle', $shortPhraseArticle);
+      $statementToCreateArticle->bindParam(':contentArticle', $contentArticle);
+      $statementToCreateArticle->bindParam(':tagsArticle', $tagsArticle);
+      $statementToCreateArticle->bindParam(':authorArticle', $usernameSession);
+      $statementToCreateArticle->bindValue(':dateArticle', date('Y-m-d'));
+      $statementToCreateArticle->execute();
       move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
       $articleModel->isArticleCreated(true);
       return $articleModel;
@@ -141,16 +140,16 @@ class ArticleRepository
     $idSession = $sessionData["session_id"];
     $usernameSession = $sessionData["username"];
     $typeUserSession = $sessionData["type_user"];
-    $statementSession = $dbConnect->prepare("SELECT id_session,username,user_type FROM session WHERE id_session = :id_from_session_variable AND username = :username_from_session_variable AND user_type = :type_user_from_session_variable");
+    $statementToCheckIfAdminIsUpdatingArticle = $dbConnect->prepare("SELECT id_session,username,user_type FROM session WHERE id_session = :id_from_session_variable AND username = :username_from_session_variable AND user_type = :type_user_from_session_variable");
 
-    $statementSession->bindParam("id_from_session_variable", $idSession);
-    $statementSession->bindParam("username_from_session_variable", $usernameSession);
-    $statementSession->bindParam("type_user_from_session_variable", $typeUserSession);
+    $statementToCheckIfAdminIsUpdatingArticle->bindParam("id_from_session_variable", $idSession);
+    $statementToCheckIfAdminIsUpdatingArticle->bindParam("username_from_session_variable", $usernameSession);
+    $statementToCheckIfAdminIsUpdatingArticle->bindParam("type_user_from_session_variable", $typeUserSession);
 
-    $statementSession->execute();
-    $result = $statementSession->fetch();
+    $statementToCheckIfAdminIsUpdatingArticle->execute();
+    $admin = $statementToCheckIfAdminIsUpdatingArticle->fetch();
 
-    if ($result["user_type"] === UserType::ADMIN->value) {
+    if ($admin["user_type"] === UserType::ADMIN->value) {
       $titleUpdateArticle = $updateArticleData["title"];
       $fileUpdateArticle = $updateArticleData["file"];
       $shortPhraseUpdateArticle = $updateArticleData["short_phrase"];
@@ -165,31 +164,31 @@ class ArticleRepository
           $fileSettings["tmp_name"] = $fileRequirements[1];
           $fileSettings["directory"] = $fileRequirements[2];
           $filePath = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/" . $fileSettings["file_name"];
-          $statement = $dbConnect->prepare("UPDATE article SET image = :filePath,title = :titleUpdateArticle,chapô  = :shortPhraseUpdateArticle,content = :contentUpdateArticle,tags = :tagsUpdateArticle,author = :authorArticle,date_creation = :dateUpdateArticle WHERE id = :idUpdateArticle");
-          $statement->bindParam(':filePath', $filePath);
-          $statement->bindParam(':titleUpdateArticle', $titleUpdateArticle);
-          $statement->bindParam(':shortPhraseUpdateArticle', $shortPhraseUpdateArticle);
-          $statement->bindParam(':contentUpdateArticle', $contentUpdateArticle);
-          $statement->bindParam(':tagsUpdateArticle', $tagsUpdateArticle);
-          $statement->bindParam(':authorArticle', $usernameSession);
-          $statement->bindParam(':dateUpdateArticle', $dateOfTheDay);
-          $statement->bindParam(':idUpdateArticle', $idUpdateArticle);
-          $statement->execute();
+          $statementWithUploadedFile = $dbConnect->prepare("UPDATE article SET image = :filePath,title = :titleUpdateArticle,chapô  = :shortPhraseUpdateArticle,content = :contentUpdateArticle,tags = :tagsUpdateArticle,author = :authorArticle,date_creation = :dateUpdateArticle WHERE id = :idUpdateArticle");
+          $statementWithUploadedFile->bindParam(':filePath', $filePath);
+          $statementWithUploadedFile->bindParam(':titleUpdateArticle', $titleUpdateArticle);
+          $statementWithUploadedFile->bindParam(':shortPhraseUpdateArticle', $shortPhraseUpdateArticle);
+          $statementWithUploadedFile->bindParam(':contentUpdateArticle', $contentUpdateArticle);
+          $statementWithUploadedFile->bindParam(':tagsUpdateArticle', $tagsUpdateArticle);
+          $statementWithUploadedFile->bindParam(':authorArticle', $usernameSession);
+          $statementWithUploadedFile->bindParam(':dateUpdateArticle', $dateOfTheDay);
+          $statementWithUploadedFile->bindParam(':idUpdateArticle', $idUpdateArticle);
+          $statementWithUploadedFile->execute();
           move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
           return ["article_updated" => 1];
 
         case !is_array($fileUpdateArticle):
 
-          $statement = $dbConnect->prepare("UPDATE article SET image = :filePath,title = :titleUpdateArticle,chapô  = :shortPhraseUpdateArticle,content = :contentUpdateArticle,tags = :tagsUpdateArticle,author = :authorArticle,date_creation = :dateUpdateArticle WHERE id = :idUpdateArticle");
-          $statement->bindParam(':filePath', $fileUpdateArticle);
-          $statement->bindParam(':titleUpdateArticle', $titleUpdateArticle);
-          $statement->bindParam(':shortPhraseUpdateArticle', $shortPhraseUpdateArticle);
-          $statement->bindParam(':contentUpdateArticle', $contentUpdateArticle);
-          $statement->bindParam(':tagsUpdateArticle', $tagsUpdateArticle);
-          $statement->bindParam(':authorArticle', $usernameSession);
-          $statement->bindParam(':dateUpdateArticle', $dateOfTheDay);
-          $statement->bindParam(':idUpdateArticle', $idUpdateArticle);
-          $statement->execute();
+          $statementWithoutUploadedFile = $dbConnect->prepare("UPDATE article SET image = :filePath,title = :titleUpdateArticle,chapô  = :shortPhraseUpdateArticle,content = :contentUpdateArticle,tags = :tagsUpdateArticle,author = :authorArticle,date_creation = :dateUpdateArticle WHERE id = :idUpdateArticle");
+          $statementWithoutUploadedFile->bindParam(':filePath', $fileUpdateArticle);
+          $statementWithoutUploadedFile->bindParam(':titleUpdateArticle', $titleUpdateArticle);
+          $statementWithoutUploadedFile->bindParam(':shortPhraseUpdateArticle', $shortPhraseUpdateArticle);
+          $statementWithoutUploadedFile->bindParam(':contentUpdateArticle', $contentUpdateArticle);
+          $statementWithoutUploadedFile->bindParam(':tagsUpdateArticle', $tagsUpdateArticle);
+          $statementWithoutUploadedFile->bindParam(':authorArticle', $usernameSession);
+          $statementWithoutUploadedFile->bindParam(':dateUpdateArticle', $dateOfTheDay);
+          $statementWithoutUploadedFile->bindParam(':idUpdateArticle', $idUpdateArticle);
+          $statementWithoutUploadedFile->execute();
           return ["article_updated" => 1];
       }
     }
@@ -201,16 +200,16 @@ class ArticleRepository
     $idSession = $sessionData["session_id"];
     $usernameSession = $sessionData["username"];
     $typeUserSession = $sessionData["type_user"];
-    $statementSession = $dbConnect->prepare("SELECT id_session,username,user_type FROM session WHERE id_session = :id_from_session_variable AND username = :username_from_session_variable AND user_type = :type_user_from_session_variable");
+    $statementToCheckIfAdminIsDeletingArticle = $dbConnect->prepare("SELECT id_session,username,user_type FROM session WHERE id_session = :id_from_session_variable AND username = :username_from_session_variable AND user_type = :type_user_from_session_variable");
 
-    $statementSession->bindParam("id_from_session_variable", $idSession);
-    $statementSession->bindParam("username_from_session_variable", $usernameSession);
-    $statementSession->bindParam("type_user_from_session_variable", $typeUserSession);
+    $statementToCheckIfAdminIsDeletingArticle->bindParam("id_from_session_variable", $idSession);
+    $statementToCheckIfAdminIsDeletingArticle->bindParam("username_from_session_variable", $usernameSession);
+    $statementToCheckIfAdminIsDeletingArticle->bindParam("type_user_from_session_variable", $typeUserSession);
 
-    $statementSession->execute();
-    $result = $statementSession->fetch();
+    $statementToCheckIfAdminIsDeletingArticle->execute();
+    $admin = $statementToCheckIfAdminIsDeletingArticle->fetch();
 
-    if ($result["user_type"] === UserType::ADMIN->value) {
+    if ($admin["user_type"] === UserType::ADMIN->value) {
 
       $statement = $dbConnect->prepare("DELETE FROM article WHERE id = :id");
       $statement->bindParam("id", $idArticle);

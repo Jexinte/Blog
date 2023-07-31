@@ -47,6 +47,10 @@ a {
 #errors{
   padding:0;
 }
+
+p{
+  font-weight: var(--700);
+}
 @media (max-width:992px) {
   #error img{
     width: 100%;

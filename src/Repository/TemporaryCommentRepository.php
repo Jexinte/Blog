@@ -180,6 +180,10 @@ class TemporaryCommentRepository
     $statement->bindParam("idComment", $idComment);
     $statement->execute();
     $thereIsComment = $statement->fetch();
+    $french_date_format = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
+
+    $dateOfPublication = $french_date_format->format(new DateTime($thereIsComment["date_of_publication"]));
+    $thereIsComment["date_of_publication"] = $dateOfPublication;
     if ($thereIsComment) {
       return $thereIsComment;
     }
@@ -192,10 +196,10 @@ class TemporaryCommentRepository
     $dbConnect = $this->connector->connect();
     switch (true) {
       case str_contains($valueOfValidation, "Accepter"):
-        $statement = $dbConnect->prepare("SELECT id,idUser,idArticle,content,DATE_FORMAT(date_creation, '%d %M %Y') AS date_of_publication FROM temporary_comment WHERE id = :idComment");
-        $statement->bindParam("idComment", $idComment);
-        $statement->execute();
-        $resultIsAccepted = $statement->fetch();
+        $statementToAcceptTemporaryComment = $dbConnect->prepare("SELECT id,idUser,idArticle,content,DATE_FORMAT(date_creation, '%d %M %Y') AS date_of_publication FROM temporary_comment WHERE id = :idComment");
+        $statementToAcceptTemporaryComment->bindParam("idComment", $idComment);
+        $statementToAcceptTemporaryComment->execute();
+        $resultIsAccepted = $statementToAcceptTemporaryComment->fetch();
         if ($resultIsAccepted) {
           $feedbackResult = !empty($feedback) ? $feedback : null;
           $statementInsertAcceptedChoice = $dbConnect->prepare("UPDATE temporary_comment SET approved =  :approved , feedback_administrator = :feedback WHERE id = :idComment");
@@ -228,8 +232,8 @@ class TemporaryCommentRepository
   public function deleteTemporaryComment(array $rejectedValidation): void
   {
     $dbConnect = $this->connector->connect();
-    $statementDeleteTemporaryComment = $dbConnect->prepare("DELETE FROM temporary_comment WHERE id = :idComment");
-    $statementDeleteTemporaryComment->bindParam("idComment", $rejectedValidation["id_comment"]);
-    $statementDeleteTemporaryComment->execute();
+    $statementToDeleteTemporaryComment = $dbConnect->prepare("DELETE FROM temporary_comment WHERE id = :idComment");
+    $statementToDeleteTemporaryComment->bindParam("idComment", $rejectedValidation["id_comment"]);
+    $statementToDeleteTemporaryComment->execute();
   }
 }

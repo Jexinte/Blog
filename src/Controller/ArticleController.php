@@ -124,13 +124,13 @@ class ArticleController
     $tagsField = $this->handleTagsField($tags);
 
 
-    $articleData = new ArticleModel($fileField, $titleField, $shortPhraseField, $contentField, $tagsField, null);
+    $articleModel = new ArticleModel($fileField, $titleField, $shortPhraseField, $contentField, $tagsField, null);
 
-    $titleInModel = $articleData->getTitle();
-    $fileInModel = $articleData->getImage();
-    $shortPhraseInModel = $articleData->getChapo();
-    $contentInModel = $articleData->getContent();
-    $tagsInModel = $articleData->getTags();
+    $titleInModel = $articleModel->getTitle();
+    $fileInModel = $articleModel->getImage();
+    $shortPhraseInModel = $articleModel->getChapo();
+    $contentInModel = $articleModel->getContent();
+    $tagsInModel = $articleModel->getTags();
     $articleResult = $articleRepository->createArticle($titleInModel, $fileInModel, $shortPhraseInModel, $contentInModel, $tagsInModel, $sessionData);
 
     if ($articleResult) {
