@@ -29,18 +29,20 @@ class SessionManagerRepository
 
 
 
-  public function insertSessionData(?string $idSession, string $username, string $userType): ?array
+  public function insertSessionData(object $sessionModel): ?array
   {
 
     $dbConnect = $this->connector->connect();
 
+    $username = $sessionModel->getUsername();
+    $userType = $sessionModel->getUserType();
+    
     $statementToCreateSession = $dbConnect->prepare("SELECT username FROM session WHERE username = :username");
     $statementToCreateSession->bindParam("username", $username);
     $statementToCreateSession->execute();
     $result = $statementToCreateSession->fetch();
 
     if (!$result) {
-      $sessionModel = new SessionModel($idSession, $username, $userType);
       $sessionModel->setIdSession(str_replace("/", "", base64_encode(random_bytes(50))));
       $idSessionInModel = $sessionModel->getIdSession();
       $insertData = $dbConnect->prepare("INSERT INTO session (id_session,username,user_type) VALUES(?,?,?)");

@@ -88,11 +88,10 @@ class ArticleRepository
     return $article;
   }
 
-  public function createArticle(string $title, string $file, string $shortPhrase, string $content, array $tags, array $sessionData): ?ArticleModel
+  public function createArticle(object $articleModel,array $sessionData): ?ArticleModel
   {
 
     $dbConnect = $this->connector->connect();
-    $articleModel = new ArticleModel($file, $title, $shortPhrase, $content, $tags, null);
     $idSession = $sessionData["session_id"];
     $usernameSession = $sessionData["username"];
     $typeUserSession = $sessionData["type_user"];

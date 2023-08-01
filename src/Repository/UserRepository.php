@@ -18,12 +18,15 @@ class UserRepository
   }
 
 
-  public function createUser(string $username, string $file, string $email, string $password, BackedEnum $userType): ?UserModel
+  public function createUser(object $userModel): ?UserModel
   {
 
     $dbConnect = $this->connector->connect();
-    $userModel = new UserModel($username, $file, $email, $password, $userType, null, null, null);
-
+    $username = $userModel->getUsername();
+    $file = $userModel->getProfileImage();
+    $email = $userModel->getEmail();
+    $password = $userModel->getPassword();
+    $userType = $userModel->getUserType();
 
     $statementToCheckIfUserAlreadyExist = $dbConnect->prepare('SELECT username,email FROM user WHERE username = :username OR  email = :email');
     $statementToCheckIfUserAlreadyExist->bindParam("username", $username);

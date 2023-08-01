@@ -50,23 +50,7 @@ class TemporaryCommentController
 
     $temporaryCommentModel = new TemporaryCommentModel($idArticle, $sessionData["id_user"], $temporaryCommentResult, $dateOfCreation, null, null, null, null);
 
-    $idArticleInModel = $temporaryCommentModel->getIdArticle();
-    $idUserInModel = $temporaryCommentModel->getIdUser();
-    $temporaryCommentInModel = $temporaryCommentModel->getContent();
-    $dateInModel = $temporaryCommentModel->getDateCreation();
-    $approvedInModel = $temporaryCommentModel->getApproved();
-    $rejectedInModel = $temporaryCommentModel->getRejected();
-    $feedbackAdmin = $temporaryCommentModel->getFeedbackAdministrator();
-    $temporaryCommentResult = $this->temporaryCommentRepository->insertTemporaryComment(
-      $idArticleInModel,
-      $idUserInModel,
-      $temporaryCommentInModel,
-      $dateInModel,
-      $approvedInModel,
-      $rejectedInModel,
-      $feedbackAdmin,
-      $sessionData
-    );
+    $temporaryCommentResult = $this->temporaryCommentRepository->insertTemporaryComment($temporaryCommentModel,$sessionData);
     if ($temporaryCommentResult->getTemporaryCommentCreated())
       return $temporaryCommentResult;
   }

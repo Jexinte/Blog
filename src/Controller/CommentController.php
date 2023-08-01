@@ -24,11 +24,8 @@ class CommentController
       $new_date_format = DateTime::createFromFormat("d F Y", $commentsDetails["date_creation"]);
       $dateOfCreation = $new_date_format->format("Y-m-d");
       $commentModel = new CommentModel($commentsDetails["id_article"], $commentsDetails["id_user"], $commentsDetails["content"], $dateOfCreation);
-      $idArticleInModel = $commentModel->getIdArticle();
-      $idUserInModel = $commentModel->getIdUser();
-      $contentInModel = $commentModel->getContent();
-      $dateCreationInModel = $commentModel->getDateCreation();
-      $this->commentRepository->createComment($idArticleInModel, $idUserInModel, $contentInModel, $dateCreationInModel, $sessionData);
+
+      $this->commentRepository->createComment($commentModel, $sessionData);
     }
   }
 }

@@ -88,25 +88,9 @@ class HomepageFormController
     $subjectResult = $this->handleSubjectField($subject)["subject"];
     $messageResult = $this->handleMessageField($message)["message"];
 
-
-
-    
-
     $homepageFormModel = new HomepageFormModel($firstnameResult, $lastnameResult, $emailResult, $subjectResult, $messageResult, null);
-    $firstnameInModel = $homepageFormModel->getFirstname();
-    $lastnameInModel = $homepageFormModel->getLastname();
-    $emailInModel = $homepageFormModel->getEmail();
-    $subjectInModel = $homepageFormModel->getSubject();
-    $messageInModel = $homepageFormModel->getMessage();
-
-
-    $insertDataDb = $this->homepageFormRepository->insertDataInDatabase(
-      $firstnameInModel,
-      $lastnameInModel,
-      $emailInModel,
-      $subjectInModel,
-      $messageInModel
-    );
+    
+    $insertDataDb = $this->homepageFormRepository->insertDataInDatabase($homepageFormModel);
     if ($insertDataDb->getFormDataSaved()) {
       $getDataFromDb = $this->homepageFormRepository->getDataFromDatabase($insertDataDb);
       return array_key_exists("data_retrieved", $getDataFromDb) && $getDataFromDb["data_retrieved"] == 1 ? $this->homepageFormRepository->sendMailAdmin($getDataFromDb) : null;

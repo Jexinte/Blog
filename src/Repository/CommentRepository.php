@@ -14,11 +14,10 @@ class CommentRepository
     private readonly DatabaseConnection  $connector
   ) {
   }
-  public function createComment(int $idArticle, int $idUser, string $content, string $dateCreation, array $sessionData): void
+  public function createComment(object $commentModel, array $sessionData): void
   {
 
     $dbConnect = $this->connector->connect();
-    $commentModel = new CommentModel($idArticle, $idUser, $content, $dateCreation);
     $idOfArticle = $commentModel->getIdArticle();
     $idOfUser = $commentModel->getIdUser();
     $contentOfArticle = $commentModel->getContent();

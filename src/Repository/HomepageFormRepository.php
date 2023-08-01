@@ -17,11 +17,10 @@ class HomepageFormRepository
   {
   }
 
-  public function insertDataInDatabase(string $firstname, string $lastname, string $email, string $subject, string $message): ?HomepageFormModel
+  public function insertDataInDatabase(object $homepageFormModel): ?HomepageFormModel
   {
 
     $dbConnect = $this->connector->connect();
-    $homepageFormModel = new HomepageFormModel($firstname, $lastname, $email, $subject, $message, null);
     $firstnameFromForm = $homepageFormModel->getFirstname();
     $lastnameFromForm = $homepageFormModel->getLastname();
     $emailFromForm = $homepageFormModel->getEmail();

@@ -11,16 +11,17 @@ class NotificationRepository
   {
   }
 
-  public function createNotification(int $idArticle, int $idUser, ?bool $approved, ?bool $rejected, string $feedback): null
+  public function createNotification(object $notificationModel): null
   {
     $dbConnect = $this->connector->connect();
+    
     $statementToCreateNotification = $dbConnect->prepare("INSERT INTO user_notification (idArticle,idUser,approved,rejected,feedback_administrator) VALUES(?,?,?,?,?)");
     $values = [
-      $idArticle,
-      $idUser,
-      $approved,
-      $rejected,
-      $feedback
+      $notificationModel->getiIdArticle(),
+      $notificationModel->getiIdUser(),
+      $notificationModel->getApproved(),
+      $notificationModel->getRejected(),
+      $notificationModel->getFeedbackAdministrator()
     ];
     $statementToCreateNotification->execute($values);
     return null;

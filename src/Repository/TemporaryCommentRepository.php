@@ -21,14 +21,13 @@ class TemporaryCommentRepository
   ) {
   }
 
-  public function insertTemporaryComment(int $idArticle, int $idUser, string $temporaryComment, string $date, ?bool $approved, ?bool $rejected, ?string $feedback, array $sessionData): ?TemporaryCommentModel
+  public function insertTemporaryComment(object $temporaryCommentModel, array $sessionData): ?TemporaryCommentModel
   {
 
     $dbConnect = $this->connector->connect();
     $idSession = $sessionData["session_id"];
     $usernameSession = $sessionData["username"];
     $typeUserSession = $sessionData["type_user"];
-    $temporaryCommentModel = new TemporaryCommentModel($idArticle, $idUser, $temporaryComment, $date, $approved, $rejected, $feedback, null);
     $idArticleInTemporaryCommentModel = $temporaryCommentModel->getIdArticle();
     $idUserInTemporaryCommentModel = $temporaryCommentModel->getIdUser();
     $temporaryCommentInModel = $temporaryCommentModel->getContent();

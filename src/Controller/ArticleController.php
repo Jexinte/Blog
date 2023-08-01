@@ -121,12 +121,7 @@ class ArticleController
 
     $articleModel = new ArticleModel($fileField, $titleField, $shortPhraseField, $contentField, $tagsField, null);
 
-    $titleInModel = $articleModel->getTitle();
-    $fileInModel = $articleModel->getImage();
-    $shortPhraseInModel = $articleModel->getChapo();
-    $contentInModel = $articleModel->getContent();
-    $tagsInModel = $articleModel->getTags();
-    $articleResult = $this->articleRepository->createArticle($titleInModel, $fileInModel, $shortPhraseInModel, $contentInModel, $tagsInModel, $sessionData);
+    $articleResult = $this->articleRepository->createArticle($articleModel,$sessionData);
 
     if ($articleResult) {
       return $articleResult;

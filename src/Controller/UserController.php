@@ -103,15 +103,8 @@ class UserController
 
 
     $userModel = new UserModel($usernameResult, $fileResult, $emailResult, $passwordResult, $userType, null, null, null);
-    $usernameInModel = $userModel->getUsername();
-    $profileImageInModel = $userModel->getProfileImage();
-    $emailInModel = $userModel->getEmail();
-    $passwordInModel = $userModel->getPassword();
-    $userTypeInModel = $userModel->getUserType();
-
-
-
-    $userDb = $this->userRepository->createUser($usernameInModel, $profileImageInModel, $emailInModel, $passwordInModel, $userTypeInModel);
+  
+    $userDb = $this->userRepository->createUser($userModel);
 
     if ($userDb->getSuccessSignUp()) {
       return $userDb;
