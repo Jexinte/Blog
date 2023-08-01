@@ -15,20 +15,17 @@ class SessionController
 
   public function handleInsertSessionData(array $sessionData): void
   {
-    $sessionManagerRepository = $this->sessionManagerRepository;
-
     $sessionModel = new SessionModel(null, $sessionData["username"], $sessionData["type_user"]);
     $idSessionInModel = $sessionModel->getIdSession();
     $usernameInModel = $sessionModel->getUsername();
     $userTypeInModel = $sessionModel->getUserType();
 
-    $sessionManagerRepository->insertSessionData($idSessionInModel, $usernameInModel, $userTypeInModel);
+    $this->sessionManagerRepository->insertSessionData($idSessionInModel, $usernameInModel, $userTypeInModel);
   }
 
   public function handleGetIdSessionData(array $arr): ?array
   {
-    $sessionManagerRepository = $this->sessionManagerRepository;
 
-    return $sessionManagerRepository->getIdSessionData($arr);
+    return $this->sessionManagerRepository->getIdSessionData($arr);
   }
 }

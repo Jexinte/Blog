@@ -6,7 +6,7 @@ use Enumeration\UserType;
 
 
 use Exceptions\ValidationException;
-use Repository\UserRepository;
+use Repository\userRepository;
 use Model\UserModel;
 use Enumeration\Regex;
 
@@ -18,7 +18,7 @@ class UserController
 {
 
 
-  public function __construct(private readonly UserRepository $UserRepository)
+  public function __construct(private readonly userRepository $userRepository)
   {
   }
 
@@ -110,8 +110,8 @@ class UserController
     $userTypeInModel = $userModel->getUserType();
 
 
-    $userRepository = $this->UserRepository;
-    $userDb = $userRepository->createUser($usernameInModel, $profileImageInModel, $emailInModel, $passwordInModel, $userTypeInModel);
+
+    $userDb = $this->userRepository->createUser($usernameInModel, $profileImageInModel, $emailInModel, $passwordInModel, $userTypeInModel);
 
     if ($userDb->getSuccessSignUp()) {
       return $userDb;
@@ -153,7 +153,6 @@ class UserController
   public function loginValidator(string $email, string $password): array|string|null
   {
     $validationException = new ValidationException();
-    $userRepository = $this->UserRepository;
     $emailResult = $this->verifyEmailOnLogin($email);
     $passwordResult = $this->verifyPasswordOnLogin($password);
 
@@ -168,7 +167,7 @@ class UserController
 
 
 
-    $login = $userRepository->loginUser($emailField, $passwordField);
+    $login = $this->userRepository->loginUser($emailField, $passwordField);
     if (array_key_exists("password_error", $login)) {
       throw $validationException->setTypeAndValueOfException("password_exception", $validationException::PASSWORD_INCORRECT_MESSAGE_ERROR);
     } elseif (array_key_exists('email_error', $login)) {
@@ -181,22 +180,18 @@ class UserController
 
   public function handleLogout(array $sessionData): ?array
   {
-    $userRepository = $this->UserRepository;
-
-    if (is_array($userRepository->logout($sessionData))) {
-      return $userRepository->logout($sessionData);
+    if (is_array($this->userRepository->logout($sessionData))) {
+      return $this->userRepository->logout($sessionData);
     }
   }
 
   public function handleGetAllUserNotifications(array $sessionData): ?array
   {
-    $userRepository = $this->UserRepository;
-    return $userRepository->getAllUserNotifications($sessionData);
+    return $this->userRepository->getAllUserNotifications($sessionData);
   }
 
   public function handleDeleteNotification(int $idNotification): ?array
   {
-    $userRepository = $this->UserRepository;
-    return $userRepository->deleteNotification($idNotification);
+    return $this->userRepository->deleteNotification($idNotification);
   }
 }

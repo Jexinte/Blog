@@ -9,21 +9,17 @@ use Repository\CommentRepository;
 class CommentController
 {
 
-  public function __construct(private readonly CommentRepository $comment)
+  public function __construct(private readonly CommentRepository $commentRepository)
   {
   }
 
   public function handleGetAllComments(int $idArticle): ?array
   {
-    $commentRepository = $this->comment;
-    $comments = $commentRepository->getAllComments([], $idArticle);
-    return $comments;
+    return $this->commentRepository->getAllComments([], $idArticle);
   }
 
   public function handleCreateComment(array $commentsDetails, array $sessionData): void
   {
-    $commentRepository = $this->comment;
-
     if (array_key_exists("approved", $commentsDetails)) {
       $new_date_format = DateTime::createFromFormat("d F Y", $commentsDetails["date_creation"]);
       $dateOfCreation = $new_date_format->format("Y-m-d");
@@ -32,7 +28,7 @@ class CommentController
       $idUserInModel = $commentModel->getIdUser();
       $contentInModel = $commentModel->getContent();
       $dateCreationInModel = $commentModel->getDateCreation();
-      $commentRepository->createComment($idArticleInModel, $idUserInModel, $contentInModel, $dateCreationInModel, $sessionData);
+      $this->commentRepository->createComment($idArticleInModel, $idUserInModel, $contentInModel, $dateCreationInModel, $sessionData);
     }
   }
 }

@@ -14,7 +14,7 @@ class NotificationController
 
   public function handleCreateNotification(array $validation): void
   {
-    $notificationRepository = $this->notificationRepository;
+    
     switch (true) {
       case array_key_exists("approved", $validation):
         $notificationModel = new NotificationModel($validation["id_article"], $validation["id_user"], $validation["approved"], null, $validation["feedback"]);
@@ -23,7 +23,7 @@ class NotificationController
         $approvedInModel = $notificationModel->getApproved();
         $rejectedInModel = $notificationModel->getRejected();
         $feedbackInModel = $notificationModel->getFeedbackAdministrator();
-        $notificationRepository->createNotification($idArticleInModel, $idUserInModel, $approvedInModel, $rejectedInModel, $feedbackInModel);
+        $this->notificationRepository->createNotification($idArticleInModel, $idUserInModel, $approvedInModel, $rejectedInModel, $feedbackInModel);
         break;
       case array_key_exists("rejected", $validation):
         $notificationModel = new NotificationModel($validation["id_article"], $validation["id_user"], null, $validation["rejected"], $validation["feedback"]);
@@ -32,7 +32,7 @@ class NotificationController
         $approvedInModel = $notificationModel->getApproved();
         $rejectedInModel = $notificationModel->getRejected();
         $feedbackInModel = $notificationModel->getFeedbackAdministrator();
-        $notificationRepository->createNotification($idArticleInModel, $idUserInModel, $approvedInModel, $rejectedInModel, $feedbackInModel);
+        $this->notificationRepository->createNotification($idArticleInModel, $idUserInModel, $approvedInModel, $rejectedInModel, $feedbackInModel);
         break;
     }
   }

@@ -13,20 +13,20 @@ use Enumeration\Regex;
 class ArticleController
 {
 
-  public function __construct(private readonly ArticleRepository $article)
+  public function __construct(private readonly ArticleRepository $articleRepository)
   {
   }
   public function listOfAllArticles(): array
   {
 
-    return $this->article->getArticles();
+    return $this->articleRepository->getArticles();
   }
 
   public function handleOneArticle(int $id): ?array
   {
     $result = !empty($id);
 
-    return $result ? $this->article->getArticle($id) : null;
+    return $result ? $this->articleRepository->getArticle($id) : null;
   }
 
 
@@ -111,7 +111,7 @@ class ArticleController
 
   public function handleCreateArticleValidator(string $title, array $fileArticle, string $shortPhrase, string $content, string $tags, array $sessionData): ?ArticleModel
   {
-    $articleRepository = $this->article;
+    
     $titleField = $this->handleTitleField($title)["title"];
     $fileField = $this->handleFileField($fileArticle)["file"];
     $shortPhraseField = $this->handleShortPhraseField($shortPhrase)["short_phrase"];
@@ -126,7 +126,7 @@ class ArticleController
     $shortPhraseInModel = $articleModel->getChapo();
     $contentInModel = $articleModel->getContent();
     $tagsInModel = $articleModel->getTags();
-    $articleResult = $articleRepository->createArticle($titleInModel, $fileInModel, $shortPhraseInModel, $contentInModel, $tagsInModel, $sessionData);
+    $articleResult = $this->articleRepository->createArticle($titleInModel, $fileInModel, $shortPhraseInModel, $contentInModel, $tagsInModel, $sessionData);
 
     if ($articleResult) {
       return $articleResult;
@@ -238,10 +238,7 @@ class ArticleController
   public function handleUpdateArticleValidator(string $title, array $fileArticle, string $hiddenInputFileOriginalPath, string $shortPhrase, string $content, string $tags, array $sessionData, int $idArticle): ?array
   {
 
-    $articleRepository = $this->article;
     $numberOfTagsAuthorized = 3;
-
-
     $titleResult = $this->handleUpdateTitleValidation($title)["title"];
     $shortPhraseResult = $this->handleUpdateShortPhraseValidation($shortPhrase)["short_phrase"];
     $contentResult = $this->handleUpdateContentValidation($content)["content"];
@@ -257,13 +254,12 @@ class ArticleController
       "id_article" => $idArticle
     ];
 
-    return $articleRepository->updateArticle($fields, $sessionData);
+    return $this->articleRepository->updateArticle($fields, $sessionData);
   }
 
 
   public function handleDeleteArticle(int $idArticle, array $sessionData): ?array
   {
-    $articleRepository = $this->article;
-    return $articleRepository->deleteArticle($idArticle, $sessionData);
+    return $this->articleRepository->deleteArticle($idArticle, $sessionData);
   }
 }

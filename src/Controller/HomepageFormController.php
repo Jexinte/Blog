@@ -12,7 +12,7 @@ use Enumeration\Regex;
 class HomepageFormController
 {
 
-  public function __construct(private readonly HomepageFormRepository $homepageForm)
+  public function __construct(private readonly HomepageFormRepository $homepageFormRepository)
   {
   }
 
@@ -90,7 +90,7 @@ class HomepageFormController
 
 
 
-    $formRepository = $this->homepageForm;
+    
 
     $homepageFormModel = new HomepageFormModel($firstnameResult, $lastnameResult, $emailResult, $subjectResult, $messageResult, null);
     $firstnameInModel = $homepageFormModel->getFirstname();
@@ -100,7 +100,7 @@ class HomepageFormController
     $messageInModel = $homepageFormModel->getMessage();
 
 
-    $insertDataDb = $formRepository->insertDataInDatabase(
+    $insertDataDb = $this->homepageFormRepository->insertDataInDatabase(
       $firstnameInModel,
       $lastnameInModel,
       $emailInModel,
@@ -108,8 +108,8 @@ class HomepageFormController
       $messageInModel
     );
     if ($insertDataDb->getFormDataSaved()) {
-      $getDataFromDb = $formRepository->getDataFromDatabase($insertDataDb);
-      return array_key_exists("data_retrieved", $getDataFromDb) && $getDataFromDb["data_retrieved"] == 1 ? $formRepository->sendMailAdmin($getDataFromDb) : null;
+      $getDataFromDb = $this->homepageFormRepository->getDataFromDatabase($insertDataDb);
+      return array_key_exists("data_retrieved", $getDataFromDb) && $getDataFromDb["data_retrieved"] == 1 ? $this->homepageFormRepository->sendMailAdmin($getDataFromDb) : null;
     }
   }
 }

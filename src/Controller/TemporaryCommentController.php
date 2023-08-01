@@ -10,7 +10,7 @@ use Enumeration\Regex;
 class TemporaryCommentController
 {
 
-  public function __construct(private readonly TemporaryCommentRepository $temporaryComment)
+  public function __construct(private readonly TemporaryCommentRepository $temporaryCommentRepository)
   {
   }
 
@@ -44,7 +44,7 @@ class TemporaryCommentController
   public function handleInsertTemporaryCommentValidator(string $comment, int $idArticle, array $sessionData): ?TemporaryCommentModel
   {
 
-    $temporaryCommentRepository = $this->temporaryComment;
+    
     $dateOfCreation =  date('Y-m-d');
     $temporaryCommentResult = $this->handleCommentField($comment)["comment"];
 
@@ -57,7 +57,7 @@ class TemporaryCommentController
     $approvedInModel = $temporaryCommentModel->getApproved();
     $rejectedInModel = $temporaryCommentModel->getRejected();
     $feedbackAdmin = $temporaryCommentModel->getFeedbackAdministrator();
-    $temporaryCommentResult = $temporaryCommentRepository->insertTemporaryComment(
+    $temporaryCommentResult = $this->temporaryCommentRepository->insertTemporaryComment(
       $idArticleInModel,
       $idUserInModel,
       $temporaryCommentInModel,
@@ -73,41 +73,41 @@ class TemporaryCommentController
 
   public function handlecheckCommentAlreadySentByUser(array $sessionData): ?array
   {
-    $temporaryCommentRepository = $this->temporaryComment;
-    return $temporaryCommentRepository->checkCommentAlreadySentByUser($sessionData);
+
+    return $this->temporaryCommentRepository->checkCommentAlreadySentByUser($sessionData);
   }
 
   public function handlegetTemporaryCommentsForAdministrators(array $sessionData): ?array
   {
-    $temporaryCommentRepository = $this->temporaryComment;
-    return $temporaryCommentRepository->getTemporaryCommentsForAdministrators($sessionData);
+
+    return $this->temporaryCommentRepository->getTemporaryCommentsForAdministrators($sessionData);
   }
 
   public function handleMailToAdmin(array $sessionData, string $titleOfArticle): void
   {
-    $temporaryCommentRepository = $this->temporaryComment;
-    $temporaryCommentRepository->mailToAdmin($sessionData, $titleOfArticle);
+
+    $this->temporaryCommentRepository->mailToAdmin($sessionData, $titleOfArticle);
   }
 
   public function handleGetOneTemporaryComment(int $idComment): ?array
   {
-    $temporaryCommentRepository = $this->temporaryComment;
-    return $temporaryCommentRepository->getOneTemporaryComment($idComment);
+
+    return $this->temporaryCommentRepository->getOneTemporaryComment($idComment);
   }
 
   public function handleValidationTemporaryComment(string $valueOfValidation, int $idComment, string $feedback): ?array
   {
 
     $feedbackResult = $this->handleFeedbackField($feedback)["feedback"];
-    $temporaryCommentRepository = $this->temporaryComment;
-    return $temporaryCommentRepository->validationTemporaryComment($valueOfValidation, $idComment, $feedbackResult);
+
+    return $this->temporaryCommentRepository->validationTemporaryComment($valueOfValidation, $idComment, $feedbackResult);
   }
 
   public function handleDeleteTemporaryComment(array $rejectedValidation): void
   {
     if (array_key_exists("rejected", $rejectedValidation)) {
-      $temporaryCommentRepository = $this->temporaryComment;
-      $temporaryCommentRepository->deleteTemporaryComment($rejectedValidation);
+
+      $this->temporaryCommentRepository->deleteTemporaryComment($rejectedValidation);
     }
   }
 }
