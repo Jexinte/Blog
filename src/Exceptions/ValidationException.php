@@ -29,13 +29,13 @@ class ValidationException extends Exception
   const USERNAME_MESSAGE_ERROR_WRONG_FORMAT = "Oops ! Merci de suivre le format ci-dessous pour votre nom d'utilisateur !";
   const EXPLANATION_MESSAGE_ERROR_WRONG_FORMAT = "L'explication doit commencer par une lettre majuscule et ne peut excéder 500 caractères";
 
-  public function setTypeAndValueOfException($key, $message)
+  public function setTypeAndValueOfException(string $key, string $message): ?ValidationException
   {
     $this->errors[$key] = $message;
     return $this;
   }
 
-  public function getErrors()
+  public function getErrors() : array
   {
     return $this->errors;
   }

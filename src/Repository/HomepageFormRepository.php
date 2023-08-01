@@ -3,7 +3,7 @@
 namespace Repository;
 
 use Config\DatabaseConnection;
-use Exceptions\FormMessageNotSentException;
+use Exceptions\ValidationException;
 use Model\HomepageFormModel;
 use PHPMailer\PHPMailer\PHPMailer;
 
@@ -60,7 +60,7 @@ class HomepageFormRepository
   public function sendMailAdmin(array $data): ?array
   {
 
-
+    $validationException = new ValidationException();
     $username = json_decode($this->username, true);
     $password = json_decode($this->password, true);
     $gmail = json_decode($this->smtp_address, true);
@@ -102,6 +102,6 @@ class HomepageFormRepository
       return ["message_sent" => "Votre message a bien été envoyé !"];
     }
 
-    throw new FormMessageNotSentException();
+    throw $validationException->setTypeAndValueOfException("message_not_sent_exception", $validationException::MESSAGE_SENT_FAILED);
   }
 }
