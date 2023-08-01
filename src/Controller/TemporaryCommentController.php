@@ -2,9 +2,7 @@
 
 namespace Controller;
 
-use Exceptions\CommentEmptyException;
-use Exceptions\CommentWrongFormatException;
-use Exceptions\ValidationErrorWrongFormatException;
+use Exceptions\ValidationException;
 use Repository\TemporaryCommentRepository;
 use Model\TemporaryCommentModel;
 use Enumeration\Regex;
@@ -20,12 +18,12 @@ class TemporaryCommentController
   public function handleCommentField(string $comment): array|string
   {
 
-
+    $validationException = new ValidationException();
     switch (true) {
       case empty($comment):
-        throw new CommentEmptyException();
+        throw $validationException->setTypeAndValueOfException("comment_exception", $validationException::ERROR_EMPTY);
       case !preg_match(REGEX::COMMENT, $comment):
-        throw new CommentWrongFormatException();
+        throw $validationException->setTypeAndValueOfException("comment_exception", $validationException::COMMENT_WRONG_FORMAT_EXCEPTION);
       default:
         return ["comment" => $comment];
     }
@@ -33,10 +31,12 @@ class TemporaryCommentController
 
   public function handleFeedbackField(string $feedback): ?array
   {
+    $validationException = new ValidationException();
     switch (true) {
 
       case !preg_match(REGEX::FEEDBACK, $feedback):
-        throw new ValidationErrorWrongFormatException();
+        throw $validationException->setTypeAndValueOfException("comment_exception", $validationException::EXPLANATION_MESSAGE_ERROR_WRONG_FORMAT);
+
       default:
         return ["feedback" => $feedback];
     }

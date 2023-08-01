@@ -11,39 +11,6 @@ $sessionRepository = new SessionManagerRepository($db);
 $sessionRepository->startSession();
 
 
-use Exceptions\UsernameErrorEmptyException;
-use Exceptions\UsernameWrongFormatException;
-use Exceptions\FileErrorEmptyException;
-use Exceptions\FileTypeException;
-use Exceptions\EmailErrorEmptyException;
-use Exceptions\EmailWrongFormatException;
-use Exceptions\PasswordErrorEmptyException;
-use Exceptions\PasswordWrongFormatException;
-use Exceptions\TitleErrorEmptyException;
-use Exceptions\TitleWrongFormatException;
-use Exceptions\ContentArticleErrorEmptyException;
-use Exceptions\ContentArticleWrongFormatException;
-use Exceptions\ShortPhraseErrorEmptyException;
-use Exceptions\ShortPhraseWrongFormatException;
-use Exceptions\TagsErrorEmptyException;
-use Exceptions\TagsWrongFormatException;
-use Exceptions\ContentMessageWrongFormatException;
-use Exceptions\ContentMessageErrorEmptyException;
-use Exceptions\SubjectErrorEmptyException;
-use Exceptions\SubjectWrongFormatException;
-use Exceptions\LastnameErrorEmptyException;
-use Exceptions\LastnameWrongFormatException;
-use Exceptions\FirstNameErrorEmptyException;
-use Exceptions\FirstNameWrongFormatException;
-use Exceptions\CommentEmptyException;
-use Exceptions\CommentWrongFormatException;
-use Exceptions\EmailUnavailableException;
-use Exceptions\EmailUnexistException;
-use Exceptions\FormMessageNotSentException;
-use Exceptions\PasswordIncorrectException;
-use Exceptions\UsernameUnavailableException;
-use Exceptions\ValidationErrorWrongFormatException;
-
 use Controller\ArticleController;
 use Controller\UserController;
 use Controller\DownloadController;
@@ -54,7 +21,7 @@ use Controller\NotificationController;
 use Controller\SessionController;
 
 use Enumeration\UserType;
-
+use Exceptions\ValidationException;
 use Repository\ArticleRepository;
 use Repository\CommentRepository;
 use Repository\HomepageFormRepository;
@@ -165,39 +132,13 @@ if (isset($_GET['action'])) {
                     header("HTTP/1.1 302");
                     header("Location: index.php?selection=sign_in");
                 }
-            } catch (UsernameErrorEmptyException $e) {
+            } catch (ValidationException $e) {
+                $errors = $e->getErrors();
                 header("HTTP/1.1 400");
-                $paramaters["username_exception"] =
-                    UsernameErrorEmptyException::USERNAME_MESSAGE_ERROR_EMPTY;
-            } catch (UsernameWrongFormatException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["username_exception"] = UsernameWrongFormatException::USERNAME_MESSAGE_ERROR_WRONG_FORMAT;
-            } catch (FileErrorEmptyException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["file_exception"] = FileErrorEmptyException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED;
-            } catch (FileTypeException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["file_exception"] = FileTypeException::FILE_MESSAGE_ERROR_TYPE_FILE;
-            } catch (EmailErrorEmptyException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["email_exception"] = EmailErrorEmptyException::EMAIL_MESSAGE_ERROR_EMPTY;
-            } catch (EmailWrongFormatException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["email_exception"] = EmailWrongFormatException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT;
-            } catch (PasswordErrorEmptyException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["password_exception"] = PasswordErrorEmptyException::PASSWORD_MESSAGE_ERROR_EMPTY;
-            } catch (PasswordWrongFormatException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["password_exception"] = PasswordWrongFormatException::PASSWORD_MESSAGE_ERROR_WRONG_FORMAT;
-            } catch (UsernameUnavailableException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["username_exception"] = UsernameUnavailableException::USERNAME_UNAVAILABLE_MESSAGE_ERROR . ' ' . $_POST["username"] . " n'est pas disponible ";
-            } catch (EmailUnavailableException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["email_exception"] = EmailUnavailableException::EMAIL_UNAVAILABLE_MESSAGE_ERROR . ' ' . $_POST["mail"] . " n'est pas disponible";
+                foreach ($errors as $key => $v) {
+                    $paramaters[$key] = $v;
+                }
             }
-
             break;
         case "sign_in":
             try {
@@ -214,24 +155,12 @@ if (isset($_GET['action'])) {
                     header("HTTP/1.1 302");
                     header("Location: index.php?selection=blog");
                 }
-            } catch (EmailErrorEmptyException $e) {
+            } catch (ValidationException $e) {
+                $errors = $e->getErrors();
                 header("HTTP/1.1 400");
-                $paramaters["email_exception"] = EmailErrorEmptyException::EMAIL_MESSAGE_ERROR_EMPTY;
-            } catch (EmailWrongFormatException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["email_exception"] = EmailWrongFormatException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT;
-            } catch (PasswordErrorEmptyException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["password_exception"] = PasswordErrorEmptyException::PASSWORD_MESSAGE_ERROR_EMPTY;
-            } catch (PasswordWrongFormatException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["password_exception"] = PasswordWrongFormatException::PASSWORD_MESSAGE_ERROR_WRONG_FORMAT;
-            } catch (EmailUnexistException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["email_exception"] = EmailUnexistException::EMAIL_UNEXIST_MESSAGE_ERROR;
-            } catch (PasswordIncorrectException $e) {
-                header("HTTP/1.1 403");
-                $paramaters["password_exception"] = PasswordIncorrectException::PASSWORD_INCORRECT_MESSAGE_ERROR;
+                foreach ($errors as $key => $v) {
+                    $paramaters[$key] = $v;
+                }
             }
 
             break;
@@ -256,40 +185,12 @@ if (isset($_GET['action'])) {
             try {
                 $template = "homepage.twig";
                 $paramaters["message"] = $formController->homepageFormValidator($_POST["firstname"], $_POST["lastname"], $_POST["mail"], $_POST["subject"], $_POST["message"]);
-            } catch (FirstNameErrorEmptyException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["firstname_exception"] = FirstNameErrorEmptyException::FIRSTNAME_MESSAGE_ERROR_EMPTY;
-            } catch (FirstNameWrongFormatException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["firstname_exception"] = FirstNameWrongFormatException::FIRSTNAME_MESSAGE_ERROR_WRONG_FORMAT;
-            } catch (LastnameErrorEmptyException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["lastname_exception"] = LastnameErrorEmptyException::LASTNAME_MESSAGE_ERROR_EMPTY;
-            } catch (LastnameWrongFormatException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["lastname_exception"] = LastnameWrongFormatException::LASTNAME_MESSAGE_ERROR_WRONG_FORMAT;
-            } catch (EmailErrorEmptyException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["email_exception"] = EmailErrorEmptyException::EMAIL_MESSAGE_ERROR_EMPTY;
-            } catch (EmailWrongFormatException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["email_exception"] = EmailWrongFormatException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT;
-            } catch (SubjectErrorEmptyException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["subject_exception"] = SubjectErrorEmptyException::SUBJECT_MESSAGE_ERROR_EMPTY;
-            } catch (SubjectWrongFormatException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["subject_exception"] = SubjectWrongFormatException::SUBJECT_MESSAGE_ERROR_MIN_20_CHARS_MAX_100_CHARS;
-            } catch (ContentMessageErrorEmptyException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["content_message_exception"] = ContentMessageErrorEmptyException::CONTENT_MESSAGE_ERROR_EMPTY;
-            } catch (ContentMessageWrongFormatException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["content_message_exception"] = ContentMessageWrongFormatException::CONTENT_MESSAGE_ERROR_MIN_20_CHARS_MAX_500_CHARS;
-            } catch (FormMessageNotSentException $e) {
-                header("HTTP/1.1 500");
-                header("Location: index.php?action=error&code=500");
-                $paramaters["message_not_sent_exception"] = FormMessageNotSentException::MESSAGE_SENT_FAILED;
+            } catch (ValidationException $e) {
+                $errors = $e->getErrors();
+                header("HTTP/1.1 400");
+                foreach ($errors as $key => $v) {
+                    $paramaters[$key] = $v;
+                }
             }
             break;
 
@@ -316,36 +217,12 @@ if (isset($_GET['action'])) {
                 } else {
                     header("Location: index.php?action=error&code=403");
                 }
-            } catch (TitleErrorEmptyException $e) {
+            } catch (ValidationException $e) {
+                $errors = $e->getErrors();
                 header("HTTP/1.1 400");
-                $paramaters["title_exception"] = TitleErrorEmptyException::TITLE_MESSAGE_ERROR_EMPTY;
-            } catch (TitleWrongFormatException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["title_exception"] = TitleWrongFormatException::TITLE_MESSAGE_ERROR_MAX_255_CHARS;
-            } catch (FileErrorEmptyException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["file_exception"] = FileErrorEmptyException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED;
-            } catch (FileTypeException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["file_exception"] = FileTypeException::FILE_MESSAGE_ERROR_TYPE_FILE;
-            } catch (ShortPhraseErrorEmptyException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["short_phrase_exception"] = ShortPhraseErrorEmptyException::SHORT_PHRASE_MESSAGE_ERROR_EMPTY;
-            } catch (ShortPhraseWrongFormatException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["short_phrase_exception"] = ShortPhraseWrongFormatException::SHORT_PHRASE_MESSAGE_ERROR_MAX_255_CHARS;
-            } catch (ContentArticleErrorEmptyException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["content_article_exception"] = ContentArticleErrorEmptyException::CONTENT_ARTICLE_MESSAGE_ERROR_EMPTY;
-            } catch (ContentArticleWrongFormatException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["content_article_exception"] = ContentArticleWrongFormatException::CONTENT_ARTICLE_MESSAGE_ERROR_MAX_5000_CHARS;
-            } catch (TagsErrorEmptyException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["tags_exception"] = TagsErrorEmptyException::TAGS_ERROR_EMPTY;
-            } catch (TagsWrongFormatException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["tags_exception"] = TagsWrongFormatException::TAGS_MESSAGE_ERROR_MAX_3_TAGS;
+                foreach ($errors as $key => $v) {
+                    $paramaters[$key] = $v;
+                }
             }
             break;
 
@@ -376,32 +253,14 @@ if (isset($_GET['action'])) {
                 } else {
                     header("Location: index.php?action=error&code=403");
                 }
-            } catch (TitleErrorEmptyException $e) {
-                $paramaters["title_exception"] = TitleErrorEmptyException::TITLE_MESSAGE_ERROR_EMPTY;
+            } catch (ValidationException $e) {
                 $paramaters["original_data"] = $originalData;
-            } catch (TitleWrongFormatException $e) {
-                $paramaters["title_exception"] = TitleWrongFormatException::TITLE_MESSAGE_ERROR_MAX_255_CHARS;
-                $paramaters["original_data"] = $originalData;
-            } catch (ShortPhraseErrorEmptyException $e) {
-                $paramaters["short_phrase_exception"] = ShortPhraseErrorEmptyException::SHORT_PHRASE_MESSAGE_ERROR_EMPTY;
-                $paramaters["original_data"] = $originalData;
-            } catch (ShortPhraseWrongFormatException $e) {
-                $paramaters["short_phrase_exception"] = ShortPhraseWrongFormatException::SHORT_PHRASE_MESSAGE_ERROR_MAX_255_CHARS;
-                $paramaters["original_data"] = $originalData;
-            } catch (ContentArticleErrorEmptyException $e) {
-                $paramaters["content_exception"] = ContentArticleErrorEmptyException::CONTENT_ARTICLE_MESSAGE_ERROR_EMPTY;
-                $paramaters["original_data"] = $originalData;
-            } catch (ContentArticleWrongFormatException $e) {
-                $paramaters["content_exception"] = ContentArticleWrongFormatException::CONTENT_ARTICLE_MESSAGE_ERROR_MAX_5000_CHARS;
-                $paramaters["original_data"] = $originalData;
-            } catch (TagsWrongFormatException $e) {
-                $paramaters["tags_exception"] = TagsWrongFormatException::TAGS_MESSAGE_ERROR_MAX_3_TAGS;
-                $paramaters["original_data"] = $originalData;
-            } catch (FileTypeException $e) {
-                $paramaters["file_exception"] = FileTypeException::FILE_MESSAGE_ERROR_TYPE_FILE;
-                $paramaters["original_data"] = $originalData;
+                $errors = $e->getErrors();
+                header("HTTP/1.1 400");
+                foreach ($errors as $key => $v) {
+                    $paramaters[$key] = $v;
+                }
             }
-
             break;
         case "delete_article":
             if ($_SESSION["type_user"] === UserType::ADMIN->value) {
@@ -444,16 +303,13 @@ if (isset($_GET['action'])) {
                 } else {
                     header("Location: index.php?action=error&code=403");
                 }
-            } catch (CommentEmptyException $e) {
-                $paramaters = [
-                    "comment_exception" => CommentEmptyException::COMMENT_EMPTY_EXCEPTION,
-                    "default" => $defaultValues
-                ];
-            } catch (CommentWrongFormatException $e) {
-                $paramaters = [
-                    "comment_exception" => CommentWrongFormatException::COMMENT_WRONG_FORMAT_EXCEPTION,
-                    "default" => $defaultValues
-                ];
+            } catch (ValidationException $e) {
+                $errors = $e->getErrors();
+                header("HTTP/1.1 400");
+                $paramaters["default"] =  $defaultValues;
+                foreach ($errors as $key => $v) {
+                    $paramaters[$key] = $v;
+                }
             }
             break;
         case "validation":
@@ -515,11 +371,13 @@ if (isset($_GET['action'])) {
                 } else {
                     header("Location: index.php?action=error&code=403");
                 }
-            } catch (ValidationErrorWrongFormatException $e) {
-                $paramaters = [
-                    "validation_exception" => ValidationErrorWrongFormatException::VALIDATION_MESSAGE_ERROR_WRONG_FORMAT,
-                    "comment" => $temporaryComment
-                ];
+            } catch (ValidationException $e) {
+                $errors = $e->getErrors();
+                $paramaters["comment"] = $temporaryComment;
+                header("HTTP/1.1 400");
+                foreach ($errors as $key => $v) {
+                    $paramaters[$key] = $v;
+                }
             }
             break;
 

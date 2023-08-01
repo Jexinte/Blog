@@ -4,19 +4,8 @@ namespace Controller;
 
 use Enumeration\UserType;
 
-use Exceptions\EmailErrorEmptyException;
-use Exceptions\EmailUnavailableException;
-use Exceptions\EmailUnexistException;
-use Exceptions\EmailWrongFormatException;
-use Exceptions\PasswordErrorEmptyException;
-use Exceptions\PasswordIncorrectException;
-use Exceptions\PasswordWrongFormatException;
-use Exceptions\UsernameUnavailableException;
-use Exceptions\UsernameWrongFormatException;
-use Exceptions\UsernameErrorEmptyException;
-use Exceptions\FileTypeException;
-use Exceptions\FileErrorEmptyException;
 
+use Exceptions\ValidationException;
 use Repository\UserRepository;
 use Model\UserModel;
 use Enumeration\Regex;
@@ -36,20 +25,20 @@ class UserController
 
   public function handleUsernameField(string $username): array|string
   {
-
+    $validationException = new ValidationException();
     switch (true) {
       case empty($username):
-
-        throw new UsernameErrorEmptyException();
+        throw $validationException->setTypeAndValueOfException("username_exception", $validationException::ERROR_EMPTY);
       case !preg_match(REGEX::USERNAME, $username):
 
-        throw new UsernameWrongFormatException();
+        throw $validationException->setTypeAndValueOfException("username_exception", $validationException::USERNAME_MESSAGE_ERROR_WRONG_FORMAT);
       default:
         return ["username" => $username];
     }
   }
   public function handleFileField(array $file): array|string
   {
+    $validationException = new ValidationException();
     switch (true) {
       case !empty($file["name"]) && $file["error"] == UPLOAD_ERR_OK:
         $filename = $file["name"];
@@ -65,40 +54,35 @@ class UserController
 
           return ["file" => "$filenameGenerated;$filenameTmp;$dirImages"];
         } else {
-
-          throw new FileTypeException();
+          throw $validationException->setTypeAndValueOfException("file_exception", $validationException::FILE_MESSAGE_ERROR_TYPE_FILE);
         }
 
       default:
-
-        throw new FileErrorEmptyException(FileErrorEmptyException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED);
+        throw $validationException->setTypeAndValueOfException("file_exception", $validationException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED);
     }
   }
 
 
   public function handleEmailField(string $email): array|string
   {
+    $validationException = new ValidationException();
     switch (true) {
       case empty($email):
-
-        throw new EmailErrorEmptyException();
+        throw $validationException->setTypeAndValueOfException("email_exception", $validationException::ERROR_EMPTY);
       case !preg_match(REGEX::EMAIL, $email):
-
-        throw new EmailWrongFormatException();
+        throw $validationException->setTypeAndValueOfException("email_exception", $validationException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT);
       default:
         return ["email" => $email];
     }
   }
   public function handlePasswordField(string $password): array|string
   {
-
+    $validationException = new ValidationException();
     switch (true) {
       case empty($password):
-
-        throw new PasswordErrorEmptyException();
+        throw $validationException->setTypeAndValueOfException('password_exception', $validationException::ERROR_EMPTY);
       case !preg_match(REGEX::PASSWORD, $password):
-
-        throw new PasswordWrongFormatException();
+        throw $validationException->setTypeAndValueOfException("password_exception", $validationException::PASSWORD_MESSAGE_ERROR_WRONG_FORMAT);
       default:
         $hashPassword = password_hash($password, PASSWORD_DEFAULT);
         return ["password" => $hashPassword];
@@ -109,6 +93,7 @@ class UserController
   public function signUpValidator(string $username, array $file, string $email, string $password): ?UserModel
   {
 
+    $validationException = new ValidationException();
     $usernameResult = $this->handleUsernameField($username)["username"];
     $emailResult = $this->handleEmailField($email)["email"];
     $passwordResult = $this->handlePasswordField($password)["password"];
@@ -133,24 +118,22 @@ class UserController
     }
     switch (true) {
       case !is_null($userDb->isUsernameAvailable()):
-        throw new UsernameUnavailableException();
+        throw $validationException->setTypeAndValueOfException("username_exception", $validationException::USERNAME_UNAVAILABLE_MESSAGE_ERROR . $username . " n'est pas disponible !");
       case !is_null($userDb->isEmailAvailable()):
-        throw new EmailUnavailableException();
+        throw $validationException->setTypeAndValueOfException("email_exception", $validationException::EMAIL_UNAVAILABLE_MESSAGE_ERROR . $email . " n'est pas disponible !");
     }
   }
 
 
   public function verifyEmailOnLogin(string $email): array|string
   {
-
+    $validationException = new ValidationException();
     $emailRegex = "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/";
     switch (true) {
       case empty($email):
-
-        throw new EmailErrorEmptyException();
+        throw $validationException->setTypeAndValueOfException("email_exception", $validationException::ERROR_EMPTY);
       case !preg_match($emailRegex, $email):
-
-        throw new EmailWrongFormatException();
+        throw $validationException->setTypeAndValueOfException("email_exception", $validationException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT);
       default:
         return ["email" => $email];
     }
@@ -158,10 +141,10 @@ class UserController
 
   public function verifyPasswordOnLogin(string $password): array|string
   {
-
+    $validationException = new ValidationException();
 
     if (empty($password)) {
-      throw new PasswordErrorEmptyException();
+      throw $validationException->setTypeAndValueOfException('password_exception', $validationException::ERROR_EMPTY);
     }
     return ["password" => $password];
   }
@@ -169,6 +152,7 @@ class UserController
 
   public function loginValidator(string $email, string $password): array|string|null
   {
+    $validationException = new ValidationException();
     $userRepository = $this->UserRepository;
     $emailResult = $this->verifyEmailOnLogin($email);
     $passwordResult = $this->verifyPasswordOnLogin($password);
@@ -185,11 +169,10 @@ class UserController
 
 
     $login = $userRepository->loginUser($emailField, $passwordField);
-
     if (array_key_exists("password_error", $login)) {
-      throw new PasswordIncorrectException();
+      throw $validationException->setTypeAndValueOfException("password_exception", $validationException::PASSWORD_INCORRECT_MESSAGE_ERROR);
     } elseif (array_key_exists('email_error', $login)) {
-      throw new EmailUnexistException();
+      throw $validationException->setTypeAndValueOfException("email_exception", $validationException::EMAIL_UNEXIST_MESSAGE_ERROR);
     }
     return $login ?? null;
   }

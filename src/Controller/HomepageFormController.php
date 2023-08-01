@@ -2,17 +2,7 @@
 
 namespace Controller;
 
-use Exceptions\ContentMessageWrongFormatException;
-use Exceptions\ContentMessageErrorEmptyException;
-use Exceptions\SubjectErrorEmptyException;
-use Exceptions\SubjectWrongFormatException;
-use Exceptions\EmailErrorEmptyException;
-use Exceptions\EmailWrongFormatException;
-use Exceptions\LastnameErrorEmptyException;
-use Exceptions\LastnameWrongFormatException;
-use Exceptions\FirstNameErrorEmptyException;
-use Exceptions\FirstNameWrongFormatException;
-
+use Exceptions\ValidationException;
 
 use Model\HomepageFormModel;
 use Repository\HomepageFormRepository;
@@ -28,34 +18,36 @@ class HomepageFormController
 
   public function handleFirstNameField(string $firstname): array|string
   {
-
+    $validationException = new ValidationException();
     switch (true) {
       case empty($firstname):
-        throw new FirstNameErrorEmptyException();
+        throw $validationException->setTypeAndValueOfException("firstname_exception", $validationException::ERROR_EMPTY);
       case !preg_match(REGEX::FIRSTNAME, $firstname):
-        throw new FirstNameWrongFormatException();
+        throw $validationException->setTypeAndValueOfException("firstname_exception", $validationException::FIRSTNAME_MESSAGE_ERROR_WRONG_FORMAT);
       default:
         return ["firstname" => $firstname];
     }
   }
   public function handleLastNameField(string $lastname): array|string
   {
+    $validationException = new ValidationException();
     switch (true) {
       case empty($lastname):
-        throw new LastnameErrorEmptyException();
+        throw $validationException->setTypeAndValueOfException("lastname_exception", $validationException::ERROR_EMPTY);
       case !preg_match(REGEX::LASTNAME, $lastname):
-        throw new LastnameWrongFormatException();
+        throw $validationException->setTypeAndValueOfException("lastname_exception", $validationException::LASTNAME_MESSAGE_ERROR_WRONG_FORMAT);
       default:
         return ["lastname" => $lastname];
     }
   }
   public function handleEmailField(string $email): array|string
   {
+    $validationException = new ValidationException();
     switch (true) {
       case empty($email):
-        throw new EmailErrorEmptyException();
+        throw $validationException->setTypeAndValueOfException("email_exception", $validationException::ERROR_EMPTY);
       case !preg_match(REGEX::EMAIL, $email):
-        throw new EmailWrongFormatException();
+        throw $validationException->setTypeAndValueOfException("email_exception", $validationException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT);
       default:
         return ["email" => $email];
     }
@@ -63,23 +55,24 @@ class HomepageFormController
 
   public function handleSubjectField(string $subject): array|string
   {
+    $validationException = new ValidationException();
     switch (true) {
       case empty($subject):
-        throw new SubjectErrorEmptyException();
+        throw $validationException->setTypeAndValueOfException("subject_exception", $validationException::ERROR_EMPTY);
       case !preg_match(REGEX::SUBJECT, $subject):
-
-        throw new SubjectWrongFormatException();
+        throw $validationException->setTypeAndValueOfException("subject_exception", $validationException::SUBJECT_MESSAGE_ERROR_MIN_20_CHARS_MAX_100_CHARS);
       default:
         return ["subject" => $subject];
     }
   }
   public function handleMessageField(string $message): array|string
   {
+    $validationException = new ValidationException();
     switch (true) {
       case empty($message):
-        throw new ContentMessageErrorEmptyException();
+        throw $validationException->setTypeAndValueOfException("content_message_exception", $validationException::ERROR_EMPTY);
       case !preg_match(REGEX::FORM_MESSAGE, $message):
-        throw new ContentMessageWrongFormatException();
+        throw $validationException->setTypeAndValueOfException("content_message_exception", $validationException::CONTENT_MESSAGE_ERROR_MIN_20_CHARS_MAX_500_CHARS);
       default:
         return ["message" => $message];
     }

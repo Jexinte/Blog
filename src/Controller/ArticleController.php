@@ -5,17 +5,7 @@ namespace Controller;
 
 use Model\ArticleModel;
 
-
-use Exceptions\TitleErrorEmptyException;
-use Exceptions\TitleWrongFormatException;
-use Exceptions\FileErrorEmptyException;
-use Exceptions\FileTypeException;
-use Exceptions\ShortPhraseErrorEmptyException;
-use Exceptions\ShortPhraseWrongFormatException;
-use Exceptions\ContentArticleErrorEmptyException;
-use Exceptions\ContentArticleWrongFormatException;
-use Exceptions\TagsErrorEmptyException;
-use Exceptions\TagsWrongFormatException;
+use Exceptions\ValidationException;
 use Repository\ArticleRepository;
 
 use Enumeration\Regex;
@@ -43,11 +33,13 @@ class ArticleController
 
   public function handleTitleField(string $title): array|string
   {
+    $validationException = new ValidationException();
+
     switch (true) {
       case empty($title):
-        throw new TitleErrorEmptyException();
+        throw $validationException->setTypeAndValueOfException("title_exception", $validationException::ERROR_EMPTY);
       case !preg_match(Regex::TITLE, $title):
-        throw new TitleWrongFormatException();
+        throw $validationException->setTypeAndValueOfException("title_exception", $validationException::TITLE_MESSAGE_ERROR_MAX_255_CHARS);
       default:
         return ["title" => $title];
     }
@@ -55,6 +47,8 @@ class ArticleController
 
   public function handleFileField(array $fileArticle): array|string
   {
+    $validationException = new ValidationException();
+
     switch (true) {
       case !empty($fileArticle["name"]) && $fileArticle["error"] == UPLOAD_ERR_OK:
         $filenameArticle = $fileArticle["name"];
@@ -70,44 +64,45 @@ class ArticleController
 
           return ["file" => "$filenameGeneratedArticle;$filenameTmpArticle;$dirImagesUpdateArticle"];
         } else {
-          throw new FileTypeException();
+          throw $validationException->setTypeAndValueOfException("file_exception", $validationException::FILE_MESSAGE_ERROR_TYPE_FILE);
         }
 
       default:
-        throw new FileErrorEmptyException(FileErrorEmptyException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED);
+        throw $validationException->setTypeAndValueOfException("file_exception", $validationException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED);
     }
   }
   public function handleShortPhraseField(string $shortPhrase): array|string
   {
+    $validationException = new ValidationException();
     switch (true) {
       case empty($shortPhrase):
-        throw new ShortPhraseErrorEmptyException();
+        throw $validationException->setTypeAndValueOfException("short_phrase_exception", $validationException::ERROR_EMPTY);
       case !preg_match(Regex::SHORT_PHRASE, $shortPhrase):
-        throw new ShortPhraseWrongFormatException();
+        throw $validationException->setTypeAndValueOfException("short_phrase_exception", $validationException::SHORT_PHRASE_MESSAGE_ERROR_MAX_255_CHARS);
       default:
         return ["short_phrase" => $shortPhrase];
     }
   }
   public function handleContentField(string $content): array|string
   {
-
+    $validationException = new ValidationException();
     switch (true) {
       case empty($content):
-        throw new ContentArticleErrorEmptyException();
+        throw $validationException->setTypeAndValueOfException("content_article_exception", $validationException::ERROR_EMPTY);
       case !preg_match(REGEX::CONTENT_ARTICLE, $content):
-        throw new ContentArticleWrongFormatException();
+        throw $validationException->setTypeAndValueOfException("content_article_exception", $validationException::CONTENT_ARTICLE_MESSAGE_ERROR_MAX_5000_CHARS);
       default:
         return ["content" => $content];
     }
   }
   public function handleTagsField(string $tags): array|string
   {
-
+    $validationException = new ValidationException();
     switch (true) {
       case empty($tags):
-        throw new TagsErrorEmptyException();
+        throw $validationException->setTypeAndValueOfException("tags_exception", $validationException::ERROR_EMPTY);
       case !preg_match(REGEX::TAGS, $tags):
-        throw new TagsWrongFormatException();
+        throw $validationException->setTypeAndValueOfException("tags_exception", $validationException::TAGS_MESSAGE_ERROR_MAX_3_TAGS);
       default:
         return ["tags" => $tags];
     }
@@ -143,13 +138,14 @@ class ArticleController
   public function handleUpdateTitleValidation(string $title): string|array
   {
     $expectedWord = ucfirst($title);
+    $validationException = new ValidationException();
+
 
     switch (true) {
       case empty($title):
-        throw new TitleErrorEmptyException();
-      case $title != $expectedWord || strlen($title) > 500:
-        throw new TitleWrongFormatException();
-
+        throw $validationException->setTypeAndValueOfException("title_exception", $validationException::ERROR_EMPTY);
+      case $title != $expectedWord || strlen($title) > 255:
+        throw $validationException->setTypeAndValueOfException("title_exception", $validationException::TITLE_MESSAGE_ERROR_MAX_255_CHARS);
       default:
         return ["title" => $title];
     }
@@ -160,14 +156,16 @@ class ArticleController
   {
 
     $expectedWord = ucfirst($shortPhrase);
+    $validationException = new ValidationException();
+
 
     switch (true) {
       case empty($shortPhrase):
-        throw new ShortPhraseErrorEmptyException();
+        throw $validationException->setTypeAndValueOfException("short_phrase_exception", $validationException::ERROR_EMPTY);
       case $shortPhrase != $expectedWord:
-        throw new ShortPhraseWrongFormatException();
-      case strlen($shortPhrase) > 500:
-        throw new ShortPhraseWrongFormatException();
+        throw $validationException->setTypeAndValueOfException("short_phrase_exception", $validationException::SHORT_PHRASE_MESSAGE_ERROR_MAX_255_CHARS);
+      case strlen($shortPhrase) > 255:
+        throw $validationException->setTypeAndValueOfException("short_phrase_exception", $validationException::SHORT_PHRASE_MESSAGE_ERROR_MAX_255_CHARS);
       default:
         return ["short_phrase" => $shortPhrase];
     }
@@ -176,14 +174,15 @@ class ArticleController
   public function handleUpdateContentValidation(string $content): string|array
   {
     $expectedWord = ucfirst($content);
+    $validationException = new ValidationException();
 
     switch (true) {
       case empty($content):
-        throw new ContentArticleErrorEmptyException();
+        throw $validationException->setTypeAndValueOfException("content_article_exception", $validationException::ERROR_EMPTY);
       case $content != $expectedWord:
-        throw new ContentArticleWrongFormatException();
-      case strlen($content) > 500:
-        throw new ContentArticleWrongFormatException();
+        throw $validationException->setTypeAndValueOfException("content_article_exception", $validationException::CONTENT_ARTICLE_MESSAGE_ERROR_MAX_5000_CHARS);
+      case strlen($content) > 5000:
+        throw $validationException->setTypeAndValueOfException("content_article_exception", $validationException::CONTENT_ARTICLE_MESSAGE_ERROR_MAX_5000_CHARS);
       default:
         return ["content" => $content];
     }
@@ -193,6 +192,8 @@ class ArticleController
 
   public function handleUpdateValidationOnNumberOfTagsAuthorized(string $value, int $numberOfTagsAuthorized): string|array
   {
+    $validationException = new ValidationException();
+
     $result = count(explode(" ", $value)) == 3 ? explode(' ', $value) : null;
     $counter = 0;
     if (!is_null($result)) {
@@ -201,11 +202,12 @@ class ArticleController
       }
     }
 
-    return $counter === $numberOfTagsAuthorized ? ["tags" => $value] : throw new TagsWrongFormatException();
+    return $counter === $numberOfTagsAuthorized ? ["tags" => $value] : throw $validationException->setTypeAndValueOfException("tags_exception", $validationException::TAGS_MESSAGE_ERROR_MAX_3_TAGS);
   }
 
   public function handleUpdateValidationOnFilePath(array $filePathFromForm, string $originalPathFromDatabase): string|array|null
   {
+    $validationException = new ValidationException();
 
     switch (true) {
       case empty($filePathFromForm["name"]):
@@ -225,7 +227,10 @@ class ArticleController
             $filenameGeneratedUpdateArticle = $bytesToStr . "." . $filenameAndExtensionUpdateArticle[1];
 
             return ["file" => "$filenameGeneratedUpdateArticle;$filenameTmpUpdateArticle;$dirImagesUpdateArticle"];
-          } else throw new FileTypeException();
+          } else {
+
+            throw $validationException->setTypeAndValueOfException("file_exception", $validationException::FILE_MESSAGE_ERROR_TYPE_FILE);
+          }
         }
         return null;
     }
