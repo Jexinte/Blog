@@ -2,7 +2,6 @@
 
 namespace Repository;
 
-use BackedEnum;
 use Config\DatabaseConnection;
 use Enumeration\UserType;
 use Model\UserModel;

@@ -5,7 +5,6 @@ namespace Repository;
 use Config\DatabaseConnection;
 use DateTime;
 use IntlDateFormatter;
-use Model\CommentModel;
 
 class CommentRepository
 {

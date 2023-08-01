@@ -3,7 +3,6 @@
 namespace Repository;
 
 use Config\DatabaseConnection;
-use Model\SessionModel;
 
 class SessionManagerRepository
 {
