@@ -88,7 +88,7 @@ class ArticleRepository
     return $article;
   }
 
-  public function createArticle(object $articleModel,array $sessionData,$idCookie): ?ArticleModel
+  public function createArticle(object $articleModel,array $sessionData,string $idCookie): ?ArticleModel
   {
 
     $dbConnect = $this->connector->connect();
@@ -192,7 +192,7 @@ class ArticleRepository
       }
     }
   }
-  public function deleteArticle(int $idArticle, array $sessionData,$idCookie): ?array
+  public function deleteArticle(int $idArticle, array $sessionData,string $idCookie): ?array
   {
 
     $dbConnect = $this->connector->connect();

@@ -30,7 +30,8 @@ class SessionManager
     }
   }
 
-  public function getIdInCookie(){
+  public function getIdInCookie():string
+  {
     $this->cookieId = $_COOKIE["PHPSESSID"];
     return $this->cookieId;
   }

@@ -39,7 +39,7 @@ class CommentModel
   }
 
 
-  public function isCreated($created):void
+  public function isCreated(?bool $created):void
   {
     $this->created = $created;
   }

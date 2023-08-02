@@ -42,10 +42,9 @@ class CommentController
     }
   }
 
-  public function handleInsertComment($comment,$sessionData)
+  public function handleInsertComment(string $comment,array $sessionData):void
   {
     $commentResult = $this->handleCommentField($comment);
-    var_dump($sessionData);
   }
 
 }
