@@ -11,7 +11,8 @@ class CommentModel
     private int $idUser,
     public string $content,
     public string $dateCreation,
-  
+    public ?bool $created,
+    public string $status
   ) {
   }
 
@@ -30,6 +31,17 @@ class CommentModel
   public function getDateCreation():string
   {
     return $this->dateCreation;
+  }
+
+  public function getCreated():?bool 
+  {
+    return $this->created;
+  }
+
+
+  public function isCreated($created):void
+  {
+    $this->created = $created;
   }
 
 

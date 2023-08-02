@@ -88,23 +88,24 @@ class ArticleRepository
     return $article;
   }
 
-  public function createArticle(object $articleModel,array $sessionData): ?ArticleModel
+  public function createArticle(object $articleModel,array $sessionData,$idCookie): ?ArticleModel
   {
 
     $dbConnect = $this->connector->connect();
     $idSession = $sessionData["session_id"];
+    $idUser = $sessionData["id_user"];
     $usernameSession = $sessionData["username"];
     $typeUserSession = $sessionData["type_user"];
-    $statementToCheckIfAdminIsCreatingArticle = $dbConnect->prepare("SELECT id_session,username,user_type FROM session WHERE id_session = :id_from_session_variable AND username = :username_from_session_variable AND user_type = :type_user_from_session_variable");
+    $statementToCheckIfAdminIsCreatingArticle = $dbConnect->prepare("SELECT id,type FROM user WHERE id = :id_user_from_session_variable  AND type = :type_user_from_session_variable");
 
-    $statementToCheckIfAdminIsCreatingArticle->bindParam("id_from_session_variable", $idSession);
-    $statementToCheckIfAdminIsCreatingArticle->bindParam("username_from_session_variable", $usernameSession);
+    $statementToCheckIfAdminIsCreatingArticle->bindParam("id_user_from_session_variable", $idUser);
     $statementToCheckIfAdminIsCreatingArticle->bindParam("type_user_from_session_variable", $typeUserSession);
 
     $statementToCheckIfAdminIsCreatingArticle->execute();
     $admin = $statementToCheckIfAdminIsCreatingArticle->fetch();
-    if ($admin["user_type"] === UserType::ADMIN->value && $admin["username"] == $sessionData["username"]) {
-
+    
+    if($admin && $idCookie == $idSession && $admin["type"] === UserType::ADMIN->value ){
+  
       $titleArticle = $articleModel->getTitle();
       $fileArticle = $articleModel->getImage();
       $shortPhraseArticle = $articleModel->getChapo();
@@ -133,22 +134,22 @@ class ArticleRepository
     }
   }
 
-  public function updateArticle(array $updateArticleData, array $sessionData): ?array
+  public function updateArticle(array $updateArticleData, array $sessionData,string $idCookie): ?array
   {
     $dbConnect = $this->connector->connect();
     $idSession = $sessionData["session_id"];
+    $idUser = $sessionData["id_user"];
     $usernameSession = $sessionData["username"];
     $typeUserSession = $sessionData["type_user"];
-    $statementToCheckIfAdminIsUpdatingArticle = $dbConnect->prepare("SELECT id_session,username,user_type FROM session WHERE id_session = :id_from_session_variable AND username = :username_from_session_variable AND user_type = :type_user_from_session_variable");
+    $statementToCheckIfAdminIsUpdatingArticle = $dbConnect->prepare("SELECT id,type FROM user WHERE id = :id_user_from_session_variable  AND type = :type_user_from_session_variable");
 
-    $statementToCheckIfAdminIsUpdatingArticle->bindParam("id_from_session_variable", $idSession);
-    $statementToCheckIfAdminIsUpdatingArticle->bindParam("username_from_session_variable", $usernameSession);
+    $statementToCheckIfAdminIsUpdatingArticle->bindParam("id_user_from_session_variable", $idUser);
     $statementToCheckIfAdminIsUpdatingArticle->bindParam("type_user_from_session_variable", $typeUserSession);
 
     $statementToCheckIfAdminIsUpdatingArticle->execute();
-    $admin = $statementToCheckIfAdminIsUpdatingArticle->fetch();
 
-    if ($admin["user_type"] === UserType::ADMIN->value) {
+    $admin = $statementToCheckIfAdminIsUpdatingArticle->fetch();
+    if($admin && $idCookie == $idSession && $admin["type"] === UserType::ADMIN->value ){
       $titleUpdateArticle = $updateArticleData["title"];
       $fileUpdateArticle = $updateArticleData["file"];
       $shortPhraseUpdateArticle = $updateArticleData["short_phrase"];
@@ -177,7 +178,6 @@ class ArticleRepository
           return ["article_updated" => 1];
 
         case !is_array($fileUpdateArticle):
-
           $statementWithoutUploadedFile = $dbConnect->prepare("UPDATE article SET image = :filePath,title = :titleUpdateArticle,chapô  = :shortPhraseUpdateArticle,content = :contentUpdateArticle,tags = :tagsUpdateArticle,author = :authorArticle,date_creation = :dateUpdateArticle WHERE id = :idUpdateArticle");
           $statementWithoutUploadedFile->bindParam(':filePath', $fileUpdateArticle);
           $statementWithoutUploadedFile->bindParam(':titleUpdateArticle', $titleUpdateArticle);
@@ -192,23 +192,22 @@ class ArticleRepository
       }
     }
   }
-  public function deleteArticle(int $idArticle, array $sessionData): ?array
+  public function deleteArticle(int $idArticle, array $sessionData,$idCookie): ?array
   {
 
     $dbConnect = $this->connector->connect();
     $idSession = $sessionData["session_id"];
-    $usernameSession = $sessionData["username"];
+    $idUser = $sessionData["id_user"];
     $typeUserSession = $sessionData["type_user"];
-    $statementToCheckIfAdminIsDeletingArticle = $dbConnect->prepare("SELECT id_session,username,user_type FROM session WHERE id_session = :id_from_session_variable AND username = :username_from_session_variable AND user_type = :type_user_from_session_variable");
+    $statementToCheckIfAdminIsDeletingArticle = $dbConnect->prepare("SELECT id,type FROM user WHERE id = :id_user_from_session_variable  AND type = :type_user_from_session_variable");
 
-    $statementToCheckIfAdminIsDeletingArticle->bindParam("id_from_session_variable", $idSession);
-    $statementToCheckIfAdminIsDeletingArticle->bindParam("username_from_session_variable", $usernameSession);
+    $statementToCheckIfAdminIsDeletingArticle->bindParam("id_user_from_session_variable", $idUser);
     $statementToCheckIfAdminIsDeletingArticle->bindParam("type_user_from_session_variable", $typeUserSession);
 
     $statementToCheckIfAdminIsDeletingArticle->execute();
     $admin = $statementToCheckIfAdminIsDeletingArticle->fetch();
 
-    if ($admin["user_type"] === UserType::ADMIN->value) {
+    if ($admin && $idSession == $idCookie && $admin["type"] === UserType::ADMIN->value) {
 
       $statement = $dbConnect->prepare("DELETE FROM article WHERE id = :id");
       $statement->bindParam("id", $idArticle);

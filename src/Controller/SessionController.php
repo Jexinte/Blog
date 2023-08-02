@@ -2,28 +2,33 @@
 
 namespace Controller;
 
-use Repository\SessionManagerRepository;
+
 use Model\SessionModel;
+use Manager\SessionManager;
 
 class SessionController
 {
 
-  public function __construct(private readonly SessionManagerRepository $sessionManagerRepository)
-  {
-  }
+  public function __construct(private SessionManager $sessionManager){}
 
-
-  public function handleInsertSessionData(array $sessionData): void
+  public function initializeLoginDataAndSessionId(array $loginData):void
   {
-    $sessionModel = new SessionModel(null, $sessionData["username"], $sessionData["type_user"]);
+    $this->sessionManager->initializeKeyAndValue("username",$loginData["username"]);
+    $this->sessionManager->initializeKeyAndValue("id_user",$loginData["id_user"]);
+    $this->sessionManager->initializeKeyAndValue("type_user",$loginData["type_user"]);
+    $this->sessionManager->initializeKeyAndValue("session_id",session_id());
   
-
-    $this->sessionManagerRepository->insertSessionData($sessionModel);
   }
 
-  public function handleGetIdSessionData(array $arr): ?array
+  public function initializeCommentDataForInsertion($articleId)
   {
-
-    return $this->sessionManagerRepository->getIdSessionData($arr);
+    $this->sessionManager->initializeKeyAndValue("id_article",$articleId);
   }
+
+public function handleGetSessionData():array
+{
+  
+  return $this->sessionManager->getSessionData();
+}
+
 }

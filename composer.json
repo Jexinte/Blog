@@ -13,6 +13,7 @@
       "Controller\\":"src/Controller/",
       "Enumeration\\" : "src/Enumeration/",
       "Exceptions\\" : "src/Exceptions/",
+      "Manager\\" : "src/Manager/",
       "Repository\\" : "src/Repository/"
     }
   },

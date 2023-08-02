@@ -109,7 +109,7 @@ class ArticleController
   }
 
 
-  public function handleCreateArticleValidator(string $title, array $fileArticle, string $shortPhrase, string $content, string $tags, array $sessionData): ?ArticleModel
+  public function handleCreateArticleValidator(string $title, array $fileArticle, string $shortPhrase, string $content, string $tags, array $sessionData,string $idCookie): ?ArticleModel
   {
     
     $titleField = $this->handleTitleField($title)["title"];
@@ -121,7 +121,7 @@ class ArticleController
 
     $articleModel = new ArticleModel($fileField, $titleField, $shortPhraseField, $contentField, $tagsField, null);
 
-    $articleResult = $this->articleRepository->createArticle($articleModel,$sessionData);
+    $articleResult = $this->articleRepository->createArticle($articleModel,$sessionData,$idCookie);
 
     if ($articleResult) {
       return $articleResult;
@@ -230,7 +230,7 @@ class ArticleController
         return null;
     }
   }
-  public function handleUpdateArticleValidator(string $title, array $fileArticle, string $hiddenInputFileOriginalPath, string $shortPhrase, string $content, string $tags, array $sessionData, int $idArticle): ?array
+  public function handleUpdateArticleValidator(string $title, array $fileArticle, string $hiddenInputFileOriginalPath, string $shortPhrase, string $content, string $tags, array $sessionData, int $idArticle,string $idCookie): ?array
   {
 
     $numberOfTagsAuthorized = 3;
@@ -249,12 +249,12 @@ class ArticleController
       "id_article" => $idArticle
     ];
 
-    return $this->articleRepository->updateArticle($fields, $sessionData);
+    return $this->articleRepository->updateArticle($fields, $sessionData,$idCookie);
   }
 
 
-  public function handleDeleteArticle(int $idArticle, array $sessionData): ?array
+  public function handleDeleteArticle(int $idArticle, array $sessionData,string $idCookie): ?array
   {
-    return $this->articleRepository->deleteArticle($idArticle, $sessionData);
+    return $this->articleRepository->deleteArticle($idArticle, $sessionData,$idCookie);
   }
 }

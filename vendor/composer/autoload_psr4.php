@@ -12,6 +12,7 @@ return array(
     'Repository\\' => array($baseDir . '/src/Repository'),
     'PHPMailer\\PHPMailer\\' => array($vendorDir . '/phpmailer/phpmailer/src'),
     'Model\\' => array($baseDir . '/src/Model'),
+    'Manager\\' => array($baseDir . '/src/Manager'),
     'Exceptions\\' => array($baseDir . '/src/Exceptions'),
     'Enumeration\\' => array($baseDir . '/src/Enumeration'),
     'Controller\\' => array($baseDir . '/src/Controller'),

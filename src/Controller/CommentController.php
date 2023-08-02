@@ -5,6 +5,8 @@ namespace Controller;
 use DateTime;
 use Model\CommentModel;
 use Repository\CommentRepository;
+use Exceptions\ValidationException;
+use Enumeration\Regex;
 
 class CommentController
 {
@@ -13,19 +15,37 @@ class CommentController
   {
   }
 
-  public function handleGetAllComments(int $idArticle): ?array
+  public function handleCommentField(string $comment): array|string
   {
-    return $this->commentRepository->getAllComments([], $idArticle);
-  }
 
-  public function handleCreateComment(array $commentsDetails, array $sessionData): void
-  {
-    if (array_key_exists("approved", $commentsDetails)) {
-      $new_date_format = DateTime::createFromFormat("d F Y", $commentsDetails["date_creation"]);
-      $dateOfCreation = $new_date_format->format("Y-m-d");
-      $commentModel = new CommentModel($commentsDetails["id_article"], $commentsDetails["id_user"], $commentsDetails["content"], $dateOfCreation);
-
-      $this->commentRepository->createComment($commentModel, $sessionData);
+    $validationException = new ValidationException();
+    switch (true) {
+      case empty($comment):
+        throw $validationException->setTypeAndValueOfException("comment_exception", $validationException::ERROR_EMPTY);
+      case !preg_match(REGEX::COMMENT, $comment):
+        throw $validationException->setTypeAndValueOfException("comment_exception", $validationException::COMMENT_WRONG_FORMAT_EXCEPTION);
+      default:
+        return ["comment" => $comment];
     }
   }
+
+  public function handleFeedbackField(string $feedback): ?array
+  {
+    $validationException = new ValidationException();
+    switch (true) {
+
+      case !preg_match(REGEX::FEEDBACK, $feedback):
+        throw $validationException->setTypeAndValueOfException("comment_exception", $validationException::EXPLANATION_MESSAGE_ERROR_WRONG_FORMAT);
+
+      default:
+        return ["feedback" => $feedback];
+    }
+  }
+
+  public function handleInsertComment($comment,$sessionData)
+  {
+    $commentResult = $this->handleCommentField($comment);
+    var_dump($sessionData);
+  }
+
 }

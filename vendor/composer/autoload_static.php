@@ -32,6 +32,7 @@ class ComposerStaticInit109fbc80a3a8192711741efed149726e
         'M' => 
         array (
             'Model\\' => 6,
+            'Manager\\' => 8,
         ),
         'E' => 
         array (
@@ -69,6 +70,10 @@ class ComposerStaticInit109fbc80a3a8192711741efed149726e
         'Model\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src/Model',
+        ),
+        'Manager\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src/Manager',
         ),
         'Exceptions\\' => 
         array (
