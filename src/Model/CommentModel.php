@@ -9,10 +9,10 @@ class CommentModel
   public function __construct(
     public int $idArticle,
     private int $idUser,
-    public string $content,
+    public string $comment,
     public string $dateCreation,
     public ?bool $created,
-    public string $status
+
   ) {
   }
 
@@ -24,9 +24,9 @@ class CommentModel
   {
     return $this->idUser;
   }
-  public function getContent():string
+  public function getComment():string
   {
-    return $this->content;
+    return $this->comment;
   }
   public function getDateCreation():string
   {
@@ -39,10 +39,12 @@ class CommentModel
   }
 
 
+
   public function isCreated(?bool $created):void
   {
     $this->created = $created;
   }
+
 
 
 }

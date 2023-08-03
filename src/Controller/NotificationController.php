@@ -14,16 +14,16 @@ class NotificationController
 
   public function handleCreateNotification(array $validation): void
   {
-    
+
     switch (true) {
-      case array_key_exists("approved", $validation):
-        $notificationModel = new NotificationModel($validation["id_article"], $validation["id_user"], $validation["approved"], null, $validation["feedback"]);
+      case $validation["status"] == 1:
+        $notificationModel = new NotificationModel($validation["id_article"], $validation["id_user"], $validation["status"], $validation["feedback"]);
 
         $this->notificationRepository->createNotification($notificationModel);
         break;
-      case array_key_exists("rejected", $validation):
-        $notificationModel = new NotificationModel($validation["id_article"], $validation["id_user"], null, $validation["rejected"], $validation["feedback"]);
-      
+      default:
+        $notificationModel = new NotificationModel($validation["id_article"], $validation["id_user"], $validation["status"], $validation["feedback"]);
+
         $this->notificationRepository->createNotification($notificationModel);
         break;
     }
@@ -31,13 +31,11 @@ class NotificationController
 
   public function handleGetAllUserNotifications(array $validation): ?array
   {
-    $notificationRepository = $this->notificationRepository;
-    return $notificationRepository->getAllUserNotifications($validation);
+    return $this->notificationRepository->getAllUserNotifications($validation);
   }
 
   public function handleDeleteNotification(int $idNotification): null
   {
-    $notificationRepository = $this->notificationRepository;
-    return $notificationRepository->deleteNotification($idNotification);
+    return $this->notificationRepository->deleteNotification($idNotification);
   }
 }

@@ -20,10 +20,12 @@ class SessionController
   
   }
 
-  public function initializeCommentDataForInsertion(int $articleId):void
+  public function initializeIdArticle(int $articleId):void
   {
     $this->sessionManager->initializeKeyAndValue("id_article",$articleId);
   }
+
+
 
 public function handleGetSessionData():array
 {

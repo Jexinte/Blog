@@ -51,7 +51,7 @@
 		{% else %}
 		<h2 class="h2" id="comment-main-title">Ajouter un commentaire</h2>
 
-		<form action="?action=add_comment&amp;idArticle={{article.id is defined ? article.id : default.id}}" method="post">
+		<form action="?action=add_comment&amp;id={{article.id is defined ? article.id : default.id}}" method="post">
 			<textarea name="comment" id="feedback" cols="30" rows="10" value="{{default.comment_failed is defined ? default.comment_failed : ''}}"></textarea>
 			<input type="text" name="id_article" value = {{article.id is defined ? article.id : default.id}} hidden>
 			<p class="text-success">{# Afficher un message de confirmation d'envoi#}</p>

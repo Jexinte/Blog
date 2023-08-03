@@ -30,7 +30,7 @@
 			{% for notification in notifications %}
 				<div class="text-center col-sm-12 col-md-12 col-lg-12 col-xl-12 notifications">
 
-					{% if notification.approved == 1  %}
+					{% if notification.status == 1  %}
 						<a href="index.php?selection=article&amp;id={{notification.idArticle}}" class=" notation">Votre commentaire
 							{{notification.title_article}}
 							a été accepté !</a>

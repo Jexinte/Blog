@@ -15,12 +15,11 @@ class NotificationRepository
   {
     $dbConnect = $this->connector->connect();
     
-    $statementToCreateNotification = $dbConnect->prepare("INSERT INTO user_notification (idArticle,idUser,approved,rejected,feedback_administrator) VALUES(?,?,?,?,?)");
+    $statementToCreateNotification = $dbConnect->prepare("INSERT INTO user_notification (idArticle,idUser,status,feedback_administrator) VALUES(?,?,?,?)");
     $values = [
-      $notificationModel->getiIdArticle(),
-      $notificationModel->getiIdUser(),
-      $notificationModel->getApproved(),
-      $notificationModel->getRejected(),
+      $notificationModel->getIdArticle(),
+      $notificationModel->getIdUser(),
+      $notificationModel->getStatus(),
       $notificationModel->getFeedbackAdministrator()
     ];
     $statementToCreateNotification->execute($values);

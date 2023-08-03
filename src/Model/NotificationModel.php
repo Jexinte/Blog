@@ -8,8 +8,7 @@ class NotificationModel
   public function __construct(
     public int $idArticle,
     public int $idUser,
-    public ?bool $approved,
-    public ?bool $rejected,
+    public ?bool $status,
     public string $feedbackAdministrator
   ) {
   }
@@ -22,14 +21,11 @@ class NotificationModel
   {
     return $this->idUser;
   }
-  public function getApproved():?bool
+  public function getStatus():?bool
   {
-    return $this->approved;
+    return $this->status;
   }
-  public function getRejected():?bool
-  {
-    return $this->rejected;
-  }
+ 
   public function getFeedbackAdministrator(): string
   {
     return $this->feedbackAdministrator;
