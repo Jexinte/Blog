@@ -14,30 +14,20 @@ class CommentController
   {
   }
 
-  public function handleCommentField(string $comment): array|string
+
+  public function handleTextField(string $keyArray, ?string $value, string $keyException, object $exception, string $regex, string $emptyException, string $wrongFormatException): string|array|null
   {
 
-    $validationException = new ValidationException();
+
     switch (true) {
-      case empty($comment):
-        throw $validationException->setTypeAndValueOfException("comment_exception", $validationException::ERROR_EMPTY);
-      case !preg_match(REGEX::COMMENT, $comment):
-        throw $validationException->setTypeAndValueOfException("comment_exception", $validationException::COMMENT_WRONG_FORMAT_EXCEPTION);
+      case is_null($value):
+        return [$keyArray => $value];
+      case empty($value):
+        throw $exception->setTypeAndValueOfException($keyException, $emptyException);
+      case !preg_match($regex, $value):
+        throw $exception->setTypeAndValueOfException($keyException, $wrongFormatException);
       default:
-        return ["comment" => $comment];
-    }
-  }
-
-  public function handleFeedbackField(string $feedback): ?array
-  {
-    $validationException = new ValidationException();
-    switch (true) {
-
-      case !preg_match(REGEX::FEEDBACK, $feedback):
-        throw $validationException->setTypeAndValueOfException("comment_exception", $validationException::EXPLANATION_MESSAGE_ERROR_WRONG_FORMAT);
-
-      default:
-        return ["feedback" => $feedback];
+        return [$keyArray => $value];
     }
   }
 
@@ -48,9 +38,19 @@ class CommentController
 
   public function handleInsertComment(string $comment, array $sessionData, string $idInCookie): ?bool
   {
-    $commentResult = $this->handleCommentField($comment);
+    $validationException = new ValidationException();
+    $exceptionKeyArray = ["comment_field" => "comment_exception"];
+    $keyArrayWhenAFieldIsTreated = ["comment_field" => "comment"];
+    $exceptionByField = [
+      "error_empty" => $validationException::ERROR_EMPTY,
+      "comment_exception" => $validationException::COMMENT_WRONG_FORMAT_EXCEPTION
+    ];
+    $regexByField = ["comment_regex" => REGEX::COMMENT];
+
+    $commentResult = $this->handleTextField($keyArrayWhenAFieldIsTreated["comment_field"], $comment, $exceptionKeyArray["comment_field"], $validationException, $regexByField["comment_regex"], $exceptionByField["error_empty"], $exceptionByField["comment_exception"])["comment"];
+
     $dateOfCreation =  date('Y-m-d');
-    $commentModel = new CommentModel($sessionData["id_article"], $sessionData["id_user"], $commentResult["comment"], $dateOfCreation, null);
+    $commentModel = new CommentModel($sessionData["id_article"], $sessionData["id_user"], $commentResult, $dateOfCreation, null);
 
     $commentCreation = $this->commentRepository->insertComment($commentModel, $sessionData, $idInCookie);
     if ($commentCreation->getCreated()) {
@@ -80,7 +80,19 @@ class CommentController
 
   public function handleValidationComment(string $valueOfValidation, int $idComment, string $feedback, array $session, string $idInCookie): ?array
   {
-    $feedbackResult = $this->handleFeedbackField($feedback)["feedback"];
+    $feedbackFinalValue = empty($feedback) ? null : $feedback;
+
+
+    $validationException = new ValidationException();
+    $exceptionKeyArray = ["feedback_field" => "validation_exception"];
+    $keyArrayWhenAFieldIsTreated = ["feedback_field" => "feedback"];
+    $exceptionByField = [
+      "error_empty" => $validationException::ERROR_EMPTY,
+      "feedback_exception" => $validationException::COMMENT_WRONG_FORMAT_EXCEPTION
+    ];
+    $regexByField = ["comment_regex" => REGEX::COMMENT];
+
+    $feedbackResult = $this->handleTextField($keyArrayWhenAFieldIsTreated["feedback_field"], $feedbackFinalValue, $exceptionKeyArray["feedback_field"], $validationException, $regexByField["comment_regex"], $exceptionByField["error_empty"], $exceptionByField["feedback_exception"])["feedback"];
     return $this->commentRepository->validationComment($valueOfValidation, $idComment, $feedbackResult, $session, $idInCookie);
   }
 

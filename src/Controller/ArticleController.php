@@ -32,65 +32,65 @@ class ArticleController
 
 
 
-   public function handleFileField(array $fileArticle): array|string
-   {
-     $validationException = new ValidationException();
+  public function handleFileField(array $fileArticle): array|string
+  {
+    $validationException = new ValidationException();
 
-     switch (true) {
-       case !empty($fileArticle["name"]) && $fileArticle["error"] == UPLOAD_ERR_OK:
-         $filenameArticle = $fileArticle["name"];
-         $dirImagesUpdateArticle = "../public/assets/images/";
-         $filenameTmpArticle = $fileArticle['tmp_name'];
-         $extensionOfTheUploadedFile = explode('.', $filenameArticle);
-         $authorizedExtensionsArticle = array("jpg", "jpeg", "png", "webp");
+    switch (true) {
+      case !empty($fileArticle["name"]) && $fileArticle["error"] == UPLOAD_ERR_OK:
+        $filenameArticle = $fileArticle["name"];
+        $dirImagesUpdateArticle = "../public/assets/images/";
+        $filenameTmpArticle = $fileArticle['tmp_name'];
+        $extensionOfTheUploadedFile = explode('.', $filenameArticle);
+        $authorizedExtensionsArticle = array("jpg", "jpeg", "png", "webp");
 
-         if (in_array($extensionOfTheUploadedFile[1], $authorizedExtensionsArticle)) {
-           $bytesToStr = str_replace("/", "", base64_encode(random_bytes(9)));
-           $filenameAndExtensionArticle = explode('.', $filenameArticle);
-           $filenameGeneratedArticle = $bytesToStr . "." . $filenameAndExtensionArticle[1];
+        if (in_array($extensionOfTheUploadedFile[1], $authorizedExtensionsArticle)) {
+          $bytesToStr = str_replace("/", "", base64_encode(random_bytes(9)));
+          $filenameAndExtensionArticle = explode('.', $filenameArticle);
+          $filenameGeneratedArticle = $bytesToStr . "." . $filenameAndExtensionArticle[1];
 
-           return ["file" => "$filenameGeneratedArticle;$filenameTmpArticle;$dirImagesUpdateArticle"];
-         } else {
-           throw $validationException->setTypeAndValueOfException("file_exception", $validationException::FILE_MESSAGE_ERROR_TYPE_FILE);
-         }
+          return ["file" => "$filenameGeneratedArticle;$filenameTmpArticle;$dirImagesUpdateArticle"];
+        } else {
+          throw $validationException->setTypeAndValueOfException("file_exception", $validationException::FILE_MESSAGE_ERROR_TYPE_FILE);
+        }
 
-       default:
-         throw $validationException->setTypeAndValueOfException("file_exception", $validationException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED);
-     }
-   }
-
-
-public function handleField(string $keyArray,string $value,string $keyException,object $exception,string $regex,string $emptyException,string $wrongFormatException):string|array
-{
-  switch(true){
-    case empty($value):
-      throw $exception->setTypeAndValueOfException($keyException,$emptyException);
-    case !preg_match($regex,$value):
-      throw $exception->setTypeAndValueOfException($keyException,$wrongFormatException);
       default:
-      return [$keyArray => $value];
+        throw $validationException->setTypeAndValueOfException("file_exception", $validationException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED);
+    }
   }
-}
 
-  public function handleCreateArticleValidator(string $title, array $fileArticle, string $shortPhrase, string $content, string $tags, array $sessionData,string $idCookie): ?ArticleModel
+
+  public function handleTextField(string $keyArray, string $value, string $keyException, object $exception, string $regex, string $emptyException, string $wrongFormatException): string|array
+  {
+    switch (true) {
+      case empty($value):
+        throw $exception->setTypeAndValueOfException($keyException, $emptyException);
+      case !preg_match($regex, $value):
+        throw $exception->setTypeAndValueOfException($keyException, $wrongFormatException);
+      default:
+        return [$keyArray => $value];
+    }
+  }
+
+  public function handleCreateArticleValidator(string $title, array $fileArticle, string $shortPhrase, string $content, string $tags, array $sessionData, string $idCookie): ?ArticleModel
   {
 
     $validationException = new ValidationException();
 
     $exceptionKeyArray =
-    [
-      "title_field" => "title_exception",
-      "short_phrase_field" => "short_phrase_exception",
-      "content_field" => "content_article_exception",
-      "tags_field" => "tags_exception"
-    ];
+      [
+        "title_field" => "title_exception",
+        "short_phrase_field" => "short_phrase_exception",
+        "content_field" => "content_article_exception",
+        "tags_field" => "tags_exception"
+      ];
     $keyArrayWhenAFieldIsTreated =
-    [
-      "title_field" => "title",
-      "short_phrase_field" => "short_phrase",
-      "content_field" => "content",
-      "tags_field" => "tags"
-    ];
+      [
+        "title_field" => "title",
+        "short_phrase_field" => "short_phrase",
+        "content_field" => "content",
+        "tags_field" => "tags"
+      ];
 
     $exceptionByField = [
       "error_empty" => $validationException::ERROR_EMPTY,
@@ -107,25 +107,25 @@ public function handleField(string $keyArray,string $value,string $keyException,
       "tags_regex" => REGEX::TAGS
     ];
 
-    $titleField = $this->handleField($keyArrayWhenAFieldIsTreated["title_field"],$title,$exceptionKeyArray["title_field"],$validationException,$regexByField["title_regex"],$exceptionByField["error_empty"],$exceptionByField["title_exception"])["title"];
+    $titleField = $this->handleTextField($keyArrayWhenAFieldIsTreated["title_field"], $title, $exceptionKeyArray["title_field"], $validationException, $regexByField["title_regex"], $exceptionByField["error_empty"], $exceptionByField["title_exception"])["title"];
 
     $fileField = $this->handleFileField($fileArticle)["file"];
 
-    $shortPhraseField = $this->handleField($keyArrayWhenAFieldIsTreated["short_phrase_field"],$shortPhrase,$exceptionKeyArray["short_phrase_field"],$validationException,$regexByField["short_phrase_regex"],$exceptionByField["error_empty"],$exceptionByField["short_phrase_exception"])["short_phrase"];
+    $shortPhraseField = $this->handleTextField($keyArrayWhenAFieldIsTreated["short_phrase_field"], $shortPhrase, $exceptionKeyArray["short_phrase_field"], $validationException, $regexByField["short_phrase_regex"], $exceptionByField["error_empty"], $exceptionByField["short_phrase_exception"])["short_phrase"];
 
-    $contentField = $this->handleField($keyArrayWhenAFieldIsTreated["content_field"],$content,$exceptionKeyArray["content_field"],$validationException,$regexByField["content_regex"],$exceptionByField["error_empty"],$exceptionByField["content_exception"])["content"];
+    $contentField = $this->handleTextField($keyArrayWhenAFieldIsTreated["content_field"], $content, $exceptionKeyArray["content_field"], $validationException, $regexByField["content_regex"], $exceptionByField["error_empty"], $exceptionByField["content_exception"])["content"];
 
-    $tagsField = $this->handleField($keyArrayWhenAFieldIsTreated["tags_field"],$tags,$exceptionKeyArray["tags_field"],$validationException,$regexByField["tags_regex"],$exceptionByField["error_empty"],$exceptionByField["tags_exception"]);
-    
+    $tagsField = $this->handleTextField($keyArrayWhenAFieldIsTreated["tags_field"], $tags, $exceptionKeyArray["tags_field"], $validationException, $regexByField["tags_regex"], $exceptionByField["error_empty"], $exceptionByField["tags_exception"]);
+
 
 
     $articleModel = new ArticleModel($fileField, $titleField, $shortPhraseField, $contentField, $tagsField, null);
 
-     $articleResult = $this->articleRepository->createArticle($articleModel,$sessionData,$idCookie);
+    $articleResult = $this->articleRepository->createArticle($articleModel, $sessionData, $idCookie);
 
-     if ($articleResult) {
-       return $articleResult;
-     }
+    if ($articleResult) {
+      return $articleResult;
+    }
   }
 
 
@@ -230,7 +230,7 @@ public function handleField(string $keyArray,string $value,string $keyException,
         return null;
     }
   }
-  public function handleUpdateArticleValidator(string $title, array $fileArticle, string $hiddenInputFileOriginalPath, string $shortPhrase, string $content, string $tags, array $sessionData, int $idArticle,string $idCookie): ?array
+  public function handleUpdateArticleValidator(string $title, array $fileArticle, string $hiddenInputFileOriginalPath, string $shortPhrase, string $content, string $tags, array $sessionData, int $idArticle, string $idCookie): ?array
   {
 
     $numberOfTagsAuthorized = 3;
@@ -249,12 +249,12 @@ public function handleField(string $keyArray,string $value,string $keyException,
       "id_article" => $idArticle
     ];
 
-    return $this->articleRepository->updateArticle($fields, $sessionData,$idCookie);
+    return $this->articleRepository->updateArticle($fields, $sessionData, $idCookie);
   }
 
 
-  public function handleDeleteArticle(int $idArticle, array $sessionData,string $idCookie): ?array
+  public function handleDeleteArticle(int $idArticle, array $sessionData, string $idCookie): ?array
   {
-    return $this->articleRepository->deleteArticle($idArticle, $sessionData,$idCookie);
+    return $this->articleRepository->deleteArticle($idArticle, $sessionData, $idCookie);
   }
 }

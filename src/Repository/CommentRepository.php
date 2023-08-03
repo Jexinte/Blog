@@ -219,7 +219,7 @@ class CommentRepository
     }
   }
 
-  public function validationComment(string $valueOfValidation, int $idComment, string $feedback, array $session, string $idInCookie): ?array
+  public function validationComment(string $valueOfValidation, int $idComment, ?string $feedback, array $session, string $idInCookie): ?array
   {
     $dbConnect = $this->connector->connect();
     if ($session["session_id"] == $idInCookie) {
