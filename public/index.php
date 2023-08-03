@@ -198,6 +198,7 @@ if (isset($_GET['action'])) {
                     $paramaters = [
                         "session" => $session,
                     ];
+          
                     $articleIsCreated = $articleController->handleCreateArticleValidator($_POST["title"], $_FILES["image_file"], $_POST["short-phrase"], $_POST["content"], $_POST["tags"], $session, $idInCookie);
                     if ($articleIsCreated) {
                         header("HTTP/1.1 302");
