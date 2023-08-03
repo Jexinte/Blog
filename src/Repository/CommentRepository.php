@@ -52,7 +52,7 @@ class CommentRepository
     return $comments;
   }
 
-  public function insertComment(object $commentModel, array $sessionData, $idInCookie): ?CommentModel
+  public function insertComment(object $commentModel, array $sessionData, string $idInCookie): ?CommentModel
   {
     $dbConnect = $this->connector->connect();
     $idSession = $sessionData["session_id"];
@@ -152,7 +152,7 @@ class CommentRepository
       switch (true) {
         case empty($userComments):
           return null;
-        case array_key_exists("status", current($userComments)) && current($userComments)["status"] == null:
+        case array_key_exists("status", current($userComments)) && current($userComments)["status"] === null:
           return count($userComments) == 1 ? ["user_already_commented" => 1] : null;
         default:
           return null;
