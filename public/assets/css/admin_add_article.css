@@ -122,6 +122,12 @@ form {
   font-weight: var(--700);
 }
 
+.form-box .error{
+  font-weight: var(--700);
+  margin-top: .5em;
+
+}
+
 @media (min-width:577px) and (max-width:991px) {
 
   #content-preview {

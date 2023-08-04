@@ -121,7 +121,7 @@ if (isset($_GET['action'])) {
 
                 if ($signUpSucceed) {
                     header("HTTP/1.1 302");
-                    header("Location: index.php?selection=sign_in");
+                    header("Location:?selection=sign_in");
                 }
             } catch (ValidationException $e) {
                 $errors = $e->getErrors();
@@ -140,7 +140,7 @@ if (isset($_GET['action'])) {
 
                 if (is_array($loginSucceed) && array_key_exists("username", $loginSucceed) && array_key_exists("type_user", $loginSucceed)) {
                     header("HTTP/1.1 302");
-                    header("Location: index.php?selection=blog");
+                    header("Location:?selection=blog");
                     $sessionController->initializeLoginDataAndSessionId($loginSucceed);
                 }
             } catch (ValidationException $e) {
@@ -165,7 +165,7 @@ if (isset($_GET['action'])) {
                 header("HTTP/1.1 200");
                 readfile($fileIsDownload["file_logs"]);
             } else {
-                header("Location: index.php?action=error&code=" . $fileIsDownload["code_error"]);
+                header("Location:?action=error&code=" . $fileIsDownload["code_error"]);
             }
             break;
 
@@ -198,14 +198,14 @@ if (isset($_GET['action'])) {
                     $paramaters = [
                         "session" => $session,
                     ];
-          
+
                     $articleIsCreated = $articleController->handleCreateArticleValidator($_POST["title"], $_FILES["image_file"], $_POST["short-phrase"], $_POST["content"], $_POST["tags"], $session, $idInCookie);
                     if ($articleIsCreated) {
                         header("HTTP/1.1 302");
-                        header("Location: index.php?selection=admin_panel");
+                        header("Location:?selection=admin_panel");
                     }
                 } else {
-                    header("Location: index.php?action=error&code=403");
+                    header("Location:?action=error&code=403");
                 }
             } catch (ValidationException $e) {
                 $errors = $e->getErrors();
@@ -238,10 +238,10 @@ if (isset($_GET['action'])) {
 
                     if (is_array($updatedData)) {
                         header("HTTP/1.1 302");
-                        header("Location: index.php?selection=admin_panel");
+                        header("Location:?selection=admin_panel");
                     }
                 } else {
-                    header("Location: index.php?action=error&code=403");
+                    header("Location:?action=error&code=403");
                 }
             } catch (ValidationException $e) {
                 $paramaters["original_data"] = $originalData;
@@ -257,16 +257,16 @@ if (isset($_GET['action'])) {
                 $article = $articleController->handleDeleteArticle($_GET["id"], $session, $idInCookie);
                 if (is_array($article)) {
                     header("HTTP/1.1 302");
-                    header("Location: index.php?selection=admin_panel");
+                    header("Location:?selection=admin_panel");
                 }
             } else {
-                header("Location: index.php?action=error&code=403");
+                header("Location:?action=error&code=403");
             }
 
             break;
         case "logout":
             header("HTTP/1.1 302");
-            header("Location: index.php?selection=blog");
+            header("Location:?selection=blog");
             $sessionManager->destroySession();
             break;
 
@@ -288,11 +288,11 @@ if (isset($_GET['action'])) {
 
                     if ($commentCreated) {
                         header("HTTP/1.1 302");
-                        header("Location:index.php?selection=article&id={$article["id"]}");
+                        header("Location?selection=article&id={$article["id"]}");
                         $commentController->handleMailToAdmin($session, $defaultValues["title"], $idInCookie);
                     }
                 } else {
-                    header("Location: index.php?action=error&code=403");
+                    header("Location:?action=error&code=403");
                 }
             } catch (ValidationException $e) {
                 $errors = $e->getErrors();
@@ -329,13 +329,13 @@ if (isset($_GET['action'])) {
                     switch (true) {
                         case $commentIsAcceptedOrRejected["status"] == 1:
                             header("HTTP/1.1 302");
-                            header("Location: index.php?selection=admin_panel");
+                            header("Location:?selection=admin_panel");
                             $notificationController->handleCreateNotification($commentIsAcceptedOrRejected);
                             break;
 
                         default:
                             header("HTTP/1.1 302");
-                            header("Location: index.php?selection=admin_panel");
+                            header("Location:?selection=admin_panel");
                             $notificationController->handleCreateNotification($commentIsAcceptedOrRejected);
                             $commentController->handleDeleteComment($commentIsAcceptedOrRejected, $session, $idInCookie);
                             break;
@@ -358,10 +358,10 @@ if (isset($_GET['action'])) {
                 $article = $notificationController->handleDeleteNotification($_GET["id_notification"]);
                 if (is_null($article)) {
                     header("HTTP/1.1 302");
-                    header("Location:index.php?selection=notifications");
+                    header("Location?selection=notifications");
                 }
             } else {
-                header("Location: index.php?action=error&code=403");
+                header("Location:?action=error&code=403");
             }
     }
 } elseif ((isset($_GET['selection']))) {
@@ -404,7 +404,7 @@ if (isset($_GET['action'])) {
 
                 ];
             } else {
-                header("Location: index.php?action=error&code=403");
+                header("Location:?action=error&code=403");
             }
             break;
         case "comment_details":
@@ -416,7 +416,7 @@ if (isset($_GET['action'])) {
                     $paramaters["comment"] = $theComment;
                 }
             } else {
-                header("Location: index.php?action=error&code=403");
+                header("Location:?action=error&code=403");
             }
 
             break;
@@ -425,7 +425,7 @@ if (isset($_GET['action'])) {
             $paramaters = ["article" => $article];
             if (!$article) {
                 $template = "error.twig";
-                header("Location:index.php?action=error&code=404");
+                header("Location?action=error&code=404");
             }
             $defaultValue = ["data" => $article];
 
@@ -452,7 +452,7 @@ if (isset($_GET['action'])) {
                 $template = "admin_add_article.twig";
                 $paramaters["session"] = $session;
             } else {
-                header("Location: index.php?action=error&code=403");
+                header("Location:?action=error&code=403");
             }
 
             break;
@@ -465,7 +465,7 @@ if (isset($_GET['action'])) {
                     "article" => $article,
                 ];
             } else {
-                header("Location: index.php?action=error&code=403");
+                header("Location:?action=error&code=403");
             }
 
             break;

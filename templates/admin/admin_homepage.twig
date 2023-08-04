@@ -59,7 +59,7 @@
 				{% for comment in comments %}
 
 				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 comments">
-					<a class="comment" href="index.php?selection=comment_details&amp;idComment={{comment.id}}">
+					<a class="comment" href="?selection=comment_details&amp;idComment={{comment.id}}">
 						<h3 class="h3">{{comment.title}}</h3>
 						<div class="author-comment">
 							<h4>{{comment.username}}, {{comment.date_creation}} : </h4>
@@ -93,7 +93,7 @@
 										<a class="commands-admin" href="?selection=view_update_article&amp;id={{article.id}}">Modifier</a>
 									</button>
 									<button class="btn btn-dark">
-										<a class="commands-admin" href="index.php?action=delete_article&amp;id={{article.id}}">Supprimer</a>
+										<a class="commands-admin" href="?action=delete_article&amp;id={{article.id}}">Supprimer</a>
 									</button>
 								</div>
 							</article>

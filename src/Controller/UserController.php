@@ -100,7 +100,7 @@ class UserController
 
     $emailResult = $this->handleTextField($keyArrayWhenAFieldIsTreated["email_field"], $email, $exceptionKeyArray["email_field"], $validationException, $regexByField["email_regex"], $exceptionByField["error_empty"], $exceptionByField["email_exception"])["email"];
 
-    $passwordResult = $this->handleTextField($keyArrayWhenAFieldIsTreated["password_field"], $password, $exceptionKeyArray["password_field"], $validationException, $regexByField["password_regex"], $exceptionByField["error_empty"], $exceptionByField["password_exception"])["password"];
+    $passwordResult = password_hash($this->handleTextField($keyArrayWhenAFieldIsTreated["password_field"], $password, $exceptionKeyArray["password_field"], $validationException, $regexByField["password_regex"], $exceptionByField["error_empty"], $exceptionByField["password_exception"])["password"],PASSWORD_DEFAULT);
 
     $fileResult = $this->handleFileField($file)["file"];
 

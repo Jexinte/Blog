@@ -47,7 +47,7 @@
 		{% if count_of_comments is defined ? count_of_comments == 1 %}
 		<h2 class="text-center" id="comment-already-sent">Oops ! Il semblerait que vous ayez déjà posté un commentaire pour cet article dès qu'un administrateur l'aura validé vous pourrez à nouveau en poster un !</h2>
 		{% elseif no_user_connected is defined ? no_user_connected == 1 %}
-		<h2 class="text-center" id="user-not-connected">Afin de pouvoir publier un commentaire , veuillez vous <a href="index.php?selection=sign_in">connecter !</a></h2>		
+		<h2 class="text-center" id="user-not-connected">Afin de pouvoir publier un commentaire , veuillez vous <a href="?selection=sign_in">connecter !</a></h2>		
 		{% else %}
 		<h2 class="h2" id="comment-main-title">Ajouter un commentaire</h2>
 
