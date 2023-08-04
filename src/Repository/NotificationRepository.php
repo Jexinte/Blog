@@ -15,7 +15,7 @@ class NotificationRepository
   {
     $dbConnect = $this->connector->connect();
     
-    $statementToCreateNotification = $dbConnect->prepare("INSERT INTO user_notification (idArticle,idUser,status,feedback_administrator) VALUES(?,?,?,?)");
+    $statementToCreateNotification = $dbConnect->prepare("INSERT INTO user_notification (idArticle,idUser,status,feedbackAdministrator) VALUES(?,?,?,?)");
     $values = [
       $notificationModel->getIdArticle(),
       $notificationModel->getIdUser(),

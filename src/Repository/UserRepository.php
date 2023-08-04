@@ -40,7 +40,7 @@ class UserRepository
         $fileSettings["tmp_name"] = $fileRequirements[1];
         $fileSettings["directory"] = $fileRequirements[2];
         $filePath = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/" . $fileSettings["file_name"];
-        $statementToCreateUser = $dbConnect->prepare("INSERT INTO user (username,profile_image,email,password,type) VALUES(?,?,?,?,?)");
+        $statementToCreateUser = $dbConnect->prepare("INSERT INTO user (username,profileImage,email,password,type) VALUES(?,?,?,?,?)");
         $values = [
           $username,
           $filePath,

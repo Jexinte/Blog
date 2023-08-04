@@ -24,7 +24,7 @@ class CommentRepository
   {
     $dbConnect = $this->connector->connect();
 
-    $statementGetComments = $dbConnect->prepare("SELECT id,idArticle,idUser,content,status,DATE_FORMAT(date_creation,'%d %M %Y') AS date_publication  FROM comment WHERE idArticle = :idArticle AND status = :status ORDER BY date_publication DESC");
+    $statementGetComments = $dbConnect->prepare("SELECT id,idArticle,idUser,content,status,DATE_FORMAT(dateCreation,'%d %M %Y') AS date_publication  FROM comment WHERE idArticle = :idArticle AND status = :status ORDER BY date_publication DESC");
     $statementGetComments->bindParam("idArticle", $idArticle);
     $statementGetComments->bindValue("status", true);
 
@@ -73,7 +73,7 @@ class CommentRepository
       $dateOfCreation = $commentModel->getDateCreation();
 
 
-      $statementToInsertComment = $dbConnect->prepare("INSERT INTO comment (idArticle,idUser,content,date_creation) VALUES(?,?,?,?)");
+      $statementToInsertComment = $dbConnect->prepare("INSERT INTO comment (idArticle,idUser,content,dateCreation) VALUES(?,?,?,?)");
       $values = [
         $idArticle,
         $idUser,
@@ -170,7 +170,7 @@ class CommentRepository
 
 
       $comments = [];
-      $statementComments = $dbConnect->prepare("SELECT c.id,c.idArticle, c.idUser, c.content,c.status, DATE_FORMAT(c.date_creation, '%d %M %Y') AS date_of_publication, a.title FROM comment c JOIN article a ON c.idArticle = a.id WHERE c.status IS NULL ");
+      $statementComments = $dbConnect->prepare("SELECT c.id,c.idArticle, c.idUser, c.content,c.status, DATE_FORMAT(c.dateCreation, '%d %M %Y') AS date_of_publication, a.title FROM comment c JOIN article a ON c.idArticle = a.id WHERE c.status IS NULL ");
       $statementComments->execute();
 
 
@@ -186,7 +186,7 @@ class CommentRepository
             "id" => $row["id"],
             "id_user" => $row["idUser"],
             "content" => $row["content"],
-            "date_creation" => $date,
+            "dateCreation" => $date,
             "title" => $row["title"],
             "username" => $row2["username"]
           ];
@@ -204,7 +204,7 @@ class CommentRepository
 
     if ($session["session_id"] == $idInCookie) {
 
-      $statement = $dbConnect->prepare("SELECT c.id, c.idUser ,idArticle,content,DATE_FORMAT(date_creation, '%d %M %Y') AS date_of_publication, u.username FROM comment AS c JOIN user u ON c.idUser = u.id WHERE c.id = :idComment");
+      $statement = $dbConnect->prepare("SELECT c.id, c.idUser ,idArticle,content,DATE_FORMAT(dateCreation, '%d %M %Y') AS date_of_publication, u.username FROM comment AS c JOIN user u ON c.idUser = u.id WHERE c.id = :idComment");
       $statement->bindParam("idComment", $idComment);
       $statement->execute();
       $thereIsComment = $statement->fetch();
@@ -226,18 +226,18 @@ class CommentRepository
 
       switch (true) {
         case str_contains($valueOfValidation, "Accepter"):
-          $statementToAcceptComment = $dbConnect->prepare("SELECT id,idUser,idArticle,content,DATE_FORMAT(date_creation, '%d %M %Y') AS date_of_publication FROM comment WHERE id = :idComment");
+          $statementToAcceptComment = $dbConnect->prepare("SELECT id,idUser,idArticle,content,DATE_FORMAT(dateCreation, '%d %M %Y') AS date_of_publication FROM comment WHERE id = :idComment");
           $statementToAcceptComment->bindParam("idComment", $idComment);
           $statementToAcceptComment->execute();
           $resultIsAccepted = $statementToAcceptComment->fetch();
           if ($resultIsAccepted) {
             $feedbackResult = !empty($feedback) ? $feedback : null;
-            $statementInsertAcceptedChoice = $dbConnect->prepare("UPDATE comment SET status =  :status , feedback_administrator = :feedback WHERE id = :idComment");
+            $statementInsertAcceptedChoice = $dbConnect->prepare("UPDATE comment SET status =  :status , feedbackAdministrator = :feedback WHERE id = :idComment");
             $statementInsertAcceptedChoice->bindValue("status", true);
             $statementInsertAcceptedChoice->bindValue("idComment", $idComment);
             $statementInsertAcceptedChoice->bindValue("feedback", $feedbackResult);
             $statementInsertAcceptedChoice->execute();
-            return ["status" => 1, "id_comment" => $resultIsAccepted["id"], "id_user" => $resultIsAccepted["idUser"], "id_article" => $resultIsAccepted["idArticle"], "content" => $resultIsAccepted["content"], "date_creation" => $resultIsAccepted["date_of_publication"], "feedback" => $feedback];
+            return ["status" => 1, "id_comment" => $resultIsAccepted["id"], "id_user" => $resultIsAccepted["idUser"], "id_article" => $resultIsAccepted["idArticle"], "content" => $resultIsAccepted["content"], "dateCreation" => $resultIsAccepted["date_of_publication"], "feedback" => $feedback];
           }
           break;
 
@@ -248,7 +248,7 @@ class CommentRepository
           $resultIsRejected = $statementRejected->fetch();
           if ($resultIsRejected) {
             $feedbackResult = !empty($feedback) ? $feedback : null;
-            $statementInsertRejectedChoice = $dbConnect->prepare("UPDATE comment SET status =  :status , feedback_administrator = :feedback WHERE id = :idComment");
+            $statementInsertRejectedChoice = $dbConnect->prepare("UPDATE comment SET status =  :status , feedbackAdministrator = :feedback WHERE id = :idComment");
             $statementInsertRejectedChoice->bindValue("status", false);
             $statementInsertRejectedChoice->bindValue("idComment", $idComment);
             $statementInsertRejectedChoice->bindValue("feedback", $feedbackResult);

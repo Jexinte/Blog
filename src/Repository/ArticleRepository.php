@@ -21,7 +21,7 @@ class ArticleRepository
 
     $dbConnect = $this->connector->connect();
 
-    $statementToGetArticles = $dbConnect->prepare("SELECT id,title,chapô,content,tags,author,DATE_FORMAT(date_creation,'%d %M %Y') AS date_article  FROM article ORDER BY id DESC");
+    $statementToGetArticles = $dbConnect->prepare("SELECT id,title,chapô,content,tags,author,DATE_FORMAT(dateCreation,'%d %M %Y') AS date_article  FROM article ORDER BY id DESC");
     $statementToGetArticles->execute();
 
     $articles = [];
@@ -58,7 +58,7 @@ class ArticleRepository
   public function getArticle(int $id): array
   {
     $dbConnect = $this->connector->connect();
-    $statementToGetArticle = $dbConnect->prepare("SELECT id, image,title,chapô,content,tags,author,DATE_FORMAT(date_creation,'%d %M %Y') AS date_article FROM article WHERE id = :id");
+    $statementToGetArticle = $dbConnect->prepare("SELECT id, image,title,chapô,content,tags,author,DATE_FORMAT(dateCreation,'%d %M %Y') AS date_article FROM article WHERE id = :id");
     $statementToGetArticle->bindParam("id", $id);
     $statementToGetArticle->execute();
     $article = [];
@@ -118,7 +118,7 @@ class ArticleRepository
       $fileSettings["directory"] = $fileRequirements[2];
       $filePath = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/" . $fileSettings["file_name"];
 
-      $statementToCreateArticle = $dbConnect->prepare("INSERT INTO article (image,title,chapô,content,tags,author,date_creation) VALUES(:fileArticle,:titleArticle,:shortPhraseArticle,:contentArticle,:tagsArticle,:authorArticle,:dateArticle)");
+      $statementToCreateArticle = $dbConnect->prepare("INSERT INTO article (image,title,chapô,content,tags,author,dateCreation) VALUES(:fileArticle,:titleArticle,:shortPhraseArticle,:contentArticle,:tagsArticle,:authorArticle,:dateArticle)");
 
       $statementToCreateArticle->bindParam(':fileArticle', $filePath);
       $statementToCreateArticle->bindParam(':titleArticle', $titleArticle);
@@ -164,7 +164,7 @@ class ArticleRepository
           $fileSettings["tmp_name"] = $fileRequirements[1];
           $fileSettings["directory"] = $fileRequirements[2];
           $filePath = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/" . $fileSettings["file_name"];
-          $statementWithUploadedFile = $dbConnect->prepare("UPDATE article SET image = :filePath,title = :titleUpdateArticle,chapô  = :shortPhraseUpdateArticle,content = :contentUpdateArticle,tags = :tagsUpdateArticle,author = :authorArticle,date_creation = :dateUpdateArticle WHERE id = :idUpdateArticle");
+          $statementWithUploadedFile = $dbConnect->prepare("UPDATE article SET image = :filePath,title = :titleUpdateArticle,chapô  = :shortPhraseUpdateArticle,content = :contentUpdateArticle,tags = :tagsUpdateArticle,author = :authorArticle,dateCreation = :dateUpdateArticle WHERE id = :idUpdateArticle");
           $statementWithUploadedFile->bindParam(':filePath', $filePath);
           $statementWithUploadedFile->bindParam(':titleUpdateArticle', $titleUpdateArticle);
           $statementWithUploadedFile->bindParam(':shortPhraseUpdateArticle', $shortPhraseUpdateArticle);
@@ -178,7 +178,7 @@ class ArticleRepository
           return ["article_updated" => 1];
 
         case !is_array($fileUpdateArticle):
-          $statementWithoutUploadedFile = $dbConnect->prepare("UPDATE article SET image = :filePath,title = :titleUpdateArticle,chapô  = :shortPhraseUpdateArticle,content = :contentUpdateArticle,tags = :tagsUpdateArticle,author = :authorArticle,date_creation = :dateUpdateArticle WHERE id = :idUpdateArticle");
+          $statementWithoutUploadedFile = $dbConnect->prepare("UPDATE article SET image = :filePath,title = :titleUpdateArticle,chapô  = :shortPhraseUpdateArticle,content = :contentUpdateArticle,tags = :tagsUpdateArticle,author = :authorArticle,dateCreation = :dateUpdateArticle WHERE id = :idUpdateArticle");
           $statementWithoutUploadedFile->bindParam(':filePath', $fileUpdateArticle);
           $statementWithoutUploadedFile->bindParam(':titleUpdateArticle', $titleUpdateArticle);
           $statementWithoutUploadedFile->bindParam(':shortPhraseUpdateArticle', $shortPhraseUpdateArticle);
