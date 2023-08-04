@@ -31,7 +31,7 @@ class ArticleRepository
       $frenchDateFormat = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
 
       $dateOfCreation = $frenchDateFormat->format(new DateTime($rowOfArticle["date_article"]));
-      $statementToGetUserProfileImageRegardlessToAuthorNameOfArticle = $dbConnect->prepare("SELECT profile_image AS image, username FROM user WHERE username = :author");
+      $statementToGetUserProfileImageRegardlessToAuthorNameOfArticle = $dbConnect->prepare("SELECT profileImage AS image, username FROM user WHERE username = :author");
       $statementToGetUserProfileImageRegardlessToAuthorNameOfArticle->bindParam("author", $rowOfArticle["author"]);
       $statementToGetUserProfileImageRegardlessToAuthorNameOfArticle->execute();
       $data = [];
@@ -66,7 +66,7 @@ class ArticleRepository
       $french_date_format = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
 
       $dateOfArticleCreation = $french_date_format->format(new DateTime($rowOfArticle["date_article"]));
-      $statementToGetUserDataRegardlessToAuthorNameOfArticle = $dbConnect->prepare("SELECT profile_image, username FROM user WHERE username = :author");
+      $statementToGetUserDataRegardlessToAuthorNameOfArticle = $dbConnect->prepare("SELECT profileImage, username FROM user WHERE username = :author");
       $statementToGetUserDataRegardlessToAuthorNameOfArticle->bindParam("author", $rowOfArticle["author"]);
       $statementToGetUserDataRegardlessToAuthorNameOfArticle->execute();
       while ($rowOfUserData = $statementToGetUserDataRegardlessToAuthorNameOfArticle->fetch()) {
@@ -74,7 +74,7 @@ class ArticleRepository
         $data = [
           "id" => intval($rowOfArticle["id"]),
           "image" => $rowOfArticle['image'],
-          "author_image" => $rowOfUserData["profile_image"],
+          "author_image" => $rowOfUserData["profileImage"],
           "title" => $rowOfArticle['title'],
           "short_phrase" => $rowOfArticle['chapô'],
           "content" => $rowOfArticle["content"],
