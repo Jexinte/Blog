@@ -288,7 +288,7 @@ if (isset($_GET['action'])) {
 
                     if ($commentCreated) {
                         header("HTTP/1.1 302");
-                        header("Location?selection=article&id={$article["id"]}");
+                        header("Location:?selection=article&id={$article["id"]}");
                         $commentController->handleMailToAdmin($session, $defaultValues["title"], $idInCookie);
                     }
                 } else {
@@ -358,7 +358,7 @@ if (isset($_GET['action'])) {
                 $article = $notificationController->handleDeleteNotification($_GET["id_notification"]);
                 if (is_null($article)) {
                     header("HTTP/1.1 302");
-                    header("Location?selection=notifications");
+                    header("Location:?selection=notifications");
                 }
             } else {
                 header("Location:?action=error&code=403");
@@ -425,7 +425,7 @@ if (isset($_GET['action'])) {
             $paramaters = ["article" => $article];
             if (!$article) {
                 $template = "error.twig";
-                header("Location?action=error&code=404");
+                header("Location:?action=error&code=404");
             }
             $defaultValue = ["data" => $article];
 
