@@ -85,7 +85,7 @@ class UserController
     $exceptionByField = [
       "error_empty" => $validationException::ERROR_EMPTY,
       "username_exception" => $validationException::USERNAME_MESSAGE_ERROR_WRONG_FORMAT,
-      "email_exception" => $validationException::USERNAME_MESSAGE_ERROR_WRONG_FORMAT,
+      "email_exception" => $validationException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT,
       "password_exception" => $validationException::PASSWORD_MESSAGE_ERROR_WRONG_FORMAT,
     ];
 
