@@ -171,11 +171,12 @@ if (isset($_GET['action'])) {
 
         case "contact":
             try {
-                $template = "homepage.twig";
+                $template = "homepage.twig";            
                 $paramaters["message"] = $formController->homepageFormValidator($_POST["firstname"], $_POST["lastname"], $_POST["mail"], $_POST["subject"], $_POST["message"]);
+                $paramaters["session"] = $session;
+               
             } catch (ValidationException $e) {
                 $errors = $e->getErrors();
-                header("HTTP/1.1 400");
                 foreach ($errors as $key => $v) {
                     $paramaters[$key] = $v;
                 }
@@ -433,7 +434,7 @@ if (isset($_GET['action'])) {
 
             $sessionController->initializeIdArticle($defaultValue["data"]["id"]);
             $session = $sessionController->handleGetSessionData();
-
+            $paramaters["session"] = $session;
 
             $comments = $commentController->handleGetAllComments($_GET['id']);
             $paramaters["comments"] = $comments;

@@ -56,8 +56,8 @@ class HomepageFormController
       "firstname_exception" => $validationException::FIRSTNAME_MESSAGE_ERROR_WRONG_FORMAT,
       "lastname_exception" => $validationException::LASTNAME_MESSAGE_ERROR_WRONG_FORMAT,
       "email_exception" => $validationException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT,
-      "subject_exception" => $validationException::SUBJECT_MESSAGE_ERROR_MIN_20_CHARS_MAX_100_CHARS,
-      "content_message_exception" => $validationException::CONTENT_MESSAGE_ERROR_MIN_20_CHARS_MAX_500_CHARS,
+      "subject_exception" => $validationException::SUBJECT_MESSAGE_ERROR_MIN_1_CHARS_MAX_100_CHARS,
+      "content_message_exception" => $validationException::CONTENT_MESSAGE_ERROR_MIN_1_CHARS_MAX_500_CHARS,
     ];
 
     $regexByField = [
