@@ -12,7 +12,7 @@ enum Regex: string
   const SHORT_PHRASE = "/^(?=.{1,255}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ, .'-]*$/u";
 
   const CONTENT_ARTICLE = "/^(?=.{1,5000}$)[A-ZÀ-ÿ][A-Za-zÀ-ÿ, .'-]*$/u";
-  const TAGS = "/^(#([\p{L} '-]{1,20})(?:\s|$)){1,3}$/";
+  const TAGS = "/^#([\p{L} '-]{1,20})\s#([\p{L} '-]{1,20})\s#([\p{L} '-]{1,20})$/";
 
   const FIRSTNAME = "/^[A-Z][a-zA-ZÀ-ÖØ-öø-ſ\s'-]*$/";
   const LASTNAME = "/^[A-Z][a-zA-ZÀ-ÖØ-öø-ſ\s'-]*$/";
