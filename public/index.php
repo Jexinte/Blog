@@ -17,12 +17,13 @@ use Controller\NotificationController;
 use Controller\SessionController;
 
 use Enumeration\UserType;
-use Exceptions\ValidationException;
 use Repository\ArticleRepository;
 use Repository\CommentRepository;
 use Repository\HomepageFormRepository;
 use Repository\NotificationRepository;
 use Repository\UserRepository;
+
+use Exceptions\ValidationException;
 
 $action = "";
 $selection = "";

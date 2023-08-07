@@ -260,13 +260,13 @@ class CommentRepository
     }
   }
 
-  public function deleteTemporaryComment(array $validation, array $session, string $idInCookie): void
+  public function deleteComment(array $validation, array $session, string $idInCookie): void
   {
     $dbConnect = $this->connector->connect();
-    if ($session["session_id" == $idInCookie]) {
-      $statementToDeleteTemporaryComment = $dbConnect->prepare("DELETE FROM comment WHERE id = :idComment");
-      $statementToDeleteTemporaryComment->bindParam("idComment", $validation["id_comment"]);
-      $statementToDeleteTemporaryComment->execute();
+    if ($session["session_id"] == $idInCookie) {
+      $statementToDeleteComment = $dbConnect->prepare("DELETE FROM comment WHERE id = :idComment");
+      $statementToDeleteComment->bindParam("idComment", $validation["id_comment"]);
+      $statementToDeleteComment->execute();
     }
   }
 }
