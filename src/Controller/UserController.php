@@ -23,19 +23,7 @@ class UserController
   }
 
 
-  public function handleUsernameField(string $username): array|string
-  {
-    $validationException = new ValidationException();
-    switch (true) {
-      case empty($username):
-        throw $validationException->setTypeAndValueOfException("username_exception", $validationException::ERROR_EMPTY);
-      case !preg_match(REGEX::USERNAME, $username):
 
-        throw $validationException->setTypeAndValueOfException("username_exception", $validationException::USERNAME_MESSAGE_ERROR_WRONG_FORMAT);
-      default:
-        return ["username" => $username];
-    }
-  }
   public function handleFileField(array $file): array|string
   {
     $validationException = new ValidationException();
@@ -63,47 +51,64 @@ class UserController
   }
 
 
-  public function handleEmailField(string $email): array|string
-  {
-    $validationException = new ValidationException();
-    switch (true) {
-      case empty($email):
-        throw $validationException->setTypeAndValueOfException("email_exception", $validationException::ERROR_EMPTY);
-      case !preg_match(REGEX::EMAIL, $email):
-        throw $validationException->setTypeAndValueOfException("email_exception", $validationException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT);
-      default:
-        return ["email" => $email];
-    }
-  }
-  public function handlePasswordField(string $password): array|string
-  {
-    $validationException = new ValidationException();
-    switch (true) {
-      case empty($password):
-        throw $validationException->setTypeAndValueOfException('password_exception', $validationException::ERROR_EMPTY);
-      case !preg_match(REGEX::PASSWORD, $password):
-        throw $validationException->setTypeAndValueOfException("password_exception", $validationException::PASSWORD_MESSAGE_ERROR_WRONG_FORMAT);
-      default:
-        $hashPassword = password_hash($password, PASSWORD_DEFAULT);
-        return ["password" => $hashPassword];
-    }
-  }
 
+
+  public function handleTextField(string $keyArray, string $value, string $keyException, object $exception, string $regex, string $emptyException, string $wrongFormatException): string|array
+  {
+    switch (true) {
+      case empty($value):
+        throw $exception->setTypeAndValueOfException($keyException, $emptyException);
+      case !preg_match($regex, $value):
+        throw $exception->setTypeAndValueOfException($keyException, $wrongFormatException);
+      default:
+        return [$keyArray => $value];
+    }
+  }
 
   public function signUpValidator(string $username, array $file, string $email, string $password): ?UserModel
   {
 
     $validationException = new ValidationException();
-    $usernameResult = $this->handleUsernameField($username)["username"];
-    $emailResult = $this->handleEmailField($email)["email"];
-    $passwordResult = $this->handlePasswordField($password)["password"];
+    $exceptionKeyArray =
+      [
+        "username_field" => "username_exception",
+        "email_field" => "email_exception",
+        "password_field" => "password_exception",
+      ];
+    $keyArrayWhenAFieldIsTreated =
+      [
+        "username_field" => "username",
+        "email_field" => "email",
+        "password_field" => "password",
+      ];
+
+    $exceptionByField = [
+      "error_empty" => $validationException::ERROR_EMPTY,
+      "username_exception" => $validationException::USERNAME_MESSAGE_ERROR_WRONG_FORMAT,
+      "email_exception" => $validationException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT,
+      "password_exception" => $validationException::PASSWORD_MESSAGE_ERROR_WRONG_FORMAT,
+    ];
+
+    $regexByField = [
+      "username_regex" => REGEX::USERNAME,
+      "email_regex" => REGEX::EMAIL,
+      "password_regex" => REGEX::PASSWORD,
+    ];
+
+
+    $usernameResult = $this->handleTextField($keyArrayWhenAFieldIsTreated["username_field"], $username, $exceptionKeyArray["username_field"], $validationException, $regexByField["username_regex"], $exceptionByField["error_empty"], $exceptionByField["username_exception"])["username"];
+
+    $emailResult = $this->handleTextField($keyArrayWhenAFieldIsTreated["email_field"], $email, $exceptionKeyArray["email_field"], $validationException, $regexByField["email_regex"], $exceptionByField["error_empty"], $exceptionByField["email_exception"])["email"];
+
+    $passwordResult = password_hash($this->handleTextField($keyArrayWhenAFieldIsTreated["password_field"], $password, $exceptionKeyArray["password_field"], $validationException, $regexByField["password_regex"], $exceptionByField["error_empty"], $exceptionByField["password_exception"])["password"],PASSWORD_DEFAULT);
+
     $fileResult = $this->handleFileField($file)["file"];
+
     $userType = UserType::USER;
 
 
-
     $userModel = new UserModel($usernameResult, $fileResult, $emailResult, $passwordResult, $userType, null, null, null);
-  
+
     $userDb = $this->userRepository->createUser($userModel);
 
     if ($userDb->getSuccessSignUp()) {

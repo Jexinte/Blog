@@ -3,7 +3,6 @@
 namespace Controller;
 
 
-use Model\SessionModel;
 use Manager\SessionManager;
 
 class SessionController

@@ -31,19 +31,6 @@ class ArticleController
 
 
 
-  public function handleTitleField(string $title): array|string
-  {
-    $validationException = new ValidationException();
-
-    switch (true) {
-      case empty($title):
-        throw $validationException->setTypeAndValueOfException("title_exception", $validationException::ERROR_EMPTY);
-      case !preg_match(Regex::TITLE, $title):
-        throw $validationException->setTypeAndValueOfException("title_exception", $validationException::TITLE_MESSAGE_ERROR_MAX_255_CHARS);
-      default:
-        return ["title" => $title];
-    }
-  }
 
   public function handleFileField(array $fileArticle): array|string
   {
@@ -71,57 +58,70 @@ class ArticleController
         throw $validationException->setTypeAndValueOfException("file_exception", $validationException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED);
     }
   }
-  public function handleShortPhraseField(string $shortPhrase): array|string
+
+
+  public function handleTextField(string $keyArray, string $value, string $keyException, ValidationException $exception, string $regex, string $emptyException, string $wrongFormatException): string|array
   {
-    $validationException = new ValidationException();
     switch (true) {
-      case empty($shortPhrase):
-        throw $validationException->setTypeAndValueOfException("short_phrase_exception", $validationException::ERROR_EMPTY);
-      case !preg_match(Regex::SHORT_PHRASE, $shortPhrase):
-        throw $validationException->setTypeAndValueOfException("short_phrase_exception", $validationException::SHORT_PHRASE_MESSAGE_ERROR_MAX_255_CHARS);
+      case empty($value):
+        throw $exception->setTypeAndValueOfException($keyException, $emptyException);
+      case !preg_match($regex, $value):
+        throw $exception->setTypeAndValueOfException($keyException, $wrongFormatException);
       default:
-        return ["short_phrase" => $shortPhrase];
-    }
-  }
-  public function handleContentField(string $content): array|string
-  {
-    $validationException = new ValidationException();
-    switch (true) {
-      case empty($content):
-        throw $validationException->setTypeAndValueOfException("content_article_exception", $validationException::ERROR_EMPTY);
-      case !preg_match(REGEX::CONTENT_ARTICLE, $content):
-        throw $validationException->setTypeAndValueOfException("content_article_exception", $validationException::CONTENT_ARTICLE_MESSAGE_ERROR_MAX_5000_CHARS);
-      default:
-        return ["content" => $content];
-    }
-  }
-  public function handleTagsField(string $tags): array|string
-  {
-    $validationException = new ValidationException();
-    switch (true) {
-      case empty($tags):
-        throw $validationException->setTypeAndValueOfException("tags_exception", $validationException::ERROR_EMPTY);
-      case !preg_match(REGEX::TAGS, $tags):
-        throw $validationException->setTypeAndValueOfException("tags_exception", $validationException::TAGS_MESSAGE_ERROR_MAX_3_TAGS);
-      default:
-        return ["tags" => $tags];
+        return [$keyArray => $value];
     }
   }
 
-
-  public function handleCreateArticleValidator(string $title, array $fileArticle, string $shortPhrase, string $content, string $tags, array $sessionData,string $idCookie): ?ArticleModel
+  public function handleCreateArticleValidator(string $title, array $fileArticle, string $shortPhrase, string $content, string $tags, array $sessionData, string $idCookie): ?ArticleModel
   {
-    
-    $titleField = $this->handleTitleField($title)["title"];
+
+    $validationException = new ValidationException();
+
+    $exceptionKeyArray =
+      [
+        "title_field" => "title_exception",
+        "short_phrase_field" => "short_phrase_exception",
+        "content_field" => "content_article_exception",
+        "tags_field" => "tags_exception"
+      ];
+    $keyArrayWhenAFieldIsTreated =
+      [
+        "title_field" => "title",
+        "short_phrase_field" => "short_phrase",
+        "content_field" => "content",
+        "tags_field" => "tags"
+      ];
+
+    $exceptionByField = [
+      "error_empty" => $validationException::ERROR_EMPTY,
+      "title_exception" => $validationException::TITLE_MESSAGE_ERROR_MAX_255_CHARS,
+      "short_phrase_exception" => $validationException::SHORT_PHRASE_MESSAGE_ERROR_MAX_255_CHARS,
+      "content_exception" => $validationException::CONTENT_ARTICLE_MESSAGE_ERROR_MAX_5000_CHARS,
+      "tags_exception" => $validationException::TAGS_MESSAGE_ERROR_MAX_3_TAGS
+    ];
+
+    $regexByField = [
+      "title_regex" => REGEX::TITLE,
+      "short_phrase_regex" => REGEX::SHORT_PHRASE,
+      "content_regex" => REGEX::CONTENT_ARTICLE,
+      "tags_regex" => REGEX::TAGS
+    ];
+
+    $titleField = $this->handleTextField($keyArrayWhenAFieldIsTreated["title_field"], $title, $exceptionKeyArray["title_field"], $validationException, $regexByField["title_regex"], $exceptionByField["error_empty"], $exceptionByField["title_exception"])["title"];
+
     $fileField = $this->handleFileField($fileArticle)["file"];
-    $shortPhraseField = $this->handleShortPhraseField($shortPhrase)["short_phrase"];
-    $contentField = $this->handleContentField($content)["content"];
-    $tagsField = $this->handleTagsField($tags);
+
+    $shortPhraseField = $this->handleTextField($keyArrayWhenAFieldIsTreated["short_phrase_field"], $shortPhrase, $exceptionKeyArray["short_phrase_field"], $validationException, $regexByField["short_phrase_regex"], $exceptionByField["error_empty"], $exceptionByField["short_phrase_exception"])["short_phrase"];
+
+    $contentField = $this->handleTextField($keyArrayWhenAFieldIsTreated["content_field"], $content, $exceptionKeyArray["content_field"], $validationException, $regexByField["content_regex"], $exceptionByField["error_empty"], $exceptionByField["content_exception"])["content"];
+
+    $tagsField = $this->handleTextField($keyArrayWhenAFieldIsTreated["tags_field"], $tags, $exceptionKeyArray["tags_field"], $validationException, $regexByField["tags_regex"], $exceptionByField["error_empty"], $exceptionByField["tags_exception"]);
+
 
 
     $articleModel = new ArticleModel($fileField, $titleField, $shortPhraseField, $contentField, $tagsField, null);
 
-    $articleResult = $this->articleRepository->createArticle($articleModel,$sessionData,$idCookie);
+    $articleResult = $this->articleRepository->createArticle($articleModel, $sessionData, $idCookie);
 
     if ($articleResult) {
       return $articleResult;
@@ -188,11 +188,15 @@ class ArticleController
   public function handleUpdateValidationOnNumberOfTagsAuthorized(string $value, int $numberOfTagsAuthorized): string|array
   {
     $validationException = new ValidationException();
-
-    $result = count(explode(" ", $value)) == 3 ? explode(' ', $value) : null;
+    
+    $arr = explode(" ", $value);
+    if(in_array("",$arr)){
+      throw $validationException->setTypeAndValueOfException("tags_exception", $validationException::TAGS_MESSAGE_ERROR_MAX_3_TAGS);
+    }
+    
     $counter = 0;
-    if (!is_null($result)) {
-      foreach ($result as $v) {
+    if (!is_null($arr) && count($arr) == 3) {
+      foreach ($arr as $v) {
         if ($v[0] === "#" && isset($v[1]) && ctype_upper($v[1])) $counter++;
       }
     }
@@ -230,7 +234,7 @@ class ArticleController
         return null;
     }
   }
-  public function handleUpdateArticleValidator(string $title, array $fileArticle, string $hiddenInputFileOriginalPath, string $shortPhrase, string $content, string $tags, array $sessionData, int $idArticle,string $idCookie): ?array
+  public function handleUpdateArticleValidator(string $title, array $fileArticle, string $hiddenInputFileOriginalPath, string $shortPhrase, string $content, string $tags, array $sessionData, int $idArticle, string $idCookie): ?array
   {
 
     $numberOfTagsAuthorized = 3;
@@ -249,12 +253,12 @@ class ArticleController
       "id_article" => $idArticle
     ];
 
-    return $this->articleRepository->updateArticle($fields, $sessionData,$idCookie);
+    return $this->articleRepository->updateArticle($fields, $sessionData, $idCookie);
   }
 
 
-  public function handleDeleteArticle(int $idArticle, array $sessionData,string $idCookie): ?array
+  public function handleDeleteArticle(int $idArticle, array $sessionData, string $idCookie): ?array
   {
-    return $this->articleRepository->deleteArticle($idArticle, $sessionData,$idCookie);
+    return $this->articleRepository->deleteArticle($idArticle, $sessionData, $idCookie);
   }
 }

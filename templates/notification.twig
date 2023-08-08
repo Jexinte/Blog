@@ -29,22 +29,25 @@
 
 			{% for notification in notifications %}
 				<div class="text-center col-sm-12 col-md-12 col-lg-12 col-xl-12 notifications">
-
 					{% if notification.status == 1  %}
-						<a href="index.php?selection=article&amp;id={{notification.idArticle}}" class=" notation">Votre commentaire
-							{{notification.title_article}}
-							a été accepté !</a>
+						<a href="?selection=article&amp;id={{notification.idArticle}}" class=" notation">Votre commentaire
+							a été accepté !{{notification.title_article}}
+									<p class="text-center raison">Raison :
+							<br><span id="feedback">{{notification.feedbackAdministrator is not null ? notification.feedbackAdministrator : 'Non communiquée !'}}
+							</span>
+						</p>
+							</a>
 					{% else %}
-						<a href="index.php?selection=article&amp;id={{notification.idArticle}}" class=" notation">Votre commentaire
+						<p class=" notation">Votre commentaire
 							{{notification.title_article}}
-							a été rejeté !</a>
+							a été rejeté !</p>
 						<p class="text-center raison">Raison :
-							<br><span id="feedback">{{notification.feedback_administrator is not null ? notification.feedback_administrator : 'Non communiquée !'}}
+							<br><span id="feedback">{{notification.feedbackAdministrator is not null ? notification.feedbackAdministrator : 'Non communiquée !'}}
 							</span>
 						</p>
 					{% endif %}
 				</div>
-				<a href="index.php?action=delete_notification&amp;id_notification={{notification.id}}" class="text-center">
+				<a href="?action=delete_notification&amp;id_notification={{notification.id}}" class="text-center">
 					<i class="fa-solid fa-xmark" style="color: #f41f1f;"></i>
 				</a>
 

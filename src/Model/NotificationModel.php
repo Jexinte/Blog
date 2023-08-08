@@ -9,7 +9,7 @@ class NotificationModel
     public int $idArticle,
     public int $idUser,
     public ?bool $status,
-    public string $feedbackAdministrator
+    public ?string $feedbackAdministrator
   ) {
   }
 
@@ -21,12 +21,12 @@ class NotificationModel
   {
     return $this->idUser;
   }
-  public function getStatus():?bool
+  public function getStatus(): ?bool
   {
     return $this->status;
   }
- 
-  public function getFeedbackAdministrator(): string
+
+  public function getFeedbackAdministrator(): ?string
   {
     return $this->feedbackAdministrator;
   }
