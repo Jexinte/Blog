@@ -7,6 +7,7 @@ use Enumeration\UserType;
 use Model\ArticleModel;
 use DateTime;
 use IntlDateFormatter;
+use Model\UserModel;
 
 class ArticleRepository
 {
@@ -88,7 +89,7 @@ class ArticleRepository
     return $article;
   }
 
-  public function createArticle(object $articleModel,array $sessionData,string $idCookie): ?ArticleModel
+  public function createArticle(ArticleModel $articleModel,array $sessionData,string $idCookie): ?ArticleModel
   {
 
     $dbConnect = $this->connector->connect();

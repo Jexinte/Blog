@@ -17,7 +17,7 @@ class HomepageFormRepository
   {
   }
 
-  public function insertDataInDatabase(object $homepageFormModel): ?HomepageFormModel
+  public function insertDataInDatabase(HomepageFormModel $homepageFormModel): ?HomepageFormModel
   {
 
     $dbConnect = $this->connector->connect();

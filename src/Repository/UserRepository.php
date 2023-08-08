@@ -17,7 +17,7 @@ class UserRepository
   }
 
 
-  public function createUser(object $userModel): ?UserModel
+  public function createUser(UserModel $userModel): ?UserModel
   {
 
     $dbConnect = $this->connector->connect();

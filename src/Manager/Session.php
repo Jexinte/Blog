@@ -3,7 +3,7 @@
 namespace Manager;
 
 
-class SessionManager
+class Session
 {
   private array $session;
   private string $cookieId;
@@ -16,6 +16,7 @@ class SessionManager
 
     if (session_status() != PHP_SESSION_ACTIVE) {
       session_start();
+      //TODO Vérifier pourquoi ça ne marche pas sans la référence !
       $this->session = &$_SESSION;
     } 
 
@@ -27,6 +28,7 @@ class SessionManager
     if (session_status() === PHP_SESSION_ACTIVE) {
       session_unset();
       session_destroy();
+      $this->session = [];
     }
   }
 

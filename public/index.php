@@ -3,9 +3,9 @@
 require_once __DIR__ . "../../vendor/autoload.php";
 
 use Config\DatabaseConnection;
-use Manager\SessionManager;
+use Manager\Session;
 
-$sessionManager = new SessionManager();
+$sessionManager = new Session();
 $sessionManager->startSession();
 
 use Controller\ArticleController;
@@ -67,8 +67,8 @@ $sessionController = new SessionController($sessionManager);
 
 
 
-$commentRepository = new CommentRepository($db, $formCredentialUsername, $formCredentialsPassword, $formCredentialsSmtpAddress);
-$commentController = new CommentController($commentRepository);
+$commentRepository = new CommentRepository($db);
+$commentController = new CommentController($commentRepository, $formCredentialUsername, $formCredentialsPassword, $formCredentialsSmtpAddress);
 
 $notificationRepository = new NotificationRepository($db);
 $notificationController = new NotificationController($notificationRepository);
@@ -156,7 +156,7 @@ if (isset($_GET['action'])) {
 
         case "download_file":
             $template = "homepage.twig";
-            $fileIsDownload = $downloadController->handleDownloadFile();
+            $fileIsDownload = $downloadController->downloadPdfFile();
             if (is_array($fileIsDownload) && array_key_exists("file_logs", $fileIsDownload)) {
                 header("Content-Length: " . $fileIsDownload["file_logs"]);
                 header('Content-Description: File Transfer');

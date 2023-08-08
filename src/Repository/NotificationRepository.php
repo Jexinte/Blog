@@ -3,6 +3,7 @@
 namespace Repository;
 
 use Config\DatabaseConnection;
+use Model\NotificationModel;
 
 class NotificationRepository
 {
@@ -11,7 +12,7 @@ class NotificationRepository
   {
   }
 
-  public function createNotification(object $notificationModel): null
+  public function createNotification(NotificationModel $notificationModel): null
   {
     $dbConnect = $this->connector->connect();
     

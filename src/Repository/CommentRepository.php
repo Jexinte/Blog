@@ -3,7 +3,6 @@
 namespace Repository;
 
 use Config\DatabaseConnection;
-use PHPMailer\PHPMailer\PHPMailer;
 use Model\CommentModel;
 use Enumeration\UserType;
 use DateTime;
@@ -14,9 +13,7 @@ class CommentRepository
 
   public function __construct(
     private readonly DatabaseConnection  $connector,
-    private readonly string $username,
-    private readonly string $password,
-    private readonly string $smtp_address
+   
   ) {
   }
 
@@ -52,7 +49,7 @@ class CommentRepository
     return $comments;
   }
 
-  public function insertComment(object $commentModel, array $sessionData, string $idInCookie): ?CommentModel
+  public function insertComment(CommentModel $commentModel, array $sessionData, string $idInCookie): ?CommentModel
   {
     $dbConnect = $this->connector->connect();
     $idSession = $sessionData["session_id"];
@@ -86,46 +83,7 @@ class CommentRepository
     }
   }
 
-  public function mailToAdmin(array $sessionData, string $titleOfArticle, string $idInCookie): void
-  {
 
-
-    if ($sessionData["session_id"] == $idInCookie) {
-
-      $username = json_decode($this->username, true);
-      $password = json_decode($this->password, true);
-      $gmail = json_decode($this->smtp_address, true);
-      $usernameSession = $sessionData["username"];
-      $mail = new PHPMailer(true);
-      $mail->isSMTP();
-      $mail->Host = $gmail["smtp_address"];
-      $mail->SMTPAuth = true;
-      $mail->Username = $username["username"]; // Name of the owner application password
-      $mail->Password = $password["password"]; // Gmail Password Application
-      $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-      $mail->Port = 587;
-      $mail->SMTPOptions = array(
-        'ssl' => array(
-          'verify_peer' => false,
-          'verify_peer_name' => false,
-          'allow_self_signed' => true
-        )
-      );
-
-      $mail->setFrom($username["username"],);
-      $mail->addAddress($username["username"]);
-      $mail->isHTML();
-
-      $mail->Subject = "Nouveau commentaire du sujet $titleOfArticle";
-
-      $mail->Body = "Cher administrateur, <br><br>
-      Un nouveau commentaire a été publié sur le site par l'utilisateur <strong>$usernameSession</strong>. <br><br>
-      Pour modérer ou répondre à ce commentaire, veuillez vous <a href='http://localhost/P5_Créez%20votre%20premier%20blog%20en%20PHP%20-%20Dembele%20Mamadou/public/?selection=sign_in'>connecter</a> à l'interface d'administration du site : . <br><br>
-      Cordialement,<br><br>
-      L'équipe du site";
-      $mail->send();
-    }
-  }
 
 
   public function checkCommentAlreadySentByUser(array $sessionData, string $idInCookie): ?array
