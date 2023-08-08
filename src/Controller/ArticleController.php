@@ -60,7 +60,7 @@ class ArticleController
   }
 
 
-  public function handleTextField(string $keyArray, string $value, string $keyException, object $exception, string $regex, string $emptyException, string $wrongFormatException): string|array
+  public function handleTextField(string $keyArray, string $value, string $keyException, ValidationException $exception, string $regex, string $emptyException, string $wrongFormatException): string|array
   {
     switch (true) {
       case empty($value):
