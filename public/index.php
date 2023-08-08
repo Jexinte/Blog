@@ -139,9 +139,10 @@ if (isset($_GET['action'])) {
                 $paramaters["message"] = $userController->loginValidator($_POST['mail'], $_POST["password"]);
                 $loginSucceed = $userController->loginValidator($_POST['mail'], $_POST["password"]);
 
-                if (is_array($loginSucceed) 
-                && array_key_exists("username", $loginSucceed) 
-                && array_key_exists("type_user", $loginSucceed)
+                if (
+                    is_array($loginSucceed)
+                    && array_key_exists("username", $loginSucceed)
+                    && array_key_exists("type_user", $loginSucceed)
                 ) {
                     header("HTTP/1.1 302");
                     header("Location:?selection=blog");
@@ -175,10 +176,9 @@ if (isset($_GET['action'])) {
 
         case "contact":
             try {
-                $template = "homepage.twig";            
+                $template = "homepage.twig";
                 $paramaters["message"] = $formController->homepageFormValidator($_POST["firstname"], $_POST["lastname"], $_POST["mail"], $_POST["subject"], $_POST["message"]);
                 $paramaters["session"] = $session;
-               
             } catch (ValidationException $e) {
                 $errors = $e->getErrors();
                 foreach ($errors as $key => $v) {
