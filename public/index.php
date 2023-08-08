@@ -139,7 +139,10 @@ if (isset($_GET['action'])) {
                 $paramaters["message"] = $userController->loginValidator($_POST['mail'], $_POST["password"]);
                 $loginSucceed = $userController->loginValidator($_POST['mail'], $_POST["password"]);
 
-                if (is_array($loginSucceed) && array_key_exists("username", $loginSucceed) && array_key_exists("type_user", $loginSucceed)) {
+                if (is_array($loginSucceed) 
+                && array_key_exists("username", $loginSucceed) 
+                && array_key_exists("type_user", $loginSucceed)
+                ) {
                     header("HTTP/1.1 302");
                     header("Location:?selection=blog");
                     $sessionController->initializeLoginDataAndSessionId($loginSucceed);
