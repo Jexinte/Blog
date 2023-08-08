@@ -99,7 +99,7 @@ class CommentController
   public function handleDeleteComment(array $validation, array $session, string $idInCookie): void
   {
     if (!$validation["status"]) {
-      $this->commentRepository->deleteTemporaryComment($validation, $session, $idInCookie);
+      $this->commentRepository->deleteComment($validation, $session, $idInCookie);
     }
   }
 }

@@ -85,7 +85,7 @@ class UserController
     $exceptionByField = [
       "error_empty" => $validationException::ERROR_EMPTY,
       "username_exception" => $validationException::USERNAME_MESSAGE_ERROR_WRONG_FORMAT,
-      "email_exception" => $validationException::USERNAME_MESSAGE_ERROR_WRONG_FORMAT,
+      "email_exception" => $validationException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT,
       "password_exception" => $validationException::PASSWORD_MESSAGE_ERROR_WRONG_FORMAT,
     ];
 
@@ -100,7 +100,7 @@ class UserController
 
     $emailResult = $this->handleTextField($keyArrayWhenAFieldIsTreated["email_field"], $email, $exceptionKeyArray["email_field"], $validationException, $regexByField["email_regex"], $exceptionByField["error_empty"], $exceptionByField["email_exception"])["email"];
 
-    $passwordResult = $this->handleTextField($keyArrayWhenAFieldIsTreated["password_field"], $password, $exceptionKeyArray["password_field"], $validationException, $regexByField["password_regex"], $exceptionByField["error_empty"], $exceptionByField["password_exception"])["password"];
+    $passwordResult = password_hash($this->handleTextField($keyArrayWhenAFieldIsTreated["password_field"], $password, $exceptionKeyArray["password_field"], $validationException, $regexByField["password_regex"], $exceptionByField["error_empty"], $exceptionByField["password_exception"])["password"],PASSWORD_DEFAULT);
 
     $fileResult = $this->handleFileField($file)["file"];
 

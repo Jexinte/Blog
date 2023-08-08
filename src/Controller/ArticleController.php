@@ -188,11 +188,15 @@ class ArticleController
   public function handleUpdateValidationOnNumberOfTagsAuthorized(string $value, int $numberOfTagsAuthorized): string|array
   {
     $validationException = new ValidationException();
-
-    $result = count(explode(" ", $value)) == 3 ? explode(' ', $value) : null;
+    
+    $arr = explode(" ", $value);
+    if(in_array("",$arr)){
+      throw $validationException->setTypeAndValueOfException("tags_exception", $validationException::TAGS_MESSAGE_ERROR_MAX_3_TAGS);
+    }
+    
     $counter = 0;
-    if (!is_null($result)) {
-      foreach ($result as $v) {
+    if (!is_null($arr) && count($arr) == 3) {
+      foreach ($arr as $v) {
         if ($v[0] === "#" && isset($v[1]) && ctype_upper($v[1])) $counter++;
       }
     }
