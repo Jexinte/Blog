@@ -154,6 +154,7 @@ if ($requestObject->actionSet()) {
                 $requestObject->post()["password"]
             );
 
+
             if (is_array($loginSucceed)
                 && array_key_exists("username", $loginSucceed)
                 && array_key_exists("type_user", $loginSucceed)
@@ -161,6 +162,7 @@ if ($requestObject->actionSet()) {
                 header("HTTP/1.1 302");
                 header("Location:?selection=blog");
                 $sessionController->initializeLoginDataAndSessionId($loginSucceed);
+
             }
         } catch (ValidationException $e) {
             $errors = $e->getErrors();
@@ -209,12 +211,15 @@ if ($requestObject->actionSet()) {
         }
         break;
 
+
     case "error":
         if (isset($requestObject->get()["code"])) {
             $template = "error.twig";
             $paramaters["code"] = $requestObject->get()["code"];
         }
         break;
+
+     
 
     case "add_article":
         try {

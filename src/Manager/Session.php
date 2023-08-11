@@ -16,7 +16,6 @@ class Session
 
     if (session_status() != PHP_SESSION_ACTIVE) {
       session_start();
-      //TODO Vérifier pourquoi ça ne marche pas sans la référence !
       $this->session = &$_SESSION;
     } 
 
