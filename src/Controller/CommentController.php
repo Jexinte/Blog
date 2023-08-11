@@ -103,12 +103,12 @@ class CommentController
    
   }
 
-  public function handleCheckCommentAlreadySentByUser(array $sessionData, string $idInCookie): ?array
+  public function handleCommentSent(array $sessionData, string $idInCookie): ?array
   {
     return $this->commentRepository->checkCommentAlreadySentByUser($sessionData, $idInCookie);
   }
 
-  public function handleGetCommentsNotValidateByAdministrators(array $sessionData, string $idInCookie): ?array
+  public function handleCommentsValidation(array $sessionData, string $idInCookie): ?array
   {
     return $this->commentRepository->getCommentsNotValidateByAdministrators($sessionData, $idInCookie);
   }

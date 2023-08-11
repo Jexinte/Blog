@@ -14,7 +14,8 @@
       "Enumeration\\" : "src/Enumeration/",
       "Exceptions\\" : "src/Exceptions/",
       "Manager\\" : "src/Manager/",
-      "Repository\\" : "src/Repository/"
+      "Repository\\" : "src/Repository/",
+      "Utils\\" : "src/Utils/"
     }
   },
   "license": "ISC"

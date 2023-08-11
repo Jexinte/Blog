@@ -183,7 +183,7 @@ class UserController
     }
   }
 
-  public function handleGetAllUserNotifications(array $sessionData): ?array
+  public function handleNotifications(array $sessionData): ?array
   {
     return $this->userRepository->getAllUserNotifications($sessionData);
   }
