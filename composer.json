@@ -15,7 +15,7 @@
       "Exceptions\\" : "src/Exceptions/",
       "Manager\\" : "src/Manager/",
       "Repository\\" : "src/Repository/",
-      "Utils\\" : "src/Utils/"
+      "Util\\" : "src/Util/"
     }
   },
   "license": "ISC"

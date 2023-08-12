@@ -1,50 +1,99 @@
 <?php
 
+/**
+ * Handle sessions
+ * 
+ * PHP version 8
+ *
+ * @category Manager
+ * @package  Session
+ * @author   Yokke <mdembelepro@gmail.com>
+ * @license  ISC License
+ * @link     https://github.com/Jexinte/P5---Blog-Professionnel---Openclassrooms
+ */
+
 namespace Manager;
 
-
+/**
+ * Session class
+ * 
+ * PHP version 8
+ *
+ * @category Manger
+ * @package  Session
+ * @author   Yokke <mdembelepro@gmail.com>
+ * @license  ISC License
+ * @link     https://github.com/Jexinte/P5---Blog-Professionnel---Openclassrooms
+ */
 class Session
 {
-  private array $session;
-  private string $cookieId;
+    private array $_session;
+    private string $_cookieId;
 
-  public function __construct()
-  {
-  }
-  public function startSession(): void
-  {
 
-    if (session_status() != PHP_SESSION_ACTIVE) {
-      session_start();
-      $this->session = &$_SESSION;
-    } 
+ 
+    /**
+     * Summary of startSession
+     * 
+     * @return void
+     */
+    public function startSession(): void
+    {
 
-  }
+        if (session_status() != PHP_SESSION_ACTIVE) {
+            session_start();
+            $this->_session = &$_SESSION;
+        } 
 
-  public function destroySession(): void
-  {
-
-    if (session_status() === PHP_SESSION_ACTIVE) {
-      session_unset();
-      session_destroy();
-      $this->session = [];
     }
-  }
 
-  public function getIdInCookie():string
-  {
-    $this->cookieId = $_COOKIE["PHPSESSID"];
-    return $this->cookieId;
-  }
+    /**
+     * Summary of destroySession
+     * 
+     * @return void
+     */
+    public function destroySession(): void
+    {
+
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_unset();
+            session_destroy();
+            $this->_session = [];
+        }
+    }
+
+    /**
+     * Summary of getIdInCookie
+     * 
+     * @return string
+     */
+    public function getIdInCookie():string
+    {
+        $this->_cookieId = $_COOKIE["PHPSESSID"];
+        return $this->_cookieId;
+    }
 
 
-  public function initializeKeyAndValue(string $key, string|null|int $value): void
-  {
-    $this->session[$key] = $value;
-  }
+    /**
+     * Summary of initializeKeyAndValue
+     *
+     * @param string          $key   of data
+     * @param string|null|int $value 
+     * 
+     * @return void
+     */
+    public function initializeKeyAndValue(string $key, string|null|int $value): void
+    {
+        $this->_session[$key] = $value;
+    }
 
-  public function getSessionData(): array
-  {
-    return $this->session;
-  }
+    /**
+     * Summary of getSessionData
+     * 
+     * @return array
+     */
+    public function getSessionData(): array
+    {
+        return $this->_session;
+    }
 }
