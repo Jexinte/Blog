@@ -37,33 +37,47 @@ class HomepageFormController
     /**
      * Summary of __construct
      *
-     * @param \Repository\HomepageFormRepository $homepageFormRepository homepageformrepository
+     * @param \Repository\HomepageFormRepository $homepageFormRepository 
      */
-    public function __construct(private readonly HomepageFormRepository $homepageFormRepository)
-    {
+    public function __construct(
+        private readonly HomepageFormRepository $homepageFormRepository
+    ) {
     }
 
 
       /**
        * Summary of handleTextField
        *
-       * @param string                          $keyArray             key of value being processed
-       * @param mixed                           $value                value being processed
-       * @param string                          $keyException         key of the exception thrown
-       * @param \Exceptions\ValidationException $exception            exception thrown of vlaue being 
-       * @param string                          $regex                regex
-       * @param string                          $emptyException       exception for empty field
-       * @param string                          $wrongFormatException exception for wrong value
+       * @param string                          $keyArray             
+       * @param mixed                           $value                
+       * @param string                          $keyException         
+       * @param \Exceptions\ValidationException $exception            
+       * @param string                          $regex                
+       * @param string                          $emptyException       
+       * @param string                          $wrongFormatException 
        * 
        * @return string|array|null
        */
-    public function handleTextField(string $keyArray, string $value, string $keyException, ValidationException $exception, string $regex, string $emptyException, string $wrongFormatException): string|array
-    {
+    public function handleTextField(
+        string $keyArray, 
+        string $value, 
+        string $keyException, 
+        ValidationException $exception, 
+        string $regex, 
+        string $emptyException, 
+        string $wrongFormatException
+    ): string|array {
         switch (true) {
         case empty($value):
-            throw $exception->setTypeAndValueOfException($keyException, $emptyException);
+            throw $exception->setTypeAndValueOfException(
+                $keyException, 
+                $emptyException
+            );
         case !preg_match($regex, $value):
-            throw $exception->setTypeAndValueOfException($keyException, $wrongFormatException);
+            throw $exception->setTypeAndValueOfException(
+                $keyException, 
+                $wrongFormatException
+            );
         default:
             return [$keyArray => $value];
         }
@@ -73,16 +87,21 @@ class HomepageFormController
     /**
      * Summary of homepageFormValidator
      *
-     * @param string $firstname in form
-     * @param string $lastname  in form
-     * @param string $email     in form
-     * @param string $subject   in form
-     * @param string $message   in form
+     * @param string $firstname 
+     * @param string $lastname  
+     * @param string $email     
+     * @param string $subject   
+     * @param string $message   
      * 
      * @return array|null
      */
-    public function homepageFormValidator(string $firstname, string $lastname, string $email, string $subject, string $message): ?array
-    {
+    public function homepageFormValidator(
+        string $firstname, 
+        string $lastname, 
+        string $email, 
+        string $subject, 
+        string $message
+    ): ?array {
         $validationException = new ValidationException();
 
         $exceptionKeyArray =[
@@ -101,12 +120,18 @@ class HomepageFormController
         ];
 
         $exceptionByField = [
-        "error_empty" => $validationException::ERROR_EMPTY,
-        "firstname_exception" => $validationException::FIRSTNAME_MESSAGE_ERROR_WRONG_FORMAT,
-        "lastname_exception" => $validationException::LASTNAME_MESSAGE_ERROR_WRONG_FORMAT,
-        "email_exception" => $validationException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT,
-        "subject_exception" => $validationException::SUBJECT_MESSAGE_ERROR_MIN_1_CHARS_MAX_100_CHARS,
-        "content_message_exception" => $validationException::CONTENT_MESSAGE_ERROR_MIN_1_CHARS_MAX_500_CHARS,
+        "error_empty" =>
+         $validationException::ERROR_EMPTY,
+        "firstname_exception" =>
+         $validationException::FIRSTNAME_MESSAGE_ERROR_WRONG_FORMAT,
+        "lastname_exception" =>
+         $validationException::LASTNAME_MESSAGE_ERROR_WRONG_FORMAT,
+        "email_exception" =>
+         $validationException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT,
+        "subject_exception" =>
+         $validationException::SUBJECT_MESSAGE_ERROR_MIN_1_CHARS_MAX_100_CHARS,
+        "content_message_exception" =>
+         $validationException::CONTENT_MESSAGE_ERROR_MIN_1_CHARS_MAX_500_CHARS,
         ];
 
         $regexByField = [
@@ -118,22 +143,74 @@ class HomepageFormController
         ];
 
 
-        $firstnameResult = $this->handleTextField($keyArrayWhenAFieldIsTreated["firstname_field"], $firstname, $exceptionKeyArray["firstname_field"], $validationException, $regexByField["firstname_regex"], $exceptionByField["error_empty"], $exceptionByField["firstname_exception"])["firstname"];
+        $firstnameResult = $this->handleTextField(
+            $keyArrayWhenAFieldIsTreated["firstname_field"], 
+            $firstname, $exceptionKeyArray["firstname_field"],
+            $validationException, 
+            $regexByField["firstname_regex"], 
+            $exceptionByField["error_empty"], 
+            $exceptionByField["firstname_exception"]
+        )["firstname"];
 
-        $lastnameResult = $this->handleTextField($keyArrayWhenAFieldIsTreated["lastname_field"], $lastname, $exceptionKeyArray["lastname_field"], $validationException, $regexByField["lastname_regex"], $exceptionByField["error_empty"], $exceptionByField["lastname_exception"])["lastname"];
+        $lastnameResult = $this->handleTextField(
+            $keyArrayWhenAFieldIsTreated["lastname_field"], 
+            $lastname, 
+            $exceptionKeyArray["lastname_field"], 
+            $validationException, 
+            $regexByField["lastname_regex"], 
+            $exceptionByField["error_empty"], 
+            $exceptionByField["lastname_exception"]
+        )["lastname"];
 
-        $emailResult = $this->handleTextField($keyArrayWhenAFieldIsTreated["email_field"], $email, $exceptionKeyArray["email_field"], $validationException, $regexByField["email_regex"], $exceptionByField["error_empty"], $exceptionByField["email_exception"])["email"];
+        $emailResult = $this->handleTextField(
+            $keyArrayWhenAFieldIsTreated["email_field"], 
+            $email, 
+            $exceptionKeyArray["email_field"], 
+            $validationException, 
+            $regexByField["email_regex"], 
+            $exceptionByField["error_empty"], 
+            $exceptionByField["email_exception"]
+        )["email"];
 
-        $subjectResult = $this->handleTextField($keyArrayWhenAFieldIsTreated["subject_field"], $subject, $exceptionKeyArray["subject_field"], $validationException, $regexByField["subject_regex"], $exceptionByField["error_empty"], $exceptionByField["subject_exception"])["subject"];
+        $subjectResult = $this->handleTextField(
+            $keyArrayWhenAFieldIsTreated["subject_field"], 
+            $subject, 
+            $exceptionKeyArray["subject_field"], 
+            $validationException, 
+            $regexByField["subject_regex"], 
+            $exceptionByField["error_empty"], 
+            $exceptionByField["subject_exception"]
+        )["subject"];
 
-        $messageResult = $this->handleTextField($keyArrayWhenAFieldIsTreated["message_field"], $message, $exceptionKeyArray["message_field"], $validationException, $regexByField["message_regex"], $exceptionByField["error_empty"], $exceptionByField["content_message_exception"])["message"];
+        $messageResult = $this->handleTextField(
+            $keyArrayWhenAFieldIsTreated["message_field"], 
+            $message, 
+            $exceptionKeyArray["message_field"], 
+            $validationException, 
+            $regexByField["message_regex"], 
+            $exceptionByField["error_empty"], 
+            $exceptionByField["content_message_exception"]
+        )["message"];
 
-        $homepageFormModel = new HomepageFormModel($firstnameResult, $lastnameResult, $emailResult, $subjectResult, $messageResult, null);
+        $homepageFormModel = new HomepageFormModel(
+            $firstnameResult, 
+            $lastnameResult, 
+            $emailResult, 
+            $subjectResult, 
+            $messageResult, 
+            null
+        );
 
-        $insertDataDb = $this->homepageFormRepository->insertDataInDatabase($homepageFormModel);
+        $insertDataDb = $this->homepageFormRepository->insertDataInDatabase(
+            $homepageFormModel
+        );
         if ($insertDataDb->getFormDataSaved()) {
-            $getDataFromDb = $this->homepageFormRepository->getDataFromDatabase($insertDataDb);
-            return array_key_exists("data_retrieved", $getDataFromDb) && $getDataFromDb["data_retrieved"] == 1 ? $this->homepageFormRepository->sendMailAdmin($getDataFromDb) : null;
+            $getDataFromDb = $this->homepageFormRepository->getDataFromDatabase(
+                $insertDataDb
+            );
+            return array_key_exists("data_retrieved", $getDataFromDb) 
+            && $getDataFromDb["data_retrieved"] == 1 
+            ? $this->homepageFormRepository->sendMailAdmin($getDataFromDb) : null;
         }
     }
 }

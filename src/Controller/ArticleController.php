@@ -35,9 +35,10 @@ class ArticleController
     /**
      * Summary of __construct
      *
-     * @param \Repository\ArticleRepository $articleRepository ArticleRepository
+     * @param \Repository\ArticleRepository $articleRepository 
      */
-    public function __construct(private readonly ArticleRepository $articleRepository
+    public function __construct(
+        private readonly ArticleRepository $articleRepository
     ) {
     }
     
@@ -55,7 +56,7 @@ class ArticleController
     /**
      * Summary of handleOneArticle
      *
-     * @param int $id idArticle
+     * @param int $id 
      * 
      * @return array|null
      */
@@ -72,7 +73,7 @@ class ArticleController
     /**
      * Summary of handleFileField
      *
-     * @param array $fileArticle img
+     * @param array $fileArticle 
      * 
      * @return array|string
      */
@@ -103,11 +104,17 @@ class ArticleController
                 ;$dirImagesUpdateArticle"
                 ];
             } else {
-                throw $validationException->setTypeAndValueOfException("file_exception", $validationException::FILE_MESSAGE_ERROR_TYPE_FILE);
+                throw $validationException->setTypeAndValueOfException(
+                    "file_exception", 
+                    $validationException::FILE_MESSAGE_ERROR_TYPE_FILE
+                );
             }
 
         default:
-            throw $validationException->setTypeAndValueOfException("file_exception", $validationException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED);
+            throw $validationException->setTypeAndValueOfException(
+                "file_exception", 
+                $validationException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED
+            );
         }
     }
 
@@ -115,13 +122,13 @@ class ArticleController
     /**
      * Summary of handleTextField
      *
-     * @param string                          $keyArray             key of value being processed
-     * @param string                          $value                value being processed
-     * @param string                          $keyException         key of the exception thrown
-     * @param \Exceptions\ValidationException $exception            exception thrown of vlaue being processed
-     * @param string                          $regex                regex
-     * @param string                          $emptyException       exception for empty field
-     * @param string                          $wrongFormatException exception for wrong value
+     * @param string                          $keyArray             
+     * @param string                          $value                
+     * @param string                          $keyException         
+     * @param \Exceptions\ValidationException $exception            
+     * @param string                          $regex                
+     * @param string                          $emptyException       
+     * @param string                          $wrongFormatException 
      * 
      * @return string|array
      */
@@ -136,9 +143,15 @@ class ArticleController
     ): string|array {
         switch (true) {
         case empty($value):
-            throw $exception->setTypeAndValueOfException($keyException, $emptyException);
+            throw $exception->setTypeAndValueOfException(
+                $keyException, 
+                $emptyException
+            );
         case !preg_match($regex, $value):
-            throw $exception->setTypeAndValueOfException($keyException, $wrongFormatException);
+            throw $exception->setTypeAndValueOfException(
+                $keyException, 
+                $wrongFormatException
+            );
         default:
             return [$keyArray => $value];
         }
@@ -147,13 +160,13 @@ class ArticleController
     /**
      * Summary of handleCreateArticleValidator
      *
-     * @param string $title       of article
-     * @param array  $fileArticle article
-     * @param string $shortPhrase of article
-     * @param string $content     of article
-     * @param string $tags        of article
-     * @param array  $sessionData session data
-     * @param string $idCookie    id of actual cookie
+     * @param string $title       
+     * @param array  $fileArticle 
+     * @param string $shortPhrase 
+     * @param string $content     
+     * @param string $tags        
+     * @param array  $sessionData 
+     * @param string $idCookie    
      * 
      * @return ArticleModel
      */
@@ -254,9 +267,20 @@ class ArticleController
 
 
 
-        $articleModel = new ArticleModel($fileField, $titleField, $shortPhraseField, $contentField, $tagsField, null);
+        $articleModel = new ArticleModel(
+            $fileField, 
+            $titleField, 
+            $shortPhraseField, 
+            $contentField, 
+            $tagsField, 
+            null
+        );
 
-        $articleResult = $this->articleRepository->createArticle($articleModel, $sessionData, $idCookie);
+        $articleResult = $this->articleRepository->createArticle(
+            $articleModel, 
+            $sessionData, 
+            $idCookie
+        );
 
         if ($articleResult) {
             return $articleResult;
@@ -268,21 +292,28 @@ class ArticleController
     /**
      * Summary of handleUpdateTitleValidation
      *
-     * @param string $title of article
+     * @param string $title 
      * 
      * @return string|array
      */
-    public function handleUpdateTitleValidation(string $title): string|array
-    {
+    public function handleUpdateTitleValidation(
+        string $title
+    ): string|array {
         $expectedWord = ucfirst($title);
         $validationException = new ValidationException();
 
 
         switch (true) {
         case empty($title):
-            throw $validationException->setTypeAndValueOfException("title_exception", $validationException::ERROR_EMPTY);
+            throw $validationException->setTypeAndValueOfException(
+                "title_exception", 
+                $validationException::ERROR_EMPTY
+            );
         case $title != $expectedWord || strlen($title) > 255:
-            throw $validationException->setTypeAndValueOfException("title_exception", $validationException::TITLE_MESSAGE_ERROR_MAX_255_CHARS);
+            throw $validationException->setTypeAndValueOfException(
+                "title_exception", 
+                $validationException::TITLE_MESSAGE_ERROR_MAX_255_CHARS
+            );
         default:
             return ["title" => $title];
         }
@@ -292,12 +323,13 @@ class ArticleController
     /**
      * Summary of handleUpdateShortPhraseValidation
      *
-     * @param string $shortPhrase of article
+     * @param string $shortPhrase 
      * 
      * @return string|array
      */
-    public function handleUpdateShortPhraseValidation(string $shortPhrase): string|array
-    {
+    public function handleUpdateShortPhraseValidation(
+        string $shortPhrase
+    ): string|array {
 
         $expectedWord = ucfirst($shortPhrase);
         $validationException = new ValidationException();
@@ -305,11 +337,20 @@ class ArticleController
 
         switch (true) {
         case empty($shortPhrase):
-            throw $validationException->setTypeAndValueOfException("short_phrase_exception", $validationException::ERROR_EMPTY);
+            throw $validationException->setTypeAndValueOfException(
+                "short_phrase_exception", 
+                $validationException::ERROR_EMPTY
+            );
         case $shortPhrase != $expectedWord:
-            throw $validationException->setTypeAndValueOfException("short_phrase_exception", $validationException::SHORT_PHRASE_MESSAGE_ERROR_MAX_255_CHARS);
+            throw $validationException->setTypeAndValueOfException(
+                "short_phrase_exception", 
+                $validationException::SHORT_PHRASE_MESSAGE_ERROR_MAX_255_CHARS
+            );
         case strlen($shortPhrase) > 255:
-            throw $validationException->setTypeAndValueOfException("short_phrase_exception", $validationException::SHORT_PHRASE_MESSAGE_ERROR_MAX_255_CHARS);
+            throw $validationException->setTypeAndValueOfException(
+                "short_phrase_exception", 
+                $validationException::SHORT_PHRASE_MESSAGE_ERROR_MAX_255_CHARS
+            );
         default:
             return ["short_phrase" => $shortPhrase];
         }
@@ -318,7 +359,7 @@ class ArticleController
     /**
      * Summary of handleUpdateContentValidation
      *
-     * @param string $content of article
+     * @param string $content 
      * 
      * @return string|array
      */
@@ -329,11 +370,20 @@ class ArticleController
 
         switch (true) {
         case empty($content):
-            throw $validationException->setTypeAndValueOfException("content_article_exception", $validationException::ERROR_EMPTY);
+            throw $validationException->setTypeAndValueOfException(
+                "content_article_exception", 
+                $validationException::ERROR_EMPTY
+            );
         case $content != $expectedWord:
-            throw $validationException->setTypeAndValueOfException("content_article_exception", $validationException::CONTENT_ARTICLE_MESSAGE_ERROR_MAX_5000_CHARS);
+            throw $validationException->setTypeAndValueOfException(
+                "content_article_exception", 
+                $validationException::CONTENT_ARTICLE_MESSAGE_ERROR_MAX_5000_CHARS
+            );
         case strlen($content) > 5000:
-            throw $validationException->setTypeAndValueOfException("content_article_exception", $validationException::CONTENT_ARTICLE_MESSAGE_ERROR_MAX_5000_CHARS);
+            throw $validationException->setTypeAndValueOfException(
+                "content_article_exception", 
+                $validationException::CONTENT_ARTICLE_MESSAGE_ERROR_MAX_5000_CHARS
+            );
         default:
             return ["content" => $content];
         }
@@ -344,18 +394,23 @@ class ArticleController
     /**
      * Summary of handleUpdateValidationOnNumberOfTagsAuthorized
      *
-     * @param string $value                  of article
-     * @param int    $numberOfTagsAuthorized of article
+     * @param string $value                  
+     * @param int    $numberOfTagsAuthorized 
      * 
      * @return string|array
      */
-    public function handleUpdateValidationOnNumberOfTagsAuthorized(string $value, int $numberOfTagsAuthorized): string|array
-    {
+    public function handleUpdateValidationOnNumberOfTagsAuthorized(
+        string $value, 
+        int $numberOfTagsAuthorized
+    ): string|array {
         $validationException = new ValidationException();
 
         $arr = explode(" ", $value);
         if (in_array("", $arr)) {
-            throw $validationException->setTypeAndValueOfException("tags_exception", $validationException::TAGS_MESSAGE_ERROR_MAX_3_TAGS);
+            throw $validationException->setTypeAndValueOfException(
+                "tags_exception", 
+                $validationException::TAGS_MESSAGE_ERROR_MAX_3_TAGS
+            );
         }
 
         $counter = 0;
@@ -372,19 +427,25 @@ class ArticleController
             }
         }
 
-        return $counter === $numberOfTagsAuthorized ? ["tags" => $value] : throw $validationException->setTypeAndValueOfException("tags_exception", $validationException::TAGS_MESSAGE_ERROR_MAX_3_TAGS);
+        return $counter === $numberOfTagsAuthorized ?
+        ["tags" => $value] : throw $validationException->setTypeAndValueOfException(
+            "tags_exception", 
+            $validationException::TAGS_MESSAGE_ERROR_MAX_3_TAGS
+        );
     }
 
     /**
      * Summary of handleUpdateValidationOnFilePath
      *
-     * @param array  $filePathFromForm         of article
-     * @param string $originalPathFromDatabase of article
+     * @param array  $filePathFromForm         
+     * @param string $originalPathFromDatabase 
      * 
      * @return string|array|null
      */
-    public function handleUpdateValidationOnFilePath(array $filePathFromForm, string $originalPathFromDatabase): string|array|null
-    {
+    public function handleUpdateValidationOnFilePath(
+        array $filePathFromForm, 
+        string $originalPathFromDatabase
+    ): string|array|null {
         $validationException = new ValidationException();
 
         switch (true) {
@@ -396,18 +457,32 @@ class ArticleController
                 $filenameUpdateArticle = $filePathFromForm["name"];
                 $dirImagesUpdateArticle = "../public/assets/images/";
                 $filenameTmpUpdateArticle = $filePathFromForm['tmp_name'];
-                $extensionOfTheUploadedFile = explode('.', $filenameUpdateArticle);
+                $extFile = explode('.', $filenameUpdateArticle);
                 $authorizedExtensionsArticle = array("jpg", "jpeg", "png", "webp");
 
-                if (in_array($extensionOfTheUploadedFile[1], $authorizedExtensionsArticle)) {
-                    $bytesToStr = str_replace("/", "", base64_encode(random_bytes(9)));
-                    $filenameAndExtensionUpdateArticle = explode('.', $filenameUpdateArticle);
-                    $filenameGeneratedUpdateArticle = $bytesToStr . "." . $filenameAndExtensionUpdateArticle[1];
+                if (in_array($extFile[1], $authorizedExtensionsArticle)) {
+                    $bytesToStr = str_replace(
+                        "/", 
+                        "", 
+                        base64_encode(random_bytes(9))
+                    );
+                    $fileExtension = explode(
+                        '.', 
+                        $filenameUpdateArticle
+                    );
+                    $filenameUpdateArticle = $bytesToStr . "." . $fileExtension[1];
 
-                    return ["file" => "$filenameGeneratedUpdateArticle;$filenameTmpUpdateArticle;$dirImagesUpdateArticle"];
+                    return ["file" =>
+                    "$filenameUpdateArticle;
+                    $filenameTmpUpdateArticle;
+                    $dirImagesUpdateArticle"
+                    ];
                 } else {
 
-                    throw $validationException->setTypeAndValueOfException("file_exception", $validationException::FILE_MESSAGE_ERROR_TYPE_FILE);
+                    throw $validationException->setTypeAndValueOfException(
+                        "file_exception", 
+                        $validationException::FILE_MESSAGE_ERROR_TYPE_FILE
+                    );
                 }
             }
             return null;
@@ -416,27 +491,44 @@ class ArticleController
     /**
      * Summary of handleUpdateArticleValidator
      *
-     * @param string $title                       of article
-     * @param array  $fileArticle                 of article
-     * @param string $hiddenInputFileOriginalPath of article
-     * @param string $shortPhrase                 of article
-     * @param string $content                     of article
-     * @param string $tags                        of article
-     * @param array  $sessionData                 sessiondata
-     * @param int    $idArticle                   of article
-     * @param string $idCookie                    phpsessid
+     * @param string $title                       
+     * @param array  $fileArticle                 
+     * @param string $hiddenInputFileOriginalPath 
+     * @param string $shortPhrase                 
+     * @param string $content                     
+     * @param string $tags                        
+     * @param array  $sessionData                 
+     * @param int    $idArticle                   
+     * @param string $idCookie                    
      * 
      * @return array|null
      */
-    public function handleUpdateArticleValidator(string $title, array $fileArticle, string $hiddenInputFileOriginalPath, string $shortPhrase, string $content, string $tags, array $sessionData, int $idArticle, string $idCookie): ?array
-    {
+    public function handleUpdateArticleValidator(
+        string $title, 
+        array $fileArticle, 
+        string $hiddenInputFileOriginalPath, 
+        string $shortPhrase, 
+        string $content, 
+        string $tags, 
+        array $sessionData, 
+        int $idArticle, 
+        string $idCookie
+    ): ?array {
 
         $numberOfTagsAuthorized = 3;
         $titleResult = $this->handleUpdateTitleValidation($title)["title"];
-        $shortPhraseResult = $this->handleUpdateShortPhraseValidation($shortPhrase)["short_phrase"];
+        $shortPhraseResult = $this->handleUpdateShortPhraseValidation(
+            $shortPhrase
+        )["short_phrase"];
         $contentResult = $this->handleUpdateContentValidation($content)["content"];
-        $fileResult =  $this->handleUpdateValidationOnFilePath($fileArticle, $hiddenInputFileOriginalPath);
-        $tagsResult = $this->handleUpdateValidationOnNumberOfTagsAuthorized($tags, $numberOfTagsAuthorized)["tags"];
+        $fileResult =  $this->handleUpdateValidationOnFilePath(
+            $fileArticle, 
+            $hiddenInputFileOriginalPath
+        );
+        $tagsResult = $this->handleUpdateValidationOnNumberOfTagsAuthorized(
+            $tags, 
+            $numberOfTagsAuthorized
+        )["tags"];
 
         $fields = [
         "title" => $titleResult,
@@ -447,21 +539,32 @@ class ArticleController
         "id_article" => $idArticle
         ];
 
-        return $this->articleRepository->updateArticle($fields, $sessionData, $idCookie);
+        return $this->articleRepository->updateArticle(
+            $fields, 
+            $sessionData, 
+            $idCookie
+        );
     }
 
 
     /**
      * Summary of handleDeleteArticle
      *
-     * @param int    $idArticle   of article
-     * @param array  $sessionData sessiondata
-     * @param string $idCookie    phpsessid
+     * @param int    $idArticle   
+     * @param array  $sessionData 
+     * @param string $idCookie    
      * 
      * @return array|null
      */
-    public function handleDeleteArticle(int $idArticle, array $sessionData, string $idCookie): ?array
-    {
-        return $this->articleRepository->deleteArticle($idArticle, $sessionData, $idCookie);
+    public function handleDeleteArticle(
+        int $idArticle, 
+        array $sessionData, 
+        string $idCookie
+    ): ?array {
+        return $this->articleRepository->deleteArticle(
+            $idArticle, 
+            $sessionData, 
+            $idCookie
+        );
     }
 }

@@ -56,7 +56,7 @@ class RequestObject
      */
     public function post() :?array
     {
-        if (isset($_POST) && !empty($_POST)) {
+        if (!empty($_POST)) {
             return $_POST;
         }
     }
@@ -67,7 +67,7 @@ class RequestObject
      */
     public function get():?array
     {
-        if (isset($_GET) && !empty($_GET)) {
+        if (!empty($_GET)) {
             return $_GET;
         }
     }
@@ -80,7 +80,7 @@ class RequestObject
      */
     public function files():?array
     {
-        if (isset($_FILES) && !empty($_FILES)) {
+        if (!empty($_FILES)) {
             return $_FILES;
         }
     }

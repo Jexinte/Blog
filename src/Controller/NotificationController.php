@@ -34,16 +34,17 @@ class NotificationController
     /**
      * Summary of __construct
      *
-     * @param \Repository\NotificationRepository $notificationRepository notificationrepository
+     * @param \Repository\NotificationRepository $notificationRepository 
      */
-    public function __construct(private readonly NotificationRepository $notificationRepository)
-    {
+    public function __construct(
+        private readonly NotificationRepository $notificationRepository
+    ) {
     }
 
     /**
      * Summary of handleCreateNotification
      *
-     * @param array $validation of comment
+     * @param array $validation 
      * 
      * @return void
      */
@@ -52,12 +53,22 @@ class NotificationController
 
         switch (true) {
         case $validation["status"] == 1:
-            $notificationModel = new NotificationModel($validation["id_article"], $validation["id_user"], $validation["status"], $validation["feedback"]);
+            $notificationModel = new NotificationModel(
+                $validation["id_article"], 
+                $validation["id_user"], 
+                $validation["status"], 
+                $validation["feedback"]
+            );
 
             $this->notificationRepository->createNotification($notificationModel);
             break;
         default:
-            $notificationModel = new NotificationModel($validation["id_article"], $validation["id_user"], $validation["status"], $validation["feedback"]);
+            $notificationModel = new NotificationModel(
+                $validation["id_article"], 
+                $validation["id_user"], 
+                $validation["status"], 
+                $validation["feedback"]
+            );
 
             $this->notificationRepository->createNotification($notificationModel);
             break;
@@ -67,7 +78,7 @@ class NotificationController
     /**
      * Summary of handleGetAllUserNotifications
      *
-     * @param array $validation of comment
+     * @param array $validation 
      * 
      * @return array|null
      */
@@ -79,7 +90,7 @@ class NotificationController
     /**
      * Summary of handleDeleteNotification
      *
-     * @param int $idNotification of notification
+     * @param int $idNotification 
      * 
      * @return null
      */

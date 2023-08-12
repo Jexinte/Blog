@@ -1,4 +1,15 @@
 <?php
+/**
+ * Handle Comment Validation
+ * 
+ * PHP version 8
+ *
+ * @category Public
+ * @package  Indexphp
+ * @author   Yokke <mdembelepro@gmail.com>
+ * @license  ISC License
+ * @link     https://github.com/Jexinte/P5---Blog-Professionnel---Openclassrooms
+ */
 
 require_once __DIR__ . "../../vendor/autoload.php";
 
@@ -25,7 +36,7 @@ use Repository\UserRepository;
 
 use Exceptions\ValidationException;
 
-use Utils\RequestObject;
+use Util\RequestObject;
 
 $requestObject = new RequestObject();
 $action = "";

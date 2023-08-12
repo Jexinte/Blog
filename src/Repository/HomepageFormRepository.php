@@ -42,8 +42,12 @@ class HomepageFormRepository
      * @param string                     $password 
      * @param string                     $smtp_address 
      */
-    public function __construct(private readonly DatabaseConnection $connector, private readonly string $username, private readonly string $password, private readonly string $smtp_address)
-    {
+    public function __construct(
+        private readonly DatabaseConnection $connector, 
+        private readonly string $username, 
+        private readonly string $password, 
+        private readonly string $smtp_address
+    ) {
     }
 
     /**
@@ -53,8 +57,9 @@ class HomepageFormRepository
      * 
      * @return HomepageFormModel
      */
-    public function insertDataInDatabase(HomepageFormModel $homepageFormModel): ?HomepageFormModel
-    {
+    public function insertDataInDatabase(
+        HomepageFormModel $homepageFormModel
+    ): ?HomepageFormModel {
 
         $dbConnect = $this->connector->connect();
         $firstnameFromForm = $homepageFormModel->getFirstname();
@@ -62,7 +67,10 @@ class HomepageFormRepository
         $emailFromForm = $homepageFormModel->getEmail();
         $subjectFromForm = $homepageFormModel->getSubject();
         $messageFromForm = $homepageFormModel->getMessage();
-        $statementToSaveMessageFromFrom = $dbConnect->prepare("INSERT INTO form_message(firstname,lastname,email,subject,message) VALUES(?,?,?,?,?)");
+        $statementToSaveMessageFromFrom = $dbConnect->prepare(
+            "INSERT INTO form_message(firstname,lastname,email,subject,message) 
+            VALUES(?,?,?,?,?)"
+        );
         $values = [
         $firstnameFromForm,
         $lastnameFromForm,
@@ -88,7 +96,11 @@ class HomepageFormRepository
         $dbConnect = $this->connector->connect();
 
         if ($dataFromModel->getFormDataSaved()) {
-            $statementToFormMessageAndDataAssociatedWith = $dbConnect->prepare("SELECT * FROM form_message ORDER BY id DESC LIMIT 1");
+            $statementToFormMessageAndDataAssociatedWith = $dbConnect->prepare(
+                "SELECT * FROM form_message 
+                ORDER BY id 
+                DESC LIMIT 1"
+            );
             $statementToFormMessageAndDataAssociatedWith->execute();
             $resReq = $statementToFormMessageAndDataAssociatedWith->fetch();
             return [
@@ -121,8 +133,8 @@ class HomepageFormRepository
             $mail->isSMTP();
             $mail->Host = $gmail["smtp_address"];
             $mail->SMTPAuth = true;
-            $mail->Username = $username["username"]; // Name of the owner application password
-            $mail->Password = $password["password"]; // Gmail Password Application
+            $mail->Username = $username["username"]; 
+            $mail->Password = $password["password"]; 
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
             $mail->SMTPOptions = array(
@@ -133,16 +145,26 @@ class HomepageFormRepository
             )
             );
 
-            $mail->setFrom($username["username"], 'Message du formulaire de contact');
+            $mail->setFrom(
+                $username["username"], 
+                'Message du formulaire de contact'
+            );
             $mail->addAddress($username["username"]);
-            $mail->addReplyTo($data["user"]["email"], $data["user"]["firstname"]);
+            $mail->addReplyTo(
+                $data["user"]["email"],
+                $data["user"]["firstname"]
+            );
             $mail->isHTML();
 
             $mail->Subject = $data["user"]["subject"];
 
 
-            $mail->Body = "Cher administrateur, <br><br>
-      Un message a été envoyé depuis le formulaire de contact de la part de <strong>{$data["user"]["firstname"]} {$data["user"]["lastname"]}</strong></strong> :  <br><br>
+            $mail->Body = "
+            Cher administrateur, <br><br>
+      Un message a été envoyé 
+      depuis le formulaire de contact 
+      de la part de <strong>{$data["user"]["firstname"]} 
+      {$data["user"]["lastname"]}</strong></strong> :  <br><br>
       {$data["user"]["message"]}
       Cordialement,<br><br>
       L'équipe du site";
@@ -151,6 +173,9 @@ class HomepageFormRepository
             return ["message_sent" => "Votre message a bien été envoyé !"];
         }
 
-        throw $validationException->setTypeAndValueOfException("message_not_sent_exception", $validationException::MESSAGE_SENT_FAILED);
+        throw $validationException->setTypeAndValueOfException(
+            "message_not_sent_exception", 
+            $validationException::MESSAGE_SENT_FAILED
+        );
     }
 }

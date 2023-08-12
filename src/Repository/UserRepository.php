@@ -60,7 +60,12 @@ class UserRepository
         $password = $userModel->getPassword();
         $userType = $userModel->getUserType();
 
-        $statementToCheckIfUserAlreadyExist = $dbConnect->prepare('SELECT username,email FROM user WHERE username = :username OR  email = :email');
+        $statementToCheckIfUserAlreadyExist = $dbConnect->prepare(
+            'SELECT username,email
+             FROM user 
+             WHERE username = :username OR  
+             email = :email'
+        );
         $statementToCheckIfUserAlreadyExist->bindParam("username", $username);
         $statementToCheckIfUserAlreadyExist->bindParam("email", $email);
         $statementToCheckIfUserAlreadyExist->execute();
@@ -72,8 +77,15 @@ class UserRepository
             $fileSettings["file_name"] = $fileRequirements[0];
             $fileSettings["tmp_name"] = $fileRequirements[1];
             $fileSettings["directory"] = $fileRequirements[2];
-            $filePath = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/" . $fileSettings["file_name"];
-            $statementToCreateUser = $dbConnect->prepare("INSERT INTO user (username,profileImage,email,password,type) VALUES(?,?,?,?,?)");
+            $filePath = "
+            http://localhost/P5_Créez votre premier blog en PHP
+             - Dembele Mamadou/public/assets/images/" 
+             . $fileSettings["file_name"];
+            $statementToCreateUser = $dbConnect->prepare(
+                "INSERT INTO user 
+                (username,profileImage,email,password,type) 
+                VALUES(?,?,?,?,?)"
+            );
             $values = [
             $username,
             $filePath,
@@ -82,7 +94,11 @@ class UserRepository
             $userType->value
             ];
             $statementToCreateUser->execute($values);
-            move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
+            move_uploaded_file(
+                $fileSettings["tmp_name"],
+                $fileSettings["directory"] . "/" . 
+                 $fileSettings["file_name"]
+            );
             $userModel->isSignUpSuccessful(true);
             return $userModel;
 
@@ -104,16 +120,27 @@ class UserRepository
      * 
      * @return array
      */
-    public function loginUser(string $email, string $password): ?array
-    {
+    public function loginUser(
+        string $email, 
+        string $password
+    ): ?array {
+    
 
         $dbConnect = $this->connector->connect();
-        $statementToCheckUserCredentials = $dbConnect->prepare("SELECT id,username,email,type,password FROM user WHERE email = :email");
-        $statementToCheckUserCredentials->bindParam(":email", $email);
+        $statementToCheckUserCredentials = $dbConnect->prepare(
+            "SELECT id,username,email,type,password 
+            FROM user 
+            WHERE email = :email"
+        );
+        $statementToCheckUserCredentials->bindParam(
+            ":email", $email
+        );
         $statementToCheckUserCredentials->execute();
         $user = $statementToCheckUserCredentials->fetch();
 
-        if ($user && $user["type"] == UserType::USER->value || $user && $user["type"] == UserType::ADMIN->value) {
+        if ($user && $user["type"] == UserType::USER->value 
+            || $user && $user["type"] == UserType::ADMIN->value
+        ) {
             $checkPassword = password_verify($password, $user['password']);
             $username = $user["username"];
             $typeUser = $user["type"];
@@ -122,7 +149,11 @@ class UserRepository
                 return ["password_error" => 1];
             }
 
-            return ["username" => $username, "type_user" => $typeUser, "id_user" => $userId];
+            return [
+                "username" => $username, 
+                "type_user" => $typeUser, "
+                id_user" => $userId
+            ];
         } else {
             return ["email_error" => 1];
         }
@@ -143,7 +174,12 @@ class UserRepository
     public function logout(array $sessionData): ?array
     {
         $dbConnect = $this->connector->connect();
-        $statementSession = $dbConnect->prepare("SELECT id,id_session,username,user_type FROM session WHERE id_session = :id_session AND username = :username AND user_type = :type_user");
+        $statementSession = $dbConnect->prepare(
+            "SELECT id,id_session,username,user_type 
+            FROM session 
+            WHERE id_session = :id_session AND username = :username 
+            AND user_type = :type_user"
+        );
         $statementSession->bindParam("username", $sessionData["username"]);
         $statementSession->bindParam("type_user", $sessionData["type_user"]);
         $statementSession->bindParam("id_session", $sessionData["session_id"]);
@@ -155,7 +191,11 @@ class UserRepository
         if ($result) {
             $idSessionInDb = $result["id"];
 
-            $deleteSession = $dbConnect->prepare("DELETE FROM session WHERE id = :id");
+            $deleteSession = $dbConnect->prepare(
+                "DELETE FROM 
+                session 
+                WHERE id = :id"
+            );
             $deleteSession->bindParam("id", $idSessionInDb);
             $deleteSession->execute();
         }
@@ -175,9 +215,15 @@ class UserRepository
 
 
 
-        $statementGetAllNotifications = $dbConnect->prepare("SELECT * FROM user_notification WHERE idUser = :idUserOfSession");
+        $statementGetAllNotifications = $dbConnect->prepare(
+            "SELECT * FROM user_notification 
+            WHERE idUser = :idUserOfSession"
+        );
 
-        $statementGetAllNotifications->bindParam("idUserOfSession", $sessionData["id_user"]);
+        $statementGetAllNotifications->bindParam(
+            "idUserOfSession", 
+            $sessionData["id_user"]
+        );
         $statementGetAllNotifications->execute();
 
         return $statementGetAllNotifications->fetchAll();
@@ -190,10 +236,14 @@ class UserRepository
      * 
      * @return array<int>
      */
-    public function deleteNotification(int $idNotification): ?array
-    {
+    public function deleteNotification(
+        int $idNotification
+    ): ?array {
         $dbConnect = $this->connector->connect();
-        $statementDeleteNotification = $dbConnect->prepare("DELETE FROM user_notification WHERE id = :idNotification");
+        $statementDeleteNotification = $dbConnect->prepare(
+            "DELETE FROM user_notification 
+            WHERE id = :idNotification"
+        );
         $statementDeleteNotification->bindParam("idNotification", $idNotification);
         $statementDeleteNotification->execute();
         return ["notification_delete" => 1];

@@ -35,7 +35,7 @@ class SessionController
     /**
      * Summary of __construct
      *
-     * @param \Manager\Session $session sessionmanager
+     * @param \Manager\Session $session 
      */
     public function __construct(private Session $session)
     {
@@ -44,7 +44,7 @@ class SessionController
     /**
      * Summary of initializeLoginDataAndSessionId
      *
-     * @param array $loginData from user
+     * @param array $loginData 
      * 
      * @return void
      */
@@ -60,7 +60,7 @@ class SessionController
     /**
      * Summary of initializeIdArticle
      *
-     * @param int $articleId of article
+     * @param int $articleId 
      * 
      * @return void
      */
@@ -74,7 +74,7 @@ class SessionController
     /**
      * Summary of handleGetSessionData
      *
-     * @return array of sessiondata
+     * @return array 
      */
     public function handleGetSessionData():array
     {
