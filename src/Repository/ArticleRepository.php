@@ -390,7 +390,6 @@ class ArticleRepository
                     $idUpdateArticle
                 );
                 $statementWithUploadedFile->execute();
-                var_dump($fileSettings);
                 move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
                 return ["article_updated" => 1];
 
