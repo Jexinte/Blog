@@ -84,7 +84,7 @@ class ArticleController
         switch (true) {
         case !empty($fileArticle["name"]) && $fileArticle["error"] == UPLOAD_ERR_OK:
             $filenameArticle = $fileArticle["name"];
-            $dirImagesUpdateArticle = "../public/assets/images/";
+            $dirFile = "../public/assets/images/banner_article/";
             $filenameTmpArticle = $fileArticle['tmp_name'];
             $extensionOfTheUploadedFile = explode('.', $filenameArticle);
             $authorizedExtensionsArticle = array("jpg", "jpeg", "png", "webp");
@@ -96,13 +96,9 @@ class ArticleController
             ) {
                 $bytesToStr = str_replace("/", "", base64_encode(random_bytes(9)));
                 $fileExt = explode('.', $filenameArticle);
-                $filenameGeneratedArticle = $bytesToStr . "." . $fileExt[1];
+                $fileArticle = $bytesToStr . "." . $fileExt[1];
 
-                return ["file" => 
-                "$filenameGeneratedArticle
-                ;$filenameTmpArticle
-                ;$dirImagesUpdateArticle"
-                ];
+                return ["file" => "$fileArticle;$filenameTmpArticle;$dirFile"];
             } else {
                 throw $validationException->setTypeAndValueOfException(
                     "file_exception", 
@@ -231,7 +227,7 @@ class ArticleController
         )["title"];
 
         $fileField = $this->handleFileField($fileArticle)["file"];
-
+            
         $shortPhraseField = $this->handleTextField(
             $keyArrayWhenAFieldIsTreated
             ["short_phrase_field"], 
@@ -455,7 +451,7 @@ class ArticleController
         default:
             if ($filePathFromForm["error"] == UPLOAD_ERR_OK) {
                 $filenameUpdateArticle = $filePathFromForm["name"];
-                $dirImagesUpdateArticle = "../public/assets/images/";
+                $dirFile = "../public/assets/images/banner_article/";
                 $filenameTmpUpdateArticle = $filePathFromForm['tmp_name'];
                 $extFile = explode('.', $filenameUpdateArticle);
                 $authorizedExtensionsArticle = array("jpg", "jpeg", "png", "webp");
@@ -473,9 +469,7 @@ class ArticleController
                     $filenameUpdateArticle = $bytesToStr . "." . $fileExtension[1];
 
                     return ["file" =>
-                    "$filenameUpdateArticle;
-                    $filenameTmpUpdateArticle;
-                    $dirImagesUpdateArticle"
+                    "$filenameUpdateArticle;$filenameTmpUpdateArticle;$dirFile"
                     ];
                 } else {
 

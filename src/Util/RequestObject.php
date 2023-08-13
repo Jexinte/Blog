@@ -37,6 +37,7 @@ class RequestObject
         if (isset($_GET["action"])) {
             return true;
         }
+        return null;
     }
     /**
      * Summary of selectionSet
@@ -48,6 +49,7 @@ class RequestObject
         if (isset($_GET["selection"])) {
             return true;
         }
+        return null;
     }
     /**
      * Summary of post

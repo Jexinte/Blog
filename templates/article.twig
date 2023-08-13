@@ -19,22 +19,22 @@
 
 	<div class="container-fluid" id="article">
 	
-			<img class="article-banner" src="{{article.image is defined ? article.image : default.image}}" alt="Climbing to the top">
+			<img class="article-banner" src="{{article.image is defined ? article.image : default.data.image}}" alt="Climbing to the top">
 			<div class="row">
 				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 article">
 					<article>
 						<div class="author-box">
-							<img class="author-img" src="{{article.author_image is defined ? article.author_image : default.author_image}}" alt="avatar author1">
-							<h2 class="text-center author-name">{{article.author is defined ? article.author : default.author}}</h2>
+							<img class="author-img" src="{{article.author_image is defined ? article.author_image : default.data.author_image}}" alt="avatar author1">
+							<h2 class="text-center author-name">{{article.author is defined ? article.author : default.data.author}}</h2>
 						</div>
 
-						<h1 class="article-title" id="h1">{{article.title is defined ? article.title : default.title}}</h1>
-						<p class="article-short-phrase">{{article.short_phrase is defined ? article.short_phrase : default.short_phrase}}</p>
-						<p class="article-content">{{article.content is defined ? article.content|nl2br : default.content }}</p>
+						<h1 class="article-title" id="h1">{{article.title is defined ? article.title : default.data.title}}</h1>
+						<p class="article-short-phrase">{{article.short_phrase is defined ? article.short_phrase : default.data.short_phrase}}</p>
+						<p class="article-content">{{article.content is defined ? article.content|nl2br : default.data.content }}</p>
 						<ul class="tags">
-							<li class="tag">{{article.tags is defined ? article.tags : default.tags}}</li>
+							<li class="tag">{{article.tags is defined ? article.tags : default.data.tags}}</li>
 						</ul>
-						<p class="article-date">{{article.date_of_publication is defined ? article.date_of_publication : default.date_of_publication}}</p>
+						<p class="article-date">{{article.date_of_publication is defined ? article.date_of_publication : default.data.date_of_publication}}</p>
 					</article>
 				
 

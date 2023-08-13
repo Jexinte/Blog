@@ -102,7 +102,6 @@ if ($requestObject->actionSet()) {
 
     $action = $requestObject->get()['action'];
     $defaultValues = [];
-
     $defaultValuesComments = [];
     $labels = [
         "title", "id",
@@ -165,13 +164,13 @@ if ($requestObject->actionSet()) {
                 $requestObject->post()["password"]
             );
 
-
             if (is_array($loginSucceed)
                 && array_key_exists("username", $loginSucceed)
                 && array_key_exists("type_user", $loginSucceed)
+                && array_key_exists("id_user", $loginSucceed)
             ) {
                 header("HTTP/1.1 302");
-                header("Location:?selection=blog");
+                header("Location:?selection=homepage");
                 $sessionController->initializeLoginDataAndSessionId($loginSucceed);
 
             }
@@ -557,7 +556,6 @@ if ($requestObject->actionSet()) {
             header("Location:?action=error&code=404");
         }
         $defaultValue = ["data" => $article];
-
         $template = "article.twig";
 
         $sessionController->initializeIdArticle($defaultValue["data"]["id"]);
@@ -580,6 +578,9 @@ if ($requestObject->actionSet()) {
                 $paramaters = [
                     "count_of_comments" =>
                     $commentAlreadySentByUser["user_already_commented"],
+                "default" => $defaultValue,
+                "session" => $session
+
                 ];
             }
         } else {

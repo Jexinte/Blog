@@ -29,13 +29,10 @@
 
 			{% for notification in notifications %}
 				<div class="text-center col-sm-12 col-md-12 col-lg-12 col-xl-12 notifications">
-					{% if notification.status == 1  %}
+					{% if notification.status == 1   %}
 						<a href="?selection=article&amp;id={{notification.idArticle}}" class=" notation">Votre commentaire
 							a été accepté !{{notification.title_article}}
-									<p class="text-center raison">Raison :
-							<br><span id="feedback">{{notification.feedbackAdministrator is not null ? notification.feedbackAdministrator : 'Non communiquée !'}}
-							</span>
-						</p>
+
 							</a>
 					{% else %}
 						<p class=" notation">Votre commentaire

@@ -161,6 +161,8 @@ class ArticleRepository
         return $article;
     }
 
+
+
     /**
      * Summary of createArticle
      *
@@ -214,11 +216,7 @@ class ArticleRepository
             $fileSettings["file_name"] = $fileRequirements[0];
             $fileSettings["tmp_name"] = $fileRequirements[1];
             $fileSettings["directory"] = $fileRequirements[2];
-            $filePath = "
-            http://localhost/P5_Créez votre premier blog en PHP
-             - Dembele Mamadou/public/assets/images/" 
-             . $fileSettings["file_name"];
-
+            $filePath = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/banner_article/".$fileSettings["file_name"];
             $statementToCreateArticle = $dbConnect->prepare(
                 "INSERT INTO article 
                 (image,title,chapô,content,tags,author,dateCreation) 
@@ -263,7 +261,7 @@ class ArticleRepository
             );
             $statementToCreateArticle->execute();
             move_uploaded_file(
-                $fileSettings["tmp_name"], 
+                $fileSettings["tmp_name"],
                 $fileSettings["directory"] . "/" . 
                 $fileSettings["file_name"]
             );
@@ -323,13 +321,31 @@ class ArticleRepository
             $dateOfTheDay = date('Y-m-d');
             switch (true) {
             case is_array($fileUpdateArticle):
+                $statementGetFilename = $dbConnect->prepare(
+                    "SELECT id,image
+                     FROM article 
+                     WHERE id = :idArticle"
+                );
+                $statementGetFilename->bindParam(
+                    "idArticle",
+                    $idUpdateArticle
+                );
+                $statementGetFilename->execute();
+                $filenameFromRequest = $statementGetFilename->fetch();
+                if (array_key_exists(
+                    "image",
+                    $filenameFromRequest
+                )
+                ) {
+                    $result = str_replace("http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou", "..", $filenameFromRequest);
+                    unlink($result["image"]);
+                }
+
                 $fileRequirements = explode(';', implode(';', $fileUpdateArticle));
                 $fileSettings["file_name"] = $fileRequirements[0];
                 $fileSettings["tmp_name"] = $fileRequirements[1];
                 $fileSettings["directory"] = $fileRequirements[2];
-                $filePath = "http://localhost/P5_Créez votre premier blog en PHP 
-                - Dembele Mamadou/public/assets/images/" 
-                . $fileSettings["file_name"];
+                $filePath = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/banner_article/". $fileSettings["file_name"];
                 $statementWithUploadedFile = $dbConnect->prepare(
                     "UPDATE article 
                     SET image = :filePath,
@@ -374,11 +390,8 @@ class ArticleRepository
                     $idUpdateArticle
                 );
                 $statementWithUploadedFile->execute();
-                move_uploaded_file(
-                    $fileSettings["tmp_name"], 
-                    $fileSettings["directory"] . "/" . 
-                    $fileSettings["file_name"]
-                );
+                var_dump($fileSettings);
+                move_uploaded_file($fileSettings["tmp_name"], $fileSettings["directory"] . "/" . $fileSettings["file_name"]);
                 return ["article_updated" => 1];
 
             case !is_array($fileUpdateArticle):
@@ -471,7 +484,21 @@ class ArticleRepository
         if ($admin && $idSession == $idCookie 
             && $admin["type"] === UserType::ADMIN->value
         ) {
-
+            $statementGetFilename = $dbConnect->prepare(
+                "SELECT id,image
+                 FROM article 
+                 WHERE id = :idArticle"
+            );
+            $statementGetFilename->bindParam(
+                "idArticle",
+                $idArticle
+            );
+            $statementGetFilename->execute();
+            $filenameFromRequest = $statementGetFilename->fetch();
+            if (array_key_exists("image", $filenameFromRequest)) {
+                $result = str_replace("http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou", "..", $filenameFromRequest);
+                unlink($result["image"]);
+            }
             $statement = $dbConnect->prepare("DELETE FROM article WHERE id = :id");
             $statement->bindParam("id", $idArticle);
             $statement->execute();

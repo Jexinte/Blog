@@ -166,7 +166,7 @@ class HomepageFormRepository
       de la part de <strong>{$data["user"]["firstname"]} 
       {$data["user"]["lastname"]}</strong></strong> :  <br><br>
       {$data["user"]["message"]}
-      Cordialement,<br><br>
+      <br><br>Cordialement,<br><br>
       L'équipe du site";
 
             $mail->send();

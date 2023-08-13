@@ -77,10 +77,7 @@ class UserRepository
             $fileSettings["file_name"] = $fileRequirements[0];
             $fileSettings["tmp_name"] = $fileRequirements[1];
             $fileSettings["directory"] = $fileRequirements[2];
-            $filePath = "
-            http://localhost/P5_Créez votre premier blog en PHP
-             - Dembele Mamadou/public/assets/images/" 
-             . $fileSettings["file_name"];
+            $filePath = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/user_profile/". $fileSettings["file_name"];
             $statementToCreateUser = $dbConnect->prepare(
                 "INSERT INTO user 
                 (username,profileImage,email,password,type) 
@@ -151,8 +148,8 @@ class UserRepository
 
             return [
                 "username" => $username, 
-                "type_user" => $typeUser, "
-                id_user" => $userId
+                "type_user" => $typeUser, 
+                "id_user" => $userId
             ];
         } else {
             return ["email_error" => 1];

@@ -42,7 +42,7 @@ class UserController
     /**
      * Summary of __construct
      *
-     * @param \Repository\userRepository $userRepository userRepository
+     * @param \Repository\userRepository $userRepository 
      */
     public function __construct(private readonly userRepository $userRepository)
     {
@@ -53,7 +53,7 @@ class UserController
     /**
      * Summary of handleFileField
      *
-     * @param array $file imgofuser
+     * @param array $file 
      * 
      * @return array|string
      */
@@ -63,7 +63,7 @@ class UserController
         switch (true) {
         case !empty($file["name"]) && $file["error"] == UPLOAD_ERR_OK:
             $filename = $file["name"];
-            $dirImages = "../public/assets/images/";
+            $dirImages = "../public/assets/images/user_profile";
             $filenameTmp = $file['tmp_name'];
             $extensionOfTheUploaded_file = explode('.', $filename);
             $authorizedExtensions = array("jpg", "jpeg", "png", "webp");
@@ -132,10 +132,10 @@ class UserController
     /**
      * Summary of signUpValidator
      *
-     * @param string $username of user
-     * @param array  $file     of user
-     * @param string $email    of user
-     * @param string $password of user
+     * @param string $username 
+     * @param array  $file     
+     * @param string $email    
+     * @param string $password 
      * 
      * @return UserModel|null
      */
@@ -249,7 +249,7 @@ class UserController
     /**
      * Summary of verifyEmailOnLogin
      *
-     * @param string $email of user
+     * @param string $email 
      * 
      * @return array|string
      */
@@ -276,7 +276,7 @@ class UserController
     /**
      * Summary of verifyPasswordOnLogin
      *
-     * @param string $password of user
+     * @param string $password 
      * 
      * @return array|string
      */
@@ -297,8 +297,8 @@ class UserController
     /**
      * Summary of loginValidator
      *
-     * @param string $email    of user
-     * @param string $password of user
+     * @param string $email    
+     * @param string $password 
      * 
      * @return array|string|null
      */
@@ -341,7 +341,7 @@ class UserController
     /**
      * Summary of handleLogout
      *
-     * @param array $sessionData sessiondata
+     * @param array $sessionData 
      * 
      * @return array|null
      */
@@ -355,7 +355,7 @@ class UserController
     /**
      * Summary of handleNotifications
      *
-     * @param array $sessionData sessiondata
+     * @param array $sessionData 
      * 
      * @return array|null
      */
@@ -367,7 +367,7 @@ class UserController
     /**
      * Summary of handleDeleteNotification
      *
-     * @param int $idNotification of notification
+     * @param int $idNotification 
      * 
      * @return array|null
      */

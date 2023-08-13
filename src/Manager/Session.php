@@ -58,7 +58,6 @@ class Session
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_unset();
             session_destroy();
-            $this->_session = [];
         }
     }
 
@@ -69,7 +68,8 @@ class Session
      */
     public function getIdInCookie():string
     {
-        $this->_cookieId = $_COOKIE["PHPSESSID"];
+        $this->_cookieId = !empty($_COOKIE["PHPSESSID"]) 
+        ? $_COOKIE["PHPSESSID"] : "";
         return $this->_cookieId;
     }
 
@@ -77,7 +77,7 @@ class Session
     /**
      * Summary of initializeKeyAndValue
      *
-     * @param string          $key   of data
+     * @param string          $key   
      * @param string|null|int $value 
      * 
      * @return void
