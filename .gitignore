@@ -3,7 +3,7 @@ config/config.json
 .idea
 vendor
 uploads
-stmp_credentials.json
+smtp_credentials.json
 notes.md
 .vscode
 .php-cs-fixer.cache

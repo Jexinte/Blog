@@ -53,9 +53,9 @@ $twig = new \Twig\Environment(
         'cache' => false
     ]
 );
-$formCredentialUsername = file_get_contents("../config/stmp_credentials.json");
-$formCredentialsPassword = file_get_contents("../config/stmp_credentials.json");
-$formCredentialsSmtpAddress = file_get_contents("../config/stmp_credentials.json");
+$formCredentialUsername = file_get_contents("../config/smtp_credentials.json");
+$formCredentialsPassword = file_get_contents("../config/smtp_credentials.json");
+$formCredentialsSmtpAddress = file_get_contents("../config/smtp_credentials.json");
 
 $db = new DatabaseConnection("professional_blog", "root", "");
 
