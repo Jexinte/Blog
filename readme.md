@@ -45,7 +45,3 @@ You have to create an `admin` user `DO IT ON THE WEB APP` then when created chan
 ### phpMyAdmin Version 5.2.1
 ### Composer Version 2.5.8
 
-# Author
-
-### Github - https://github.com/Jexinte
-### Frontend Mentor - https://github.com/Jexinte (Doing some frontend is fun too )
