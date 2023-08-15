@@ -1,4 +1,4 @@
-public/assets/images
+public/assets/images/user_profile
 config/config.json
 .idea
 vendor
@@ -6,3 +6,4 @@ uploads
 stmp_credentials.json
 notes.md
 .vscode
+.php-cs-fixer.cache

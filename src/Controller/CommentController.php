@@ -47,7 +47,7 @@ class CommentController
         private readonly CommentRepository $commentRepository,
         private readonly string $username,
         private readonly string $password,
-        private readonly string $smtp_address
+        private readonly string $smtpAddress
     ) {
     }
 
@@ -178,7 +178,7 @@ class CommentController
   
             $username = json_decode($this->username, true);
             $password = json_decode($this->password, true);
-            $gmail = json_decode($this->smtp_address, true);
+            $gmail = json_decode($this->smtpAddress, true);
             $usernameSession = $sessionData["username"];
             $mail = new PHPMailer(true);
             $mail->isSMTP();

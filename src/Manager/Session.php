@@ -27,7 +27,6 @@ namespace Manager;
  */
 class Session
 {
-    private array $_session;
     private string $_cookieId;
 
 
@@ -42,7 +41,6 @@ class Session
 
         if (session_status() != PHP_SESSION_ACTIVE) {
             session_start();
-            $this->_session = &$_SESSION;
         } 
 
     }
@@ -84,7 +82,7 @@ class Session
      */
     public function initializeKeyAndValue(string $key, string|null|int $value): void
     {
-        $this->_session[$key] = $value;
+        $_SESSION[$key] = $value;
     }
 
     /**
@@ -94,6 +92,6 @@ class Session
      */
     public function getSessionData(): array
     {
-        return $this->_session;
+        return $_SESSION;
     }
 }
