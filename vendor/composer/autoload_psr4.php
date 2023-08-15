@@ -6,11 +6,14 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Util\\' => array($baseDir . '/src/Util'),
     'Twig\\' => array($vendorDir . '/twig/twig/src'),
     'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
     'Symfony\\Polyfill\\Ctype\\' => array($vendorDir . '/symfony/polyfill-ctype'),
+    'Repository\\' => array($baseDir . '/src/Repository'),
     'PHPMailer\\PHPMailer\\' => array($vendorDir . '/phpmailer/phpmailer/src'),
     'Model\\' => array($baseDir . '/src/Model'),
+    'Manager\\' => array($baseDir . '/src/Manager'),
     'Exceptions\\' => array($baseDir . '/src/Exceptions'),
     'Enumeration\\' => array($baseDir . '/src/Enumeration'),
     'Controller\\' => array($baseDir . '/src/Controller'),

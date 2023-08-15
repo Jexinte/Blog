@@ -1,0 +1,69 @@
+{% extends "layout.twig" %}
+
+
+{% block icon_img %}
+	<link rel="icon" type="image/png" href="../public/favicon.ico"/>
+{% endblock %}
+
+{% block title %}
+	<title>
+		Notification | Blog professionnel
+	</title>
+{% endblock %}
+{% block css_page %}
+	<link rel="stylesheet" href="../public/assets/css/notification.css">
+{% endblock %}
+{% block content %}
+	{% include "menu_article.twig" %}
+
+	<div class="container-fluid" id="notification">
+		<div class="container-fluid" id="banner">
+			<img src="../public/assets/images/banner/notification_banner.jpg" alt="">
+		</div>
+		<h1 class="text-center">Notifications</h1>
+		<div class="row" id="notifications">
+			{% if notifications is empty %}
+				<h2 class="text-center" id="no-notifications">Rien à signaler pour le moment !</h2>
+			{% endif %}
+
+			{% for notification in notifications %}
+				<div class="text-center col-sm-12 col-md-12 col-lg-12 col-xl-12 notifications">
+					{% if notification.status == 1   %}
+						<a href="?selection=article&amp;id={{notification.idArticle}}" class=" notation">Votre commentaire
+							a été accepté !{{notification.title_article}}
+
+							</a>
+					{% else %}
+						<p class=" notation">Votre commentaire
+							{{notification.title_article}}
+							a été rejeté !</p>
+						
+							
+						<p class="text-center raison">
+								{% if notification.feedbackAdministrator is not empty  %}
+								Raison : <br><span id="feedback">{{notification.feedbackAdministrator}}</span>
+							</span>
+							{% endif %}
+								
+							
+						</p>
+					{% endif %}
+				</div>
+				<a href="?action=delete_notification&amp;id_notification={{notification.id}}" class="text-center">
+					<i class="fa-solid fa-xmark" style="color: #f41f1f;"></i>
+				</a>
+
+			{% endfor %}
+		</div>
+
+	</div>
+
+	{% if session is defined and session.type_user == "admin" %}
+		{% include "admin_footer.twig" %}
+	{% else %}
+
+		{% include "footer.twig" %}
+
+	{% endif %}
+{% endblock %}
+

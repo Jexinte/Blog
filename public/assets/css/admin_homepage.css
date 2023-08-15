@@ -49,10 +49,22 @@ a {
   border-radius: 1em;
   padding: 1.1em;
 }
+#no-comments{
+  color: var(--black);
+  font-weight: var(--700);
+  margin-top: 2.5em;
+}
 
+#no-article{
+  color: var(--black);
+  font-weight: var(--700);
+  margin: 3em 0;
+}
 .comments .comment {
   text-decoration: none;
+  color:var(--black);
 }
+
 
 #h1,
 #last-comments .h2,

@@ -1,35 +1,73 @@
 <?php
 
+/**
+ * Handle Database
+ * 
+ * PHP version 8
+ *
+ * @category Config
+ * @package  DatabaseConnection
+ * @author   Yokke <mdembelepro@gmail.com>
+ * @license  ISC License
+ * @link     https://github.com/Jexinte/P5---Blog-Professionnel---Openclassrooms
+ */
+
 namespace Config;
 
 use PDO;
 use PDOException;
 
-
-readonly class DatabaseConnection
+/**
+ * DatabaseConnection class
+ * 
+ * PHP version 8
+ *
+ * @category Config
+ * @package  DatabaseConnection
+ * @author   Yokke <mdembelepro@gmail.com>
+ * @license  ISC License
+ * @link     https://github.com/Jexinte/P5---Blog-Professionnel---Openclassrooms
+ */
+class DatabaseConnection
 {
 
 
+    /**
+     * Summary of __construct
+     *
+     * @param string $dbName 
+     * @param string $user 
+     * @param string $password 
+     */
     public function __construct(
-    private string $dbName,
-    private string $user,
-    private string $password
-  ) {
-  }
-
-
-
-
-  public function connect() : string|object
-  {
-
-
-    try {
-      $connect = new PDO("mysql:host=localhost;dbname=$this->dbName", "$this->user", "$this->password");
-    } catch (PDOException $e) {
-      return "Database Error :" . $e->getMessage();
+        private readonly string $dbName,
+        private readonly string $user,
+        private readonly string $password
+    ) {
     }
 
-    return $connect;
-  }
+
+
+
+    /**
+     * Summary of connect
+     * 
+     * @return string|object
+     */
+    public function connect() : string|object
+    {
+
+
+        try {
+            $connect = new PDO(
+                "mysql:host=localhost;dbname=$this->dbName",
+                "$this->user", 
+                "$this->password"
+            );
+        } catch (PDOException $e) {
+            return "Database Error :" . $e->getMessage();
+        }
+
+        return $connect;
+    }
 }

@@ -3,6 +3,7 @@
   "require": {
     "twig/twig": "^3.0",
     "phpmailer/phpmailer": "^6.8",
+    "squizlabs/php_codesniffer": "3.*",
     "ext-pdo": "*",
     "ext-intl": "*"
   },
@@ -12,7 +13,10 @@
       "Model\\":"src/Model/",
       "Controller\\":"src/Controller/",
       "Enumeration\\" : "src/Enumeration/",
-      "Exceptions\\" : "src/Exceptions/"
+      "Exceptions\\" : "src/Exceptions/",
+      "Manager\\" : "src/Manager/",
+      "Repository\\" : "src/Repository/",
+      "Util\\" : "src/Util/"
     }
   },
   "license": "ISC"

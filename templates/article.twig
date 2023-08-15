@@ -7,35 +7,34 @@
 
 {% block title %}
 	<title>
-		Article - Blog professionnel
+		Article | Blog Professionel
 		
 	</title>
 {% endblock %}
 {% block css_page %}
 	<link rel="stylesheet" href="../public/assets/css/article.css">
 {% endblock %}
-
 {% block content %}
 	{% include "menu_article.twig" %}
 
 	<div class="container-fluid" id="article">
 	
-			<img class="article-banner" src="{{article.image}}" alt="Climbing to the top">
+			<img class="article-banner" src="{{article.image is defined ? article.image : default.data.image}}" alt="Climbing to the top">
 			<div class="row">
 				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 article">
 					<article>
 						<div class="author-box">
-							<img class="author-img" src="{{article.author_image}}" alt="avatar author1">
-							<h2 class="author-name">{{article.author}}</h2>
+							<img class="author-img" src="{{article.author_image is defined ? article.author_image : default.data.author_image}}" alt="avatar author1">
+							<h2 class="text-center author-name">{{article.author is defined ? article.author : default.data.author}}</h2>
 						</div>
 
-						<h1 class="article-title" id="h1">{{article.title}}</h1>
-						<p class="article-short-phrase">{{article.short_phrase}}</p>
-						<p class="article-content">{{article.content|nl2br }}</p>
+						<h1 class="article-title" id="h1">{{article.title is defined ? article.title : default.data.title}}</h1>
+						<p class="article-short-phrase">{{article.short_phrase is defined ? article.short_phrase : default.data.short_phrase}}</p>
+						<p class="article-content">{{article.content is defined ? article.content|nl2br : default.data.content }}</p>
 						<ul class="tags">
-							<li class="tag">{{article.tags}}</li>
+							<li class="tag">{{article.tags is defined ? article.tags : default.data.tags}}</li>
 						</ul>
-						<p class="article-date">{{article.date_of_publication}}</p>
+						<p class="article-date">{{article.date_of_publication is defined ? article.date_of_publication : default.data.date_of_publication}}</p>
 					</article>
 				
 
@@ -45,50 +44,59 @@
 
 	<div
 		class="container-fluid" id="comment">
-		{# La logique pour afficher un paragraphe disant qu'il faut être connecté arrivera plus tard #}
+		{% if count_of_comments is defined ? count_of_comments == 1 %}
+		<h2 class="text-center" id="comment-already-sent">Oops ! Il semblerait que vous ayez déjà posté un commentaire pour cet article dès qu'un administrateur l'aura validé vous pourrez à nouveau en poster un !</h2>
+		{% elseif no_user_connected is defined ? no_user_connected == 1 %}
+		<h2 class="text-center" id="user-not-connected">Afin de pouvoir publier un commentaire , veuillez vous <a href="?selection=sign_in">connecter !</a></h2>		
+		{% else %}
 		<h2 class="h2" id="comment-main-title">Ajouter un commentaire</h2>
 
-		<form action="#">
-			<textarea name="comment" id="feedback" cols="30" rows="10"></textarea>
+		<form action="?action=add_comment&amp;id={{article.id is defined ? article.id : default.id}}" method="post">
+			<textarea name="comment" id="feedback" cols="30" rows="10" value="{{default.comment_failed is defined ? default.comment_failed : ''}}"></textarea>
+			<input type="text" name="id_article" value = {{article.id is defined ? article.id : default.id}} hidden>
 			<p class="text-success">{# Afficher un message de confirmation d'envoi#}</p>
-			<p class="text-danger">{# Afficher un message de confirmation d'envoi#}</p>
+			<p class="text-danger" id="comment-error">{{comment_exception is defined ? comment_exception : ''}}</p>
 			<div class="command-box">
 				<input class="btn btn-dark command" name="submit" type="submit" value="Envoyer">
 			</div>
 
-		</form>
+		</form>		
+		{% endif %}
+		
+		
+		
+	
 	</div>
 
 	<div class="container-fluid" id="comments">
 		<h2 class="h2">Commentaires</h2>
 		<div class="row">
+	{% if comments is empty %}
+	<h2 class="text-center" id="no-comments">Soyez le premier à commenter cette article !</h2>
+	{% else %}
+		{% for comment in comments %}
+			
 			<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 comments">
 				<div class="author-box">
-					<img src="../public/assets/images/author_1.jpg" alt="author comment img">
-					<h3 class="author-name">Test ,
-						<span class="date-comment">le 14 juin 2023</span>
+					<img src="{{comment.profile_image}}" alt="author comment img">
+					<h3 class="text-center author-name">{{comment.username}} ,
+						<span class="date-comment">le {{comment.date_of_publication}}</span>
 					</h3>
-					<p class="author-comment">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tenetur natus similique, dolor fugit, neque facilis molestiae error consequatur corporis, a nulla quisquam vero laudantium molestias. Mollitia id autem possimus alias!</p>
-				</div>
-
-				<div class="author-box">
-					<img src="../public/assets/images/author_1.jpg" alt="author comment img">
-					<h3 class="author-name">Test_2 ,
-						<span class="date-comment">le 14 juin 2023</span>
-					</h3>
-					<p class="author-comment">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tenetur natus similique, dolor fugit, neque facilis molestiae error consequatur corporis, a nulla quisquam vero laudantium molestias. Mollitia id autem possimus alias!</p>
-				</div>
-
-
-				<div class="author-box">
-					<img src="../public/assets/images/author_1.jpg" alt="author comment img">
-					<h3 class="author-name">Test_3 ,
-						<span class="date-comment">le 14 juin 2023</span>
-					</h3>
-					<p class="author-comment">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tenetur natus similique, dolor fugit, neque facilis molestiae error consequatur corporis, a nulla quisquam vero laudantium molestias. Mollitia id autem possimus alias!</p>
+					<p class="author-comment">{{comment.content}}</p>
 				</div>
 			</div>
+		{% endfor %}	
+	{% endif %}
+	
 		</div>
+		
 	</div>
+		{% if session is defined and session.type_user == "admin" %}
+		{% include "admin_footer.twig" %}
+	{% else %}
+
+		{% include "footer.twig" %}
+
+	{% endif %}
 {% endblock %}
 

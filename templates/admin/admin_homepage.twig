@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block title %}
-	<title>Accueil Administration - Blog professionnel</title>
+	<title>Accueil Administration | Administration</title>
 {% endblock %}
 {% block css_page %}
 	<link rel="stylesheet" href="../public/assets/css/admin_homepage.css">
@@ -26,7 +26,7 @@
 				</li>
 				{% if session is defined and session.type_user == "admin" %}
 					<li>
-						<a href="action=logout">
+						<a href="?action=logout">
 							<i class="fa-solid fa-right-from-bracket"></i>
 						</a>
 					</li>
@@ -40,59 +40,48 @@
 	<div class="container-fluid" id="homepage">
 
 		<div class="container-fluid" id="banner">
-			<img class="banner-img" src="../public/assets/images/admin_homepage.jpg" alt="admin homepage banner">
+			<img class="banner-img" src="../public/assets/images/banner/admin_homepage.jpg" alt="admin homepage banner">
 		</div>
 
-		<h1 id="h1">Bienvenue,  Administrateur</h1>
+		<h1 id="h1">Bienvenue, {{session.username}}</h1>
 
 
 		<div class="container-fluid" id="last-comments">
 			<h2 class="h2" id="h2">Derniers commentaires publiés récemments
-				<span id="total-comments">{# Le nombre total de commentaires à valider#}</span>
+				<span id="total-comments">({{total_comments is defined ? total_comments : 0}})</span>
 			</h2>
 
 			<div class="row">
+			
+			{% if comments is empty %}
+			<h2 class="text-center" id="no-comments">Aucun commentaire n'a été publié pour le moment</h2>
+			{% else %}
+				{% for comment in comments %}
 
 				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 comments">
-					<a class="comment" href="?selection=view_article">
-						<h3 class="h3">Les bases de php</h3>
+					<a class="comment" href="?selection=comment_details&amp;idComment={{comment.id}}">
+						<h3 class="h3">{{comment.title}}</h3>
 						<div class="author-comment">
-							<h4>Jane , le 13 juin 2023</h4>
-							<p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptas tempore explicabo iusto quam molestias est corporis, natus nulla deleniti porro tenetur nesciunt excepturi commodi animi asperiores? Voluptatum ex odio cumque.</p>
+							<h4>{{comment.username}}, {{comment.dateCreation}} : </h4>
+							<p>{{comment.content}}</p>
 						</div>
 					</a>
 				</div>
+				{% endfor %}				
+			{% endif %}
+			
 
 
-				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 comments">
-					<a class="comment" href="#">
-						<h3 class="h3">Les bonnes pratiques en PHP</h3>
-						<div class="author-comment">
-							<h4>Lovelace, le 19 juin 2023</h4>
-							<p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptas tempore explicabo iusto quam molestias est corporis, natus nulla deleniti porro tenetur nesciunt excepturi commodi animi asperiores? Voluptatum ex odio cumque.</p>
-						</div>
-					</a>
-				</div>
-
-
-				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 comments">
-					<a class="comment" href="#">
-						<h3 class="h3">Les frameworks PHP populaires</h3>
-						<div class="author-comment">
-							<h4>CyranoB , le 19 juin 2023</h4>
-							<p>
-								C'est un roc !... c'est un pic... c'est un cap !
-																																																																																Que dis-je, c'est un cap ?... C'est une péninsule ! »</p>
-						</div>
-					</a>
-				</div>
 			</div>
 		</div>
 
 
 		<div class="container-fluid" id="last-articles">
 			<h2 class="h2" id="last-articles-title">Derniers articles publiés récemments</h2>
-			{% if articles is defined and articles is not empty %}
+			{% if articles is empty %}
+			<h2 class="text-center" id="no-article">Aucun article n'a été publié pour le moment</h2>
+			{% else %}
+				
 				{% for article in articles %}
 					<div class="row mt-5">
 						<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 articles">
@@ -104,15 +93,14 @@
 										<a class="commands-admin" href="?selection=view_update_article&amp;id={{article.id}}">Modifier</a>
 									</button>
 									<button class="btn btn-dark">
-										<a class="commands-admin" href="index.php?action=delete_article&amp;id={{article.id}}">Supprimer</a>
+										<a class="commands-admin" href="?action=delete_article&amp;id={{article.id}}">Supprimer</a>
 									</button>
 								</div>
 							</article>
 						</div>
 					</div>
 				{% endfor %}
-			{% else %}
-				<h2 class="text-dark text-center">Aucun article n'a été publié pour le moment</h2>
+
 			{% endif %}
 
 

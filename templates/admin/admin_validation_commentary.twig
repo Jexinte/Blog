@@ -1,0 +1,50 @@
+{% extends "layout.twig" %}
+
+
+{% block icon_img %}
+	<link rel="icon" type="image/png" href="../public/favicon.ico"/>
+{% endblock %}
+
+{% block title %}
+	<title>Validation de commentaire | Administration</title>
+{% endblock %}
+{% block css_page %}
+	<link rel="stylesheet" href="../public/assets/css/admin_validation_commentary.css">
+{% endblock %}
+
+{% block content %}
+	{% include "menu_admin.twig" %}
+
+
+	<div class="container-fluid" id="comment">
+		<img class="comment-banner" src="../public/assets/images/banner/banner_commentary.jpg" alt="banner img">
+	</div>
+
+	<div class="container-fluid" id="comment">
+		<h2 id="comment-main-title">Commentaire</h2>
+		<div class="commentary-box">
+			<h3 class="author-comment">{{comment.username is defined ? comment.username : default.username}}, le {{comment.date_of_publication is defined ? comment.date_of_publication : default.date_of_publication}} :</h3>
+			
+			<p class="text-center content-comment">{{comment.content is defined ? comment.content : default.content}}</p>
+		</div>
+		<form action="?action=validation&amp;idComment={{comment.id is defined ? comment.id : comment.idComment}}" method="post">
+			<label for="feedback">Explication (facultatif) :</label>
+			<textarea name="feedback" id="feedback" cols="30" rows="10"></textarea>
+			<p class="text-danger" id="feedback-error">{{validation_exception is defined ? validation_exception : ''}}</p>
+			
+			<div class="commands-admin">
+				<input class="btn btn-warning command" name="accepted" type="submit" value="Accepter">
+				<input class="btn btn-dark command" name="rejected" type="submit" value="Rejeter">
+			</div>
+
+		</form>
+	</div>
+		{% if session is defined and session.type_user == "admin" %}
+		{% include "admin_footer.twig" %}
+	{% else %}
+
+		{% include "footer.twig" %}
+
+	{% endif %}
+{% endblock %}
+

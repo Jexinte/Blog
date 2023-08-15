@@ -1,232 +1,378 @@
 <?php
 
+/**
+ * Handle Users Validation
+ * 
+ * PHP version 8
+ *
+ * @category Controller
+ * @package  UserController
+ * @author   Yokke <mdembelepro@gmail.com>
+ * @license  ISC License
+ * @link     https://github.com/Jexinte/P5---Blog-Professionnel---Openclassrooms
+ */
+
 namespace Controller;
 
+use Enumeration\Regex;
 use Enumeration\UserType;
-
-use Exceptions\EmailErrorEmptyException;
-use Exceptions\EmailUnavailableException;
-use Exceptions\EmailUnexistException;
-use Exceptions\EmailWrongFormatException;
-use Exceptions\PasswordErrorEmptyException;
-use Exceptions\PasswordIncorrectException;
-use Exceptions\PasswordWrongFormatException;
-use Exceptions\UsernameUnavailableException;
-use Exceptions\UsernameWrongFormatException;
-use Exceptions\UsernameErrorEmptyException;
-use Exceptions\FileTypeException;
-use Exceptions\FileErrorEmptyException;
-
-use Model\User;
+use Exceptions\ValidationException;
 use Model\UserModel;
+use Repository\userRepository;
 
 
 
 
+/**
+ * Handle Users Validation
+ * 
+ * PHP version 8
+ *
+ * @category Controller
+ * @package  UserController
+ * @author   Yokke <mdembelepro@gmail.com>
+ * @license  ISC License
+ * @link     https://github.com/Jexinte/P5---Blog-Professionnel---Openclassrooms
+ */
 
-
-readonly class UserController
+class UserController
 {
 
 
-  public function __construct(private User $user)
-  {
-  }
-
-
-  public function handleUsernameField(string $username): array|string
-  {
-
-    $userRegex =  "/^[A-Z][A-Za-z\d]{2,10}$/";
-    switch (true) {
-      case empty($username):
-
-        throw new UsernameErrorEmptyException();
-      case !preg_match($userRegex, $username):
-
-        throw new UsernameWrongFormatException();
-      default:
-        return ["username" => $username];
+    /**
+     * Summary of __construct
+     *
+     * @param \Repository\userRepository $userRepository 
+     */
+    public function __construct(private readonly userRepository $userRepository)
+    {
     }
-  }
-  public function handleFileField(array $file): array|string
-  {
-    switch (true) {
-      case !empty($file["name"]) && $file["error"] == UPLOAD_ERR_OK:
-        $filename = $file["name"];
-        $dirImages = "../public/assets/images/";
-        $filenameTmp = $file['tmp_name'];
-        $extensionOfTheUploaded_file = explode('.', $filename);
-        $authorizedExtensions = array("jpg", "jpeg", "png", "webp");
 
-        if (in_array($extensionOfTheUploaded_file[1], $authorizedExtensions)) {
-          $bytesToStr = str_replace("/", "", base64_encode(random_bytes(9)));
-          $filenameAndExtension = explode('.', $filename);
-          $filenameGenerated = $bytesToStr . "." . $filenameAndExtension[1];
 
-          return ["file" => "$filenameGenerated;$filenameTmp;$dirImages"];
-        } else {
 
-          throw new FileTypeException();
+    /**
+     * Summary of handleFileField
+     *
+     * @param array $file 
+     * 
+     * @return array|string
+     */
+    public function handleFileField(array $file): array|string
+    {
+        $validationException = new ValidationException();
+        switch (true) {
+        case !empty($file["name"]) && $file["error"] == UPLOAD_ERR_OK:
+            $filename = $file["name"];
+            $dirImages = "../public/assets/images/user_profile";
+            $filenameTmp = $file['tmp_name'];
+            $extensionOfTheUploaded_file = explode('.', $filename);
+            $authorizedExtensions = array("jpg", "jpeg", "png", "webp");
+
+            if (in_array($extensionOfTheUploaded_file[1], $authorizedExtensions)) {
+                $bytesToStr = str_replace("/", "", base64_encode(random_bytes(9)));
+                $filenameAndExtension = explode('.', $filename);
+                $filenameGenerated = $bytesToStr . "." . $filenameAndExtension[1];
+
+                return ["file" => "$filenameGenerated;$filenameTmp;$dirImages"];
+            } else {
+                throw $validationException->setTypeAndValueOfException(
+                    "file_exception", 
+                    $validationException::FILE_MESSAGE_ERROR_TYPE_FILE
+                );
+            }
+
+        default:
+            throw $validationException->setTypeAndValueOfException(
+                "file_exception", 
+                $validationException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED
+            );
         }
-
-      default:
-
-        throw new FileErrorEmptyException(FileErrorEmptyException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED);
     }
-  }
 
 
-  public function handleEmailField(string $email): array|string
-  {
 
-    $emailRegex = "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/";
-
-    switch (true) {
-      case empty($email):
-
-        throw new EmailErrorEmptyException();
-      case !preg_match($emailRegex, $email):
-
-        throw new EmailWrongFormatException();
-      default:
-        return ["email" => $email];
+    /**
+     * Summary of handleTextField
+     *
+     * @param string                          $keyArray              
+     * @param mixed                           $value                 
+     * @param string                          $keyException          
+     * @param \Exceptions\ValidationException $exception             
+     * @param string                          $regex                 
+     * @param string                          $emptyException        
+     * @param string                          $wrongFormatException  
+     * 
+     * @return string|array|null
+     */
+    public function handleTextField(
+        string $keyArray, 
+        string $value, 
+        string $keyException, 
+        ValidationException $exception, 
+        string $regex, 
+        string $emptyException, 
+        string $wrongFormatException
+    ): string|array {
+        switch (true) {
+        case empty($value):
+            throw $exception->setTypeAndValueOfException(
+                $keyException, 
+                $emptyException
+            );
+        case !preg_match($regex, $value):
+            throw $exception->setTypeAndValueOfException(
+                $keyException, 
+                $wrongFormatException
+            );
+        default:
+            return [$keyArray => $value];
+        }
     }
-  }
-  public function handlePasswordField(string $password): array|string
-  {
 
-    $passwordRegex = "/^(?=.*[A-Z])(?=.*\d).{8,}$/";
-    switch (true) {
-      case empty($password):
+    /**
+     * Summary of signUpValidator
+     *
+     * @param string $username 
+     * @param array  $file     
+     * @param string $email    
+     * @param string $password 
+     * 
+     * @return UserModel|null
+     */
+    public function signUpValidator(
+        string $username, 
+        array $file, 
+        string $email, 
+        string $password
+    ): ?UserModel {
 
-        throw new PasswordErrorEmptyException();
-      case !preg_match($passwordRegex, $password):
+        $validationException = new ValidationException();
+        $exceptionKeyArray = [
+        "username_field" => "username_exception",
+        "email_field" => "email_exception",
+        "password_field" => "password_exception",
+        ];
+        $keyArrayWhenAFieldIsTreated = [
+        "username_field" => "username",
+        "email_field" => "email",
+        "password_field" => "password",
+        ];
 
-        throw new PasswordWrongFormatException();
-      default:
-        $hashPassword = password_hash($password, PASSWORD_DEFAULT);
-        return ["password" => $hashPassword];
+        $exceptionByField = [
+        "error_empty" => 
+        $validationException::ERROR_EMPTY,
+        "username_exception" => 
+        $validationException::USERNAME_MESSAGE_ERROR_WRONG_FORMAT,
+        "email_exception" => 
+        $validationException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT,
+        "password_exception" => 
+        $validationException::PASSWORD_MESSAGE_ERROR_WRONG_FORMAT,
+        ];
+
+        $regexByField = [
+        "username_regex" => REGEX::USERNAME,
+        "email_regex" => REGEX::EMAIL,
+        "password_regex" => REGEX::PASSWORD,
+        ];
+
+
+        $usernameResult = $this->handleTextField(
+            $keyArrayWhenAFieldIsTreated["username_field"], 
+            $username, 
+            $exceptionKeyArray["username_field"], 
+            $validationException, 
+            $regexByField["username_regex"], 
+            $exceptionByField["error_empty"], 
+            $exceptionByField["username_exception"]
+        )["username"];
+
+        $emailResult = $this->handleTextField(
+            $keyArrayWhenAFieldIsTreated["email_field"], 
+            $email, 
+            $exceptionKeyArray["email_field"], 
+            $validationException, 
+            $regexByField["email_regex"], 
+            $exceptionByField["error_empty"], 
+            $exceptionByField["email_exception"]
+        )["email"];
+
+        $passwordResult = password_hash(
+            $this->handleTextField(
+                $keyArrayWhenAFieldIsTreated["password_field"], 
+                $password, 
+                $exceptionKeyArray["password_field"], 
+                $validationException, 
+                $regexByField["password_regex"], 
+                $exceptionByField["error_empty"], 
+                $exceptionByField["password_exception"]
+            )["password"], PASSWORD_DEFAULT
+        );
+
+        $fileResult = $this->handleFileField($file)["file"];
+
+        $userType = UserType::USER;
+
+
+        $userModel = new UserModel(
+            $usernameResult, 
+            $fileResult, 
+            $emailResult, 
+            $passwordResult, 
+            $userType, 
+            null,
+            null, 
+            null
+        );
+
+        $userDb = $this->userRepository->createUser($userModel);
+
+        if ($userDb->getSuccessSignUp()) {
+            return $userDb;
+        }
+        switch (true) {
+        case !is_null($userDb->isUsernameAvailable()):
+            throw $validationException->setTypeAndValueOfException(
+                "username_exception", 
+                $validationException::USERNAME_UNAVAILABLE_MESSAGE_ERROR
+                 . $username . " n'est pas disponible !"
+            );
+        case !is_null($userDb->isEmailAvailable()):
+            throw $validationException->setTypeAndValueOfException(
+                "email_exception", 
+                $validationException::EMAIL_UNAVAILABLE_MESSAGE_ERROR
+                 . $email . " n'est pas disponible !"
+            );
+        }
     }
-  }
 
 
-  public function signUpValidator(string $username, array $file, string $email, string $password): array|string
-  {
-
-    $usernameResult = $this->handleUsernameField($username);
-
-    $emailResult = $this->handleEmailField($email);
-    $passwordResult = $this->handlePasswordField($password);
-    $fileResult = $this->handleFileField($file);
-
-
-    $fields = [
-      "username" => $usernameResult,
-      "email" => $emailResult,
-      "password" => $passwordResult,
-      "file" => $fileResult
-    ];
-
-
-    $userRepository = $this->user;
-    $username = $fields["username"]["username"];
-    $fileSettings = $fields["file"];
-    $email = $fields["email"]["email"];
-    $password = $fields["password"]["password"];
-    $userType = UserType::USER;
-    $userData = new UserModel($username, $fileSettings["file"], $email, $password, $userType);
-
-    $userDb = $userRepository->createUser($userData);
-
-
-
-
-    switch (true) {
-      case isset($userDb["username"])  && $userDb["username"]  === $username:
-        throw new UsernameUnavailableException();
-      case isset($userDb["email"]) && $userDb["email"] === $email:
-        throw new EmailUnavailableException();
-      default:
-        return $userDb;
+    /**
+     * Summary of verifyEmailOnLogin
+     *
+     * @param string $email 
+     * 
+     * @return array|string
+     */
+    public function verifyEmailOnLogin(string $email): array|string
+    {
+        $validationException = new ValidationException();
+        $emailRegex = "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/";
+        switch (true) {
+        case empty($email):
+            throw $validationException->setTypeAndValueOfException(
+                "email_exception", 
+                $validationException::ERROR_EMPTY
+            );
+        case !preg_match($emailRegex, $email):
+            throw $validationException->setTypeAndValueOfException(
+                "email_exception", 
+                $validationException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT
+            );
+        default:
+            return ["email" => $email];
+        }
     }
-  }
 
+    /**
+     * Summary of verifyPasswordOnLogin
+     *
+     * @param string $password 
+     * 
+     * @return array|string
+     */
+    public function verifyPasswordOnLogin(string $password): array|string
+    {
+        $validationException = new ValidationException();
 
-  public function verifyEmailOnLogin(string $email): array|string
-  {
-
-    $emailRegex = "/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/";
-    switch (true) {
-      case empty($email):
-
-        throw new EmailErrorEmptyException();
-      case !preg_match($emailRegex, $email):
-
-        throw new EmailWrongFormatException();
-      default:
-        return ["email" => $email];
+        if (empty($password)) {
+            throw $validationException->setTypeAndValueOfException(
+                'password_exception', 
+                $validationException::ERROR_EMPTY
+            );
+        }
+        return ["password" => $password];
     }
-  }
-
-  public function verifyPasswordOnLogin(string $password): array|string
-  {
 
 
-    if (empty($password)) {
-      throw new PasswordErrorEmptyException();
+    /**
+     * Summary of loginValidator
+     *
+     * @param string $email    
+     * @param string $password 
+     * 
+     * @return array|string|null
+     */
+    public function loginValidator(
+        string $email, 
+        string $password
+    ): array|string|null {
+        $validationException = new ValidationException();
+        $emailResult = $this->verifyEmailOnLogin($email);
+        $passwordResult = $this->verifyPasswordOnLogin($password);
+
+
+        $fields = [
+        "email" => $emailResult,
+        "password" => $passwordResult
+        ];
+
+        $emailField = $fields["email"]["email"];
+        $passwordField = $fields["password"]["password"];
+
+
+
+        $login = $this->userRepository->loginUser($emailField, $passwordField);
+        if (array_key_exists("password_error", $login)) {
+            throw $validationException->setTypeAndValueOfException(
+                "password_exception", 
+                $validationException::PASSWORD_INCORRECT_MESSAGE_ERROR
+            );
+        } elseif (array_key_exists('email_error', $login)) {
+            throw $validationException->setTypeAndValueOfException(
+                "email_exception", 
+                $validationException::EMAIL_UNEXIST_MESSAGE_ERROR
+            );
+        }
+        return $login ?? null;
     }
-    return ["password" => $password];
-  }
-
-
-  public function loginValidator(string $email, string $password): array|string|null
-  {
-    $userRepository = $this->user;
-    $emailResult = $this->verifyEmailOnLogin($email);
-    $passwordResult = $this->verifyPasswordOnLogin($password);
-
-
-    $fields = [
-      "email" => $emailResult,
-      "password" => $passwordResult
-    ];
-
-    $emailField = $fields["email"]["email"];
-    $passwordField = $fields["password"]["password"];
 
 
 
-    $login = $userRepository->loginUser($emailField, $passwordField);
-
-    if (array_key_exists("password_error", $login)) {
-      throw new PasswordIncorrectException();
-    } elseif (array_key_exists('email_error', $login)) {
-      throw new EmailUnexistException();
+    /**
+     * Summary of handleLogout
+     *
+     * @param array $sessionData 
+     * 
+     * @return array|null
+     */
+    public function handleLogout(array $sessionData): ?array
+    {
+        if (is_array($this->userRepository->logout($sessionData))) {
+            return $this->userRepository->logout($sessionData);
+        }
     }
-    return $login ?? null;
-  }
 
-  public function handleInsertSessionData(array $arr): void
-  {
-    $userRepository = $this->user;
-
-    $userRepository->insertSessionData($arr);
-  }
-
-  public function handleGetIdSessionData($arr): ?array
-  {
-    $userRepository = $this->user;
-
-    return $userRepository->getIdSessionData($arr);
-  }
-
-  public function handleLogout(array $sessionData): ?array
-  {
-    $userRepository = $this->user;
-
-    if (is_array($userRepository->logout($sessionData))) {
-      return $userRepository->logout($sessionData);
+    /**
+     * Summary of handleNotifications
+     *
+     * @param array $sessionData 
+     * 
+     * @return array|null
+     */
+    public function handleNotifications(array $sessionData): ?array
+    {
+        return $this->userRepository->getAllUserNotifications($sessionData);
     }
-  }
+
+    /**
+     * Summary of handleDeleteNotification
+     *
+     * @param int $idNotification 
+     * 
+     * @return array|null
+     */
+    public function handleDeleteNotification(int $idNotification): ?array
+    {
+        return $this->userRepository->deleteNotification($idNotification);
+    }
 }

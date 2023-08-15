@@ -5,7 +5,7 @@
 	<link rel="icon" type="image/png" href="../public/favicon.ico"/>
 {% endblock %}
 {% block title %}
-	<title>Blog - Blog professionnel</title>
+	<title>Blog | Blog Professionel</title>
 {% endblock %}
 {% block css_page %}
 	<link rel="stylesheet" href="../public/assets/css/blog.css">
@@ -17,19 +17,17 @@
 	{# HEADER #}
 	<header>
 		<nav class="menu">
-			<a href="?selection=homepage"><img class="logo" src="../public/assets/images/logo.png" height="60" alt=""></a>
+			<a href="?selection=homepage"><img class="logo" src="../public/assets/images/logo/logo.png" height="60" alt=""></a>
 			<ul>
 
+				{% if session is defined and session.type_user == "user" %}
 
-				{% if session is defined and session.type_user is defined %}
 					<li>
-						<a href="?selection=profile">
-							<i class="fa-solid fa-user"></i>
-						</a>
-					</li>
-					<li>
-						<a href="?selection=notifications">
+						<a href="?selection=notifications" id="bell">
 							<i class="fa-solid fa-bell"></i>
+							{% if total_notifications is defined  and total_notifications >= 1 %}
+								<span id="total-notifications">{{total_notifications is defined ? total_notifications : ''}}</span>
+							{% endif %}
 						</a>
 					</li>
 					<li>
@@ -38,7 +36,12 @@
 						</a>
 					</li>
 
+				{% elseif session.type_user == "admin" %}
+					<a href="?action=logout">
+						<i class="fa-solid fa-right-from-bracket"></i>
+					</a>
 				{% else %}
+
 					<li>
 						<a href="?selection=sign_in">
 							<i class="fa-solid fa-key"></i>
@@ -62,7 +65,7 @@
 
 		{# BANNER #}
 		<div class="container-fluid" id="banner">
-			<img class"banner-img" src="../public/assets/images/blog_banner.jpg" alt="blog banner">
+			<img class"banner-img" src="../public/assets/images/banner/blog_banner.jpg" alt="blog banner">
 		</div>
 
 		{# ARTICLES #}
@@ -70,14 +73,17 @@
 			<h1 class="text-center" id="h1">Derniers articles publiés</h1>
 			<div
 				class="row mt-5">
-
+				{% if articles is empty %}
+				<h2 class="text-center" id="no-articles"> Nous n'avons actuellement aucun article publié. Restez à l'affût, de nouvelles publications passionnantes arrivent bientôt !</h2>
+				{% endif %}
+				
 				{# ARTICLE 1 #}
 				{% for article in articles %}
 					<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
 						<a href="?selection=article&amp;id={{article.id}}" class="article">
 							<article class="article-box">
 								<div class="col-md-12 col-lg-12 author-box">
-									<img class="article-img" src="{{article.image}}" alt="">
+									<img class="article-img" src="{{article.image_user}}" alt="">
 									<h2 class="author-article" id="h2">{{article.author}}</h2>
 								</div>
 								<h3 class="article-title">{{article.title}}</h3>

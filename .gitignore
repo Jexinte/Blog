@@ -5,3 +5,5 @@ vendor
 uploads
 stmp_credentials.json
 notes.md
+.vscode
+.php-cs-fixer.cache

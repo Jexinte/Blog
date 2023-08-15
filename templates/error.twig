@@ -7,7 +7,7 @@
 {% block title %}
 	<title>Erreur
 		{{code is defined ? code : ''}}
-		- Blog professionnel</title>
+		| Blog professionnel</title>
 {% endblock %}
 
 {% block css_page %}
@@ -18,30 +18,36 @@
 
 	<header>
 		<nav class="menu">
-			<a href="?selection=homepage"><img class="logo" src="../public/assets/images/logo.png" height="60" alt=""></a>
+			<a href="?selection=homepage"><img class="logo" src="../public/assets/images/logo/logo.png" height="60" alt=""></a>
 
 		</nav>
 	</header>
 	<div class="container-fluid" id="error">
 		<div class="row">
-			<div class="col-xs-12 col-md-12 col-lg-12">
+			<div class="col-xs-12 col-md-12 col-lg-12" id="errors">
 				{% if code is defined %}
 
 					<div class="error-box">
 						{% if code == 500 %}
-							<img src="../public/assets/images/500.jpg" alt="500 code error">
-							<a href="index.php?selection=homepage">Retour vers la page d'accueil
-							</a>
-							{% elseif code == 401 %}
-							
-							<img src="../public/assets/images/401.jpg" alt="401 code error">
-							<a href="index.php?selection=homepage">Retour vers la page d'accueil								
-						{% endif %}
-
+							<img src="../public/assets/images/code_error/500.jpg" alt="500 code error">
+							<p>Désolé, une erreur interne du serveur est survenue.Veuillez réessayer ultérieurement. Merci de votre patience !</p>
+						</a>
+					{% elseif code == 401 %}
+						<img src="../public/assets/images/code_error/401.jpg" alt="401 code error">
+						<p>Vous n'êtes pas autorisée à accéder à cette ressource !</p>
+					{% elseif code == 403 %}
+						<img src="../public/assets/images/code_error/403.jpg" alt="403 code error">
+						<p>Vous n'êtes pas autorisée à accéder à cette ressource !</p>
+					{% elseif code == 404 %}
+						<img src="../public/assets/images/code_error/404.jpg" alt="404 code error">
+						<p>La page recherchée n'a pas été trouvée !</p>
 					{% endif %}
-				</div>
-			</div>
 
+				{% endif %}
+				<a href="?selection=homepage">Retour vers la page d'accueil</a>
+			</div>
 		</div>
+
 	</div>
-</div>{% endblock %}
+</div></div>{% endblock %}
+

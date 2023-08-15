@@ -1,54 +1,44 @@
 <?php
-
+/**
+ * Handle Comment Validation
+ * 
+ * PHP version 8
+ *
+ * @category Public
+ * @package  Indexphp
+ * @author   Yokke <mdembelepro@gmail.com>
+ * @license  ISC License
+ * @link     https://github.com/Jexinte/P5---Blog-Professionnel---Openclassrooms
+ */
 
 require_once __DIR__ . "../../vendor/autoload.php";
 
-use Model\Article;
-use Model\User;
-use Model\HomepageForm;
-use Model\SessionManager;
-
-$sessionRepository = new SessionManager();
-$sessionRepository->startSession();
-
 use Config\DatabaseConnection;
+use Manager\Session;
 
-use Exceptions\UsernameErrorEmptyException;
-use Exceptions\UsernameWrongFormatException;
-use Exceptions\FileErrorEmptyException;
-use Exceptions\FileTypeException;
-use Exceptions\EmailErrorEmptyException;
-use Exceptions\EmailWrongFormatException;
-use Exceptions\PasswordErrorEmptyException;
-use Exceptions\PasswordWrongFormatException;
-use Exceptions\TitleErrorEmptyException;
-use Exceptions\TitleWrongFormatException;
-use Exceptions\ContentArticleErrorEmptyException;
-use Exceptions\ContentArticleWrongFormatException;
-use Exceptions\ShortPhraseErrorEmptyException;
-use Exceptions\ShortPhraseWrongFormatException;
-use Exceptions\TagsErrorEmptyException;
-use Exceptions\TagsWrongFormatException;
-use Exceptions\ContentMessageWrongFormatException;
-use Exceptions\ContentMessageErrorEmptyException;
-use Exceptions\SubjectErrorEmptyException;
-use Exceptions\SubjectWrongFormatException;
-use Exceptions\LastnameErrorEmptyException;
-use Exceptions\LastnameWrongFormatException;
-use Exceptions\FirstNameErrorEmptyException;
-use Exceptions\FirstNameWrongFormatException;
+$sessionManager = new Session();
+$sessionManager->startSession();
 
 use Controller\ArticleController;
 use Controller\UserController;
 use Controller\DownloadController;
 use Controller\HomepageFormController;
-use Enumeration\UserType;
-use Exceptions\EmailUnavailableException;
-use Exceptions\EmailUnexistException;
-use Exceptions\FormMessageNotSentException;
-use Exceptions\PasswordIncorrectException;
-use Exceptions\UsernameUnavailableException;
+use Controller\CommentController;
+use Controller\NotificationController;
+use Controller\SessionController;
 
+use Enumeration\UserType;
+use Repository\ArticleRepository;
+use Repository\CommentRepository;
+use Repository\HomepageFormRepository;
+use Repository\NotificationRepository;
+use Repository\UserRepository;
+
+use Exceptions\ValidationException;
+
+use Util\RequestObject;
+
+$requestObject = new RequestObject();
 $action = "";
 $selection = "";
 
@@ -63,340 +53,573 @@ $twig = new \Twig\Environment(
         'cache' => false
     ]
 );
+$formCredentialUsername = file_get_contents("../config/stmp_credentials.json");
+$formCredentialsPassword = file_get_contents("../config/stmp_credentials.json");
+$formCredentialsSmtpAddress = file_get_contents("../config/stmp_credentials.json");
+
 $db = new DatabaseConnection("professional_blog", "root", "");
 
-
-$userRepository = new User($db);
+$userRepository = new UserRepository($db);
 $userController = new UserController($userRepository);
 
-$articleRepository = new Article($db);
+
+
+$articleRepository = new ArticleRepository($db);
 $articleController = new ArticleController($articleRepository);
 
 $downloadController = new DownloadController();
 
-$formRepository = new HomepageForm($db);
+$formRepository = new HomepageFormRepository(
+    $db,
+    $formCredentialUsername,
+    $formCredentialsPassword,
+    $formCredentialsSmtpAddress
+);
 $formController = new HomepageFormController($formRepository);
+$sessionController = new SessionController($sessionManager);
 
+
+
+
+$commentRepository = new CommentRepository($db);
+$commentController = new CommentController(
+    $commentRepository,
+    $formCredentialUsername,
+    $formCredentialsPassword,
+    $formCredentialsSmtpAddress
+);
+
+$notificationRepository = new NotificationRepository($db);
+$notificationController = new NotificationController($notificationRepository);
 
 $template = "homepage.twig";
 $paramaters = [];
 
-if (isset($_GET['action'])) {
+$session = $sessionController->handleGetSessionData();
+$idInCookie = $sessionManager->getIdInCookie();
 
-    $action = $_GET['action'];
+if ($requestObject->actionSet()) {
 
+    $action = $requestObject->get()['action'];
+    $defaultValues = [];
+    $defaultValuesComments = [];
+    $labels = [
+        "title", "id",
+        "short_phrase",
+        "content",
+        "image",
+        "author_image",
+        "author",
+        "tags",
+        "date_of_publication"
+    ];
+    $labelsUpdateArticle = [
+        "title",
+        "short_phrase",
+        "content",
+        "tags",
+        "file_image",
+        "id_article"
+    ];
+
+    $labelsTemporaryComments = [
+        "username", "date_of_publication", "content"
+    ];
 
     switch ($action) {
-        case "sign_up":
-            try {
-                $template = "sign_up.twig";
-                $signUp = $userController->signUpValidator(
-                    $_POST['username'],
-                    $_FILES['profile_image'],
-                    $_POST["mail"],
-                    $_POST["password"]
+    case "sign_up":
+        try {
+            $template = "sign_up.twig";
+            $signUpSucceed = $userController->signUpValidator(
+                $requestObject->post()['username'],
+                $requestObject->files()['profile_image'],
+                $requestObject->post()["mail"],
+                $requestObject->post()["password"]
+            );
+
+            $paramaters["message"] = $signUpSucceed;
+
+            if ($signUpSucceed) {
+                header("HTTP/1.1 302");
+                header("Location:?selection=sign_in");
+            }
+        } catch (ValidationException $e) {
+            $errors = $e->getErrors();
+            header("HTTP/1.1 400");
+            foreach ($errors as $key => $v) {
+                $paramaters[$key] = $v;
+            }
+        }
+        break;
+    case "sign_in":
+        try {
+            $template = "sign_in.twig";
+
+            $paramaters["message"] = $userController->loginValidator(
+                $requestObject->post()['mail'],
+                $requestObject->post()["password"]
+            );
+            $loginSucceed = $userController->loginValidator(
+                $requestObject->post()['mail'],
+                $requestObject->post()["password"]
+            );
+
+            if (is_array($loginSucceed)
+                && array_key_exists("username", $loginSucceed)
+                && array_key_exists("type_user", $loginSucceed)
+                && array_key_exists("id_user", $loginSucceed)
+            ) {
+                header("HTTP/1.1 302");
+                header("Location:?selection=homepage");
+                $sessionController->initializeLoginDataAndSessionId($loginSucceed);
+
+            }
+        } catch (ValidationException $e) {
+            $errors = $e->getErrors();
+            header("HTTP/1.1 400");
+            foreach ($errors as $key => $v) {
+                $paramaters[$key] = $v;
+            }
+        }
+
+        break;
+
+    case "download_file":
+        $template = "homepage.twig";
+        $fileIsDownload = $downloadController->downloadPdfFile();
+        if (is_array($fileIsDownload) 
+            && array_key_exists("file_logs", $fileIsDownload)
+        ) {
+            header("Content-Length: " . $fileIsDownload["file_logs"]);
+            header('Content-Description: File Transfer');
+            header("Content-Type: application/pdf");
+            header("Pragma: public");
+            header("Content-Disposition:attachment;filename=cv.pdf");
+            header("HTTP/1.1 200");
+            readfile($fileIsDownload["file_logs"]);
+        } else {
+            header("Location:?action=error&code=" . $fileIsDownload["code_error"]);
+        }
+        break;
+
+    case "contact":
+        try {
+            $template = "homepage.twig";
+            $paramaters["message"] = $formController->homepageFormValidator(
+                $requestObject->post()["firstname"],
+                $requestObject->post()["lastname"], 
+                $requestObject->post()["mail"], 
+                $requestObject->post()["subject"], 
+                $requestObject->post()["message"]
+            );
+            $paramaters["session"] = $session;
+        } catch (ValidationException $e) {
+            $errors = $e->getErrors();
+            foreach ($errors as $key => $v) {
+                $paramaters[$key] = $v;
+            }
+        }
+        break;
+
+
+    case "error":
+        if (isset($requestObject->get()["code"])) {
+            $template = "error.twig";
+            $paramaters["code"] = $requestObject->get()["code"];
+        }
+        break;
+
+     
+
+    case "add_article":
+        try {
+
+
+            if ($session["type_user"] == UserType::ADMIN->value) {
+                $template = "admin_add_article.twig";
+                $paramaters = [
+                    "session" => $session,
+                ];
+
+                $articleIsCreated = $articleController->handleCreateArticleValidator(
+                    $requestObject->post()["title"], 
+                    $requestObject->files()["image_file"], 
+                    $requestObject->post()["short-phrase"], 
+                    $requestObject->post()["content"], 
+                    $requestObject->post()["tags"], 
+                    $session, 
+                    $idInCookie
+                );
+                if ($articleIsCreated) {
+                    header("HTTP/1.1 302");
+                    header("Location:?selection=admin_panel");
+                }
+            } else {
+                header("Location:?action=error&code=403");
+            }
+        } catch (ValidationException $e) {
+            $errors = $e->getErrors();
+            header("HTTP/1.1 400");
+            foreach ($errors as $key => $v) {
+                $paramaters[$key] = $v;
+            }
+        }
+        break;
+
+    case "update_article":
+        try {
+            if ($session["type_user"] == UserType::ADMIN->value) {
+                $originalData = [];
+                $postData = [
+                    $requestObject->post()["title"], 
+                    $requestObject->post()["short_phrase"], 
+                    $requestObject->post()["content"], 
+                    $requestObject->post()["tags"], 
+                    $requestObject->post()["original_file_path"],
+                    $requestObject->post()['id_article']
+                ];
+
+                foreach ($labelsUpdateArticle as $k => $v) {
+                    $originalData[$v] = $postData[$k];
+                }
+
+                $template = "admin_update_article.twig";
+                $updatedData = $articleController->handleUpdateArticleValidator(
+                    $requestObject->post()["title"], 
+                    $requestObject->files()["image_file"], 
+                    $requestObject->post()["original_file_path"], 
+                    $requestObject->post()["short_phrase"], 
+                    $requestObject->post()["content"], 
+                    $requestObject->post()["tags"], 
+                    $session, 
+                    $requestObject->post()["id_article"], 
+                    $idInCookie
+                );
+                $paramaters = [
+                    "message" => $updatedData,
+                    "original_data" => $originalData,
+                ];
+
+                if (is_array($updatedData)) {
+                    header("HTTP/1.1 302");
+                    header("Location:?selection=admin_panel");
+                }
+            } else {
+                header("Location:?action=error&code=403");
+            }
+        } catch (ValidationException $e) {
+            $paramaters["original_data"] = $originalData;
+            $errors = $e->getErrors();
+            header("HTTP/1.1 400");
+            foreach ($errors as $key => $v) {
+                $paramaters[$key] = $v;
+            }
+        }
+        break;
+    case "delete_article":
+        if ($session["type_user"] === UserType::ADMIN->value) {
+            $article = $articleController->handleDeleteArticle(
+                $requestObject->get()["id"], 
+                $session, 
+                $idInCookie
+            );
+            if (is_array($article)) {
+                header("HTTP/1.1 302");
+                header("Location:?selection=admin_panel");
+            }
+        } else {
+            header("Location:?action=error&code=403");
+        }
+
+        break;
+    case "logout":
+        header("HTTP/1.1 302");
+        header("Location:?selection=blog");
+        $sessionManager->destroySession();
+        break;
+
+    case "add_comment":
+        try {
+            if ($session["type_user"] === UserType::ADMIN->value 
+                || $session["type_user"] == UserType::USER->value
+            ) {
+                $article = current(
+                    $articleController->handleOneArticle(
+                        $requestObject->get()["id"]
+                    )
+                );
+                $sessionController->initializeIdArticle($article["id"]);
+                foreach ($labels as $k => $v) {
+                    $defaultValues[$v] = $article[$v];
+                }
+                $template = "article.twig";
+                $paramaters = [
+                    "default" => $defaultValues,
+                ];
+
+                $session = $sessionController->handleGetSessionData();
+                $commentCreated = $commentController->handleInsertComment(
+                    $requestObject->post()["comment"], 
+                    $session, 
+                    $idInCookie
                 );
 
-                $paramaters["message"] = $signUp;
-
-                if (is_array($signUp)) {
+                if ($commentCreated) {
                     header("HTTP/1.1 302");
-                    header("Location: index.php?selection=blog");
+                    header("Location:?selection=article&id={$article["id"]}");
+                    $commentController->handleMailToAdmin(
+                        $session, 
+                        $defaultValues["title"], 
+                        $idInCookie
+                    );
                 }
-            } catch (UsernameErrorEmptyException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["username_exception"] =
-                    UsernameErrorEmptyException::USERNAME_MESSAGE_ERROR_EMPTY;
-            } catch (UsernameWrongFormatException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["username_exception"] = UsernameWrongFormatException::USERNAME_MESSAGE_ERROR_WRONG_FORMAT;
-            } catch (FileErrorEmptyException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["file_exception"] = FileErrorEmptyException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED;
-            } catch (FileTypeException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["file_exception"] = FileTypeException::FILE_MESSAGE_ERROR_TYPE_FILE;
-            } catch (EmailErrorEmptyException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["email_exception"] = EmailErrorEmptyException::EMAIL_MESSAGE_ERROR_EMPTY;
-            } catch (EmailWrongFormatException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["email_exception"] = EmailWrongFormatException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT;
-            } catch (PasswordErrorEmptyException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["password_exception"] = PasswordErrorEmptyException::PASSWORD_MESSAGE_ERROR_EMPTY;
-            } catch (PasswordWrongFormatException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["password_exception"] = PasswordWrongFormatException::PASSWORD_MESSAGE_ERROR_WRONG_FORMAT;
-            } catch (UsernameUnavailableException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["username_exception"] = UsernameUnavailableException::USERNAME_UNAVAILABLE_MESSAGE_ERROR . ' ' . $_POST["username"] . " n'est pas disponible ";
-            } catch (EmailUnavailableException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["email_exception"] = EmailUnavailableException::EMAIL_UNAVAILABLE_MESSAGE_ERROR . ' ' . $_POST["mail"] . " n'est pas disponible";
+            } else {
+                header("Location:?action=error&code=403");
             }
+        } catch (ValidationException $e) {
+            $errors = $e->getErrors();
+            header("HTTP/1.1 400");
+            $paramaters["default"] =  $defaultValues;
+            foreach ($errors as $key => $v) {
+                $paramaters[$key] = $v;
+            }
+        }
+        break;
+    case "validation":
 
-            break;
-        case "sign_in":
-            try {
-                $template = "sign_in.twig";
+        try {
+            $session = $sessionController->handleGetSessionData();
+            if ($session["type_user"] === UserType::ADMIN->value) {
+                $template = "admin_validation_commentary.twig";
 
-                $paramaters["message"] = $userController->loginValidator($_POST['mail'], $_POST["password"]);
-                $login = $userController->loginValidator($_POST['mail'], $_POST["password"]);
+                $defaultValues = [];
+                $defaultValues["idComment"] = $requestObject->get()["idComment"];
+                $temporaryComment = $commentController->handleGetOneComment(
+                    $defaultValues["idComment"], 
+                    $session, 
+                    $idInCookie
+                );
 
-                if (is_array($login) && array_key_exists("username", $login) && array_key_exists("type_user", $login)) {
-                    $_SESSION["username"] = $login["username"];
-                    $_SESSION["type_user"] = $login["type_user"];
-                    $userController->handleInsertSessionData($_SESSION);
+                foreach ($labelsTemporaryComments as $k => $v) {
+                    $defaultValuesComments[$v] = $temporaryComment[$v];
+                }
+
+                $paramaters["comment"] = $defaultValues;
+                $paramaters["default"] = $commentController->handleGetOneComment(
+                    $defaultValues["idComment"], 
+                    $session, 
+                    $idInCookie
+                );
+
+
+                $finalPost = isset($requestObject->post()["accepted"]) ? 
+                $requestObject->post()["accepted"] :
+                 $requestObject->post()["rejected"];
+
+                $commentValidation = $commentController->handleValidationComment(
+                    $finalPost, 
+                    $requestObject->get()['idComment'], 
+                    $requestObject->post()["feedback"], 
+                    $session, 
+                    $idInCookie
+                );
+                $notation = array_key_exists("approved", $commentValidation)  ?
+                 "approved" : "rejected";
+
+                switch (true) {
+                case $commentValidation["status"] == 1:
                     header("HTTP/1.1 302");
-                    header("Location: index.php?selection=blog");
-                }
-            } catch (EmailErrorEmptyException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["email_exception"] = EmailErrorEmptyException::EMAIL_MESSAGE_ERROR_EMPTY;
-            } catch (EmailWrongFormatException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["email_exception"] = EmailWrongFormatException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT;
-            } catch (PasswordErrorEmptyException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["password_exception"] = PasswordErrorEmptyException::PASSWORD_MESSAGE_ERROR_EMPTY;
-            } catch (PasswordWrongFormatException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["password_exception"] = PasswordWrongFormatException::PASSWORD_MESSAGE_ERROR_WRONG_FORMAT;
-            } catch (EmailUnexistException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["email_exception"] = EmailUnexistException::EMAIL_UNEXIST_MESSAGE_ERROR;
-            } catch (PasswordIncorrectException $e) {
-                header("HTTP/1.1 401");
-                $paramaters["password_exception"] = PasswordIncorrectException::PASSWORD_INCORRECT_MESSAGE_ERROR;
-            }
+                    header("Location:?selection=admin_panel");
+                    $notificationController->handleCreateNotification(
+                        $commentValidation
+                    );
+                    break;
 
-            break;
-
-        case "download_file":
-            $template = "homepage.twig";
-            $downloadController->handleDownloadFile();
-            if (is_array($downloadController->handleDownloadFile()) && array_key_exists("file_logs", $downloadController->handleDownloadFile())) {
-                header("Content-Length: " . $downloadController->handleDownloadFile()["file_logs"]);
-                header('Content-Description: File Transfer');
-                header("Content-Type: application/pdf");
-                header("Pragma: public");
-                header("Content-Disposition:attachment;filename=cv.pdf");
-                header("HTTP/1.1 200");
-                readfile($downloadController->handleDownloadFile()["file_logs"]);
-            } elseif (is_array($downloadController->handleDownloadFile()) && array_key_exists("code_error", $downloadController->handleDownloadFile())) {
-                header("Location: index.php?action=error&code=" . $downloadController->handleDownloadFile()["code_error"]);
-            }
-            break;
-
-        case "contact":
-            try {
-                $template = "homepage.twig";
-                $paramaters["message"] = $formController->homepageFormValidator($_POST["firstname"], $_POST["lastname"], $_POST["mail"], $_POST["subject"], $_POST["message"]);
-            } catch (FirstNameErrorEmptyException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["firstname_exception"] = FirstNameErrorEmptyException::FIRSTNAME_MESSAGE_ERROR_EMPTY;
-            } catch (FirstNameWrongFormatException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["firstname_exception"] = FirstNameWrongFormatException::FIRSTNAME_MESSAGE_ERROR_WRONG_FORMAT;
-            } catch (LastnameErrorEmptyException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["lastname_exception"] = LastnameErrorEmptyException::LASTNAME_MESSAGE_ERROR_EMPTY;
-            } catch (LastnameWrongFormatException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["lastname_exception"] = LastnameWrongFormatException::LASTNAME_MESSAGE_ERROR_WRONG_FORMAT;
-            } catch (EmailErrorEmptyException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["email_exception"] = EmailErrorEmptyException::EMAIL_MESSAGE_ERROR_EMPTY;
-            } catch (EmailWrongFormatException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["email_exception"] = EmailWrongFormatException::EMAIL_MESSAGE_ERROR_WRONG_FORMAT;
-            } catch (SubjectErrorEmptyException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["subject_exception"] = SubjectErrorEmptyException::SUBJECT_MESSAGE_ERROR_EMPTY;
-            } catch (SubjectWrongFormatException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["subject_exception"] = SubjectWrongFormatException::SUBJECT_MESSAGE_ERROR_MIN_20_CHARS_MAX_100_CHARS;
-            } catch (ContentMessageErrorEmptyException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["content_message_exception"] = ContentMessageErrorEmptyException::CONTENT_MESSAGE_ERROR_EMPTY;
-            } catch (ContentMessageWrongFormatException $e) {
-                header('HTTP/1.1 400');
-                $paramaters["content_message_exception"] = ContentMessageWrongFormatException::CONTENT_MESSAGE_ERROR_MIN_20_CHARS_MAX_500_CHARS;
-            } catch (FormMessageNotSentException $e) {
-                header("HTTP/1.1 500");
-                header("Location: index.php?action=error&code=500");
-                $paramaters["message_not_sent_exception"] = FormMessageNotSentException::MESSAGE_SENT_FAILED;
-            }
-            break;
-
-        case "error":
-            if (isset($_GET["code"])) {
-                $template = "error.twig";
-                $paramaters["code"] = $_GET["code"];
-            }
-            break;
-
-        case "add_article":
-            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
-                header("Location: index.php?action=error&code=401");
-            }
-            $template = "admin_add_article.twig";
-            try {
-                $paramaters = [
-                    "article" => $articleController->handleCreateArticleValidator($_POST["title"], $_FILES["image_file"], $_POST["short-phrase"], $_POST["content"], $_POST["tags"], $_SESSION),
-                    "session" => $_SESSION,
-                ];
-
-                if (is_array($articleController->handleCreateArticleValidator($_POST["title"], $_FILES["image_file"], $_POST["short-phrase"], $_POST["content"], $_POST["tags"], $_SESSION))) {
+                default:
                     header("HTTP/1.1 302");
-                    header("Location: index.php?selection=admin_panel");
+                    header("Location:?selection=admin_panel");
+                    $notificationController->handleCreateNotification(
+                        $commentValidation
+                    );
+                    $commentController->handleDeleteComment(
+                        $commentValidation, 
+                        $session, 
+                        $idInCookie
+                    );
+                    break;
                 }
-            } catch (TitleErrorEmptyException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["title_exception"] = TitleErrorEmptyException::TITLE_MESSAGE_ERROR_EMPTY;
-            } catch (TitleWrongFormatException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["title_exception"] = TitleWrongFormatException::TITLE_MESSAGE_ERROR_MAX_500_CHARS;
-            } catch (FileErrorEmptyException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["file_exception"] = FileErrorEmptyException::FILE_MESSAGE_ERROR_NO_FILE_SELECTED;
-            } catch (FileTypeException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["file_exception"] = FileTypeException::FILE_MESSAGE_ERROR_TYPE_FILE;
-            } catch (ShortPhraseErrorEmptyException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["short_phrase_exception"] = ShortPhraseErrorEmptyException::SHORT_PHRASE_MESSAGE_ERROR_EMPTY;
-            } catch (ShortPhraseWrongFormatException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["short_phrase_exception"] = ShortPhraseWrongFormatException::SHORT_PHRASE_MESSAGE_ERROR_MAX_500_CHARS;
-            } catch (ContentArticleErrorEmptyException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["content_article_exception"] = ContentArticleErrorEmptyException::CONTENT_ARTICLE_MESSAGE_ERROR_EMPTY;
-            } catch (ContentArticleWrongFormatException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["content_article_exception"] = ContentArticleWrongFormatException::CONTENT_ARTICLE_MESSAGE_ERROR_MAX_5000_CHARS;
-            } catch (TagsErrorEmptyException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["tags_exception"] = TagsErrorEmptyException::TAGS_ERROR_EMPTY;
-            } catch (TagsWrongFormatException $e) {
-                header("HTTP/1.1 400");
-                $paramaters["tags_exception"] = TagsWrongFormatException::TAGS_MESSAGE_ERROR_MAX_3_TAGS;
             }
-            break;
-
-        case "update_article":
-            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
-                header("Location: index.php?action=error&code=401");
+        } catch (ValidationException $e) {
+            $errors = $e->getErrors();
+            header("HTTP/1.1 400");
+            foreach ($errors as $key => $v) {
+                $paramaters[$key] = $v;
             }
-            $defautValuesInEachField =
-                [
-                    "title" => $_POST["title"],
-                    "short_phrase" => $_POST["short_phrase"],
-                    "content" => $_POST["content"],
-                    "tags" => $_POST["tags"],
-                    "file_image" => $_POST["original_file_path"],
-                    "id_article" => $_POST['id_article']
-                ];
+        }
+        break;
 
-            $template = "admin_update_article.twig";
+    case "delete_notification":
+        $session = $sessionController->handleGetSessionData();
+        if ($session["type_user"] === UserType::USER->value) {
+            $template = "notification.twig";
             $paramaters = [
-                "message" => $articleController->handleUpdateArticleValidator($_POST["title"], $_FILES["image_file"], $_POST["original_file_path"], $_POST["short_phrase"], $_POST["content"], $_POST["tags"], $_SESSION, $_POST["id_article"]),
-                "default_value" => $defautValuesInEachField,
-            ];
+                "notifications" => 
+                $notificationController->handleGetAllUserNotifications(
+                    $session
+                )
 
-            if (is_array($articleController->handleUpdateArticleValidator($_POST["title"], $_FILES["image_file"], $_POST["original_file_path"], $_POST["short_phrase"], $_POST["content"], $_POST["tags"], $_SESSION, $_POST["id_article"]))) {
+                ];
+           
+            $article = $notificationController->handleDeleteNotification(
+                $requestObject->get()["id_notification"]
+            );
+            if (is_null($article)) {
                 header("HTTP/1.1 302");
-                header("Location: index.php?selection=admin_panel");
+                header("Location:?selection=notifications");
             }
-
-
-            break;
-        case "delete_article":
-            if ($_SESSION["type_user"] == UserType::ADMIN->value) {
-                if (is_array($articleController->handleDeleteArticle($_GET["id"], $_SESSION))) {
-                    header("HTTP/1.1 302");
-                    header("Location: index.php?selection=admin_panel");
-                    $articleController->handleDeleteArticle($_GET["id"], $_SESSION);
-                }
-            }
-            header("Location: index.php?action=error&code=401");
-
-            break;
-        case "logout":
-
-            if (is_array($userController->handleLogout($_SESSION))) {
-                header("HTTP/1.1 302");
-                header("Location: index.php?selection=blog");
-                $sessionRepository->destroySession();
-            }
-            break;
+        } else {
+            header("Location:?action=error&code=403");
+        }
     }
-} elseif ((isset($_GET['selection']))) {
+} elseif (($requestObject->selectionSet())) {
 
-    $selection = $_GET['selection'];
-
+    $selection = $requestObject->get()['selection'];
     switch ($selection) {
 
-        case "homepage":
-            $template = "homepage.twig";
-            $paramaters["session"] =  $_SESSION;
-            break;
-        case "sign_in":
-            $template = "sign_in.twig";
-            break;
-        case "sign_up":
-            $template = "sign_up.twig";
-            break;
-        case "blog":
-            $template = "blog.twig";
+    case "homepage":
+        $template = "homepage.twig";
+        $paramaters["session"] = $sessionController->handleGetSessionData();
+        break;
+    case "sign_in":
+        $template = "sign_in.twig";
+        break;
+    case "sign_up":
+        $template = "sign_up.twig";
+        break;
+    case "blog":
+        $session = $sessionController->handleGetSessionData();
+        $template = "blog.twig";
+        $totalNotifications = $userController->handleNotifications($session);
+        $paramaters = [
+            "articles" => $articleController->listOfAllArticles(),
+            "session" => $session,
+            "total_notifications" => count($totalNotifications)
+        ];
+        break;
+    case "admin_panel":
 
-            if (is_array($userController->handleGetIdSessionData($_SESSION)) && array_key_exists("session_id", $userController->handleGetIdSessionData($_SESSION))) {
-                $_SESSION["session_id"] = $userController->handleGetIdSessionData($_SESSION)["session_id"];
-            }
-
-            $paramaters = [
-                "articles" => $articleController->listOfAllArticles(),
-                "session" => $_SESSION
-            ];
-            break;
-        case "admin_panel":
-            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
-                header("Location: index.php?action=error&code=401");
-            }
+        $session = $sessionController->handleGetSessionData();
+        if ($session["type_user"] == UserType::ADMIN->value) {
             $template = "admin_homepage.twig";
+            $totalCommentsNotValidate = $commentController->handleCommentsValidation(
+                $session, 
+                $idInCookie
+            );
             $paramaters = [
                 "articles" => $articleController->listOfAllArticles(),
-                "session" => $_SESSION
+                "session" => $session,
+                "comments" => $totalCommentsNotValidate,
+                "total_comments" =>
+                 is_array($totalCommentsNotValidate) 
+                 ? count($totalCommentsNotValidate) : 0
             ];
-
-
-            break;
-        case "view_article_and_commentary":
-            $template = "admin_article_and_commentary.twig";
-            break;
-        case "article":
-
-            $template = "article.twig";
-            $paramaters["article"] = current($articleController->handleOneArticle($_GET['id']));
-            break;
-        case "add_article":
-            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
-                header("Location: index.php?action=error&code=401");
+        } else {
+            header("Location:?action=error&code=403");
+        }
+        break;
+    case "comment_details":
+        $session = $sessionController->handleGetSessionData();
+        if ($session["type_user"] == UserType::ADMIN->value) {
+            $template = "admin_validation_commentary.twig";
+            $theComment = $commentController->handleGetOneComment(
+                $requestObject->get()["idComment"],
+                $session, 
+                $idInCookie
+            );
+            if (is_array($theComment)) {
+                $paramaters["comment"] = $theComment;
             }
+        } else {
+            header("Location:?action=error&code=403");
+        }
+
+        break;
+    case "article":
+        $article = current(
+            $articleController->handleOneArticle(
+                $requestObject->get()["id"]
+            )
+        );
+        $paramaters = ["article" => $article];
+        if (!$article) {
+            $template = "error.twig";
+            header("Location:?action=error&code=404");
+        }
+        $defaultValue = ["data" => $article];
+        $template = "article.twig";
+
+        $sessionController->initializeIdArticle($defaultValue["data"]["id"]);
+        $session = $sessionController->handleGetSessionData();
+        $paramaters["session"] = $session;
+
+        $comments = $commentController->handleGetAllComments(
+            $requestObject->get()['id']
+        );
+        $paramaters["comments"] = $comments;
+        if (isset($session["session_id"])) {
+            $commentAlreadySentByUser =  $commentController->handleCommentSent(
+                $session,
+                $idInCookie
+            );
+            if (is_array($commentAlreadySentByUser) 
+                
+                && $commentAlreadySentByUser["user_already_commented"] == 1
+            ) {
+                $paramaters = [
+                    "count_of_comments" =>
+                    $commentAlreadySentByUser["user_already_commented"],
+                "default" => $defaultValue,
+                "session" => $session
+
+                ];
+            }
+        } else {
+            $paramaters["no_user_connected"] = 1;
+        }
+        break;
+    case "add_article":
+        $session = $sessionController->handleGetSessionData();
+        if ($session["type_user"] == UserType::ADMIN->value) {
             $template = "admin_add_article.twig";
-            $paramaters["session"] =  $_SESSION;
-            break;
-        case "view_update_article":
-            if ($_SESSION["type_user"] != UserType::ADMIN->value) {
-                header("Location: index.php?action=error&code=401");
-            }
-            $template = "admin_update_article.twig";
-            $paramaters = [
-                "article" => current($articleController->handleOneArticle($_GET["id"])),
-            ];
+            $paramaters["session"] = $session;
+        } else {
+            header("Location:?action=error&code=403");
+        }
 
-            break;
+        break;
+    case "view_update_article":
+        $session = $sessionController->handleGetSessionData();
+        if ($session["type_user"] == UserType::ADMIN->value) {
+            $template = "admin_update_article.twig";
+            $article = current(
+                $articleController->handleOneArticle(
+                    $requestObject->get()["id"]
+                )
+            );
+            $paramaters = [
+                "article" => $article,
+            ];
+        } else {
+            header("Location:?action=error&code=403");
+        }
+
+        break;
+
+    case "notifications":
+        $session = $sessionController->handleGetSessionData();
+        $notifications = $userController->handleNotifications($session);
+        $template = "notification.twig";
+        $paramaters["notifications"] = $notifications;
     }
 }
 

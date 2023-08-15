@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : dim. 25 juin 2023 à 20:38
+-- Généré le : mar. 08 août 2023 à 19:16
 -- Version du serveur : 10.4.28-MariaDB
 -- Version de PHP : 8.2.4
 
@@ -24,21 +24,10 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Structure de la table `administrators_notifications`
+-- Structure de la table `article`
 --
 
-CREATE TABLE `administrators_notifications` (
-  `idUser` int(11) NOT NULL,
-  `total_temporary_comments` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `articles`
---
-
-CREATE TABLE `articles` (
+CREATE TABLE `article` (
   `id` int(11) NOT NULL,
   `image` varchar(255) NOT NULL,
   `title` varchar(255) NOT NULL,
@@ -46,145 +35,169 @@ CREATE TABLE `articles` (
   `content` text NOT NULL,
   `tags` varchar(255) NOT NULL,
   `author` varchar(255) NOT NULL,
-  `date_creation` date NOT NULL
+  `dateCreation` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Déchargement des données de la table `articles`
+-- Déchargement des données de la table `article`
 --
 
-INSERT INTO `articles` (`id`, `image`, `title`, `chapô`, `content`, `tags`, `author`, `date_creation`) VALUES
-(1, 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/author_1.jpg', 'Les bases de PHP', 'Découvrez les fondamentaux de PHP pour développer des sites web dynamiques.', 'PHP, acronyme de Hypertext Preprocessor, est un langage de script largement utilisé pour le développement web. Avec PHP, vous pouvez créer des pages web interactives et dynamiques en générant du contenu HTML en temps réel. Que vous souhaitiez créer un site web simple ou une application web complexe, les connaissances de base de PHP sont essentielles. Ce langage polyvalent offre de nombreuses fonctionnalités et facilite l\'interaction avec les bases de données, la manipulation de fichiers, la gestion des formulaires et bien plus encore. Plongez dans l\'univers de PHP et explorez ses possibilités infinies !', '#PHP #DéveloppementWeb #LangageDeScript', 'John007', '2023-06-12'),
-(2, 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/author_2.jpg', 'Les avantages de PHP pour le développement web', 'Découvrez pourquoi PHP est un choix populaire parmi les développeurs web.', 'PHP offre de nombreux avantages pour le développement web. Sa syntaxe simple et intuitive permet aux développeurs de créer rapidement des applications web. PHP possède également une grande communauté de développeurs actifs, ce qui signifie qu\'il existe une pléthore de ressources et de bibliothèques disponibles. De plus, PHP s\'intègre facilement aux bases de données, offrant ainsi une flexibilité pour la gestion des données. Découvrez comment PHP peut vous aider à développer des sites web puissants et dynamiques.', '#PHP #DéveloppementWeb #Avantages', 'JaneD', '2023-06-15'),
-(3, 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/author_3.jpg', 'Les bonnes pratiques de programmation en PHP', 'Découvrez les meilleures pratiques pour écrire un code PHP propre et maintenable.', 'Pour développer des applications PHP de qualité, il est essentiel de suivre les bonnes pratiques de programmation. Cela inclut l\'utilisation de la POO (Programmation Orientée Objet), l\'organisation du code en classes et en fonctions, la validation des entrées utilisateur, la sécurisation des requêtes SQL, etc. En suivant ces bonnes pratiques, vous pouvez améliorer la lisibilité, la maintenabilité et la sécurité de votre code PHP. Découvrez comment écrire un code PHP de qualité supérieure.', '#PHP #DéveloppementWeb #BonnesPratiques', 'John Smith', '2023-06-18'),
-(4, 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/author_4.png', 'Les frameworks PHP les plus populaires', 'Découvrez les frameworks PHP qui facilitent le développement d\'applications web.', 'Les frameworks PHP offrent une structure et des fonctionnalités prêtes à l\'emploi pour accélérer le développement d\'applications web. Parmi les frameworks les plus populaires, citons Laravel, Symfony, CodeIgniter et CakePHP. Chacun de ces frameworks possède ses propres caractéristiques et avantages. Découvrez comment choisir le framework PHP adapté à votre projet et comment il peut simplifier votre processus de développement.', '#PHP #DéveloppementWeb #Frameworks', 'Juni Sarko', '2023-06-20'),
-(5, 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/author_5.png', 'La sécurisation des applications PHP', 'Apprenez les meilleures pratiques pour sécuriser vos applications PHP.', 'La sécurité est un aspect crucial du développement d\'applications web. En PHP, il est important de prendre des mesures pour protéger vos applications contre les attaques telles que les injections SQL, les attaques par cross-site scripting (XSS) et les failles de sécurité. Apprenez à mettre en œuvre des techniques telles que le filtrage des entrées utilisateur, les requêtes préparées, l\'échappement des données de sortie et la gestion des sessions pour améliorer la sécurité de vos applications PHP.', '#PHP #Sécurité #DéveloppementWeb', 'YagerD', '2023-06-22'),
-(6, 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/author_6.png', 'Les meilleures pratiques pour optimiser les performances de PHP', 'Découvrez comment améliorer les performances de vos applications PHP.', 'L\'optimisation des performances est essentielle pour offrir une expérience utilisateur fluide et réactive. En PHP, il existe plusieurs techniques pour améliorer les performances de vos applications, telles que le caching, l\'utilisation efficace des requêtes SQL, la minimisation des appels de fonction et l\'utilisation de techniques de mise en cache côté serveur. Apprenez les meilleures pratiques pour optimiser les performances de vos applications PHP.', '#PHP #Optimisation #DéveloppementWeb', 'ShuffleX', '2023-06-24'),
-(7, 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/author_7.png', 'Les bases de données et PHP', 'Découvrez comment interagir avec les bases de données en utilisant PHP.', 'Les bases de données sont essentielles pour stocker et récupérer des données dans les applications web. En PHP, vous pouvez interagir avec les bases de données en utilisant des extensions telles que MySQLi ou PDO. Apprenez comment établir une connexion avec une base de données, exécuter des requêtes SQL, récupérer des résultats et gérer les transactions. Découvrez les bonnes pratiques pour interagir avec les bases de données en PHP.', '#PHP #BasesDeDonnées #DéveloppementWeb', 'Lovelace42', '2023-06-26');
+INSERT INTO `article` (`id`, `image`, `title`, `chapô`, `content`, `tags`, `author`, `dateCreation`) VALUES
+(18, 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/banner_article/article_1.jpg', 'PHP : Introduction au langage de programmation web', 'Découvrez les bases de PHP', 'PHP est un langage de programmation largement utilisé pour développer des sites web dynamiques. Dans cet article, nous allons explorer les concepts de base de PHP, y compris les variables, les boucles et les fonctions.', '#PHP #WebDevelopment #Programming', 'Admin', '2023-07-24'),
+(19, 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/banner_article/article_2.jpg', 'Les meilleures pratiques de sécurité en PHP', 'Protégez vos applications web avec PHP', 'La sécurité est essentielle lors du développement d\'applications web avec PHP. Découvrez les meilleures pratiques pour protéger votre code contre les failles courantes telles que les injections SQL et les attaques par cross-site scripting (XSS).', '#PHP #Security #WebDevelopment', 'Admin', '2023-07-24'),
+(20, 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/banner_article/article_3.jpg', 'PHP : Gérer les formulaires et les données utilisateur', 'Apprenez à manipuler les données des utilisateurs', 'Les formulaires sont couramment utilisés pour collecter des données auprès des utilisateurs. Dans cet article, nous allons explorer comment traiter et valider les données envoyées via des formulaires en utilisant PHP.\r\nLes formulaires sont couramment utilisés pour collecter des données auprès des utilisateurs. Dans cet article, nous allons explorer comment traiter et valider les données envoyées via des formulaires en utilisant PHP.', '#PHP #GérerFormulaire #ValidationDeDonnées', 'Admin', '2023-08-03'),
+(46, 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/b040dmH+B6y.jpg', 'Test', 'A', 'B', '#C #C #C', 'Admin', '2023-08-08');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `comments`
+-- Structure de la table `comment`
 --
 
-CREATE TABLE `comments` (
+CREATE TABLE `comment` (
   `id` int(11) NOT NULL,
   `idArticle` int(11) NOT NULL,
   `idUser` int(11) NOT NULL,
-  `content` varchar(255) NOT NULL,
-  `date_creation` datetime NOT NULL
+  `content` text NOT NULL,
+  `dateCreation` date NOT NULL,
+  `feedbackAdministrator` varchar(255) DEFAULT NULL,
+  `status` tinyint(4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `comment`
+--
+
+INSERT INTO `comment` (`id`, `idArticle`, `idUser`, `content`, `dateCreation`, `feedbackAdministrator`, `status`) VALUES
+(204, 20, 1, 'Test', '2023-08-07', NULL, 1),
+(206, 20, 1, 'Vax', '2023-08-08', NULL, 1),
+(207, 20, 1, 'Test3', '2023-08-08', NULL, 1);
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `form_messages`
+-- Structure de la table `form_message`
 --
 
-CREATE TABLE `form_messages` (
+CREATE TABLE `form_message` (
   `id` int(11) NOT NULL,
-  `idUser` int(11) DEFAULT NULL,
-  `firstname` int(11) NOT NULL,
-  `lastname` int(11) NOT NULL,
-  `email` int(11) NOT NULL,
-  `message` int(11) NOT NULL
+  `firstname` varchar(255) NOT NULL,
+  `lastname` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `subject` varchar(100) NOT NULL,
+  `message` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `form_message`
+--
+
+INSERT INTO `form_message` (`id`, `firstname`, `lastname`, `email`, `subject`, `message`) VALUES
+(100, 'John', 'Doe', 'johndoe@gmail.com', 'Un partenariat d\'exception à l\'avenir !', 'Un partenariat d\'exception à l\'avenir !'),
+(101, 'John', 'Doe', 'john@gmail.com', 'EEEEEEEEEEEEEEEEEEEEEEEEEEEEE', 'EEEEEEEEEEEEEEEEEEEEEEEEEEEEE'),
+(102, 'John', 'Doe', 'john@gmail.com', 'EEEEEEEEEEEEEEEEEEEEEEEEEEEEE', 'EEEEEEEEEEEEEEEEEEEEEEEEEEEEE'),
+(103, 'John', 'Doe', 'x@live.fr', 'Asdfsfdfsfsfsdfsfsdfsfddsfsfsfsfd', 'Asdfsfdfsfsfsdfsfsdfsfddsfsfsfsfd'),
+(104, 'John', 'Doe', 'johndoe@live.fr', 'Un partenariat d\'exception à l\'avenir!', 'Un partenariat d\'exception à l\'avenir!'),
+(105, 'John', 'Doe', 'johndoe@live.fr', 'Un partenariat d\'exception à l\'avenir!', 'Un partenariat d\'exception à l\'avenir!'),
+(106, 'John', 'Doe', 'johndoe@live.fr', 'Un partenariat d\'exception à l\'avenir!', 'Un partenariat d\'exception à l\'avenir!'),
+(107, 'John', 'Doe', 'johndoe@live.fr', 'Un partenariat d\'exception à l\'avenir!', 'Un partenariat d\'exception à l\'avenir!'),
+(108, 'Vax', 'Doe', 'johnd@live.fr', 'MyretiaxMyretiaxMyretiax', 'MyretiaxMyretiaxMyretiaxMyretiax'),
+(109, 'Floki', 'Franel', 'franel@gmail.com', 'Adssdfsfsffsfdsfdsdfsd', 'Adssdfsfsffsfdsfdsdfsd'),
+(110, 'Floki', 'Franel', 'franel@gmail.com', 'Adssdfsfsffsfdsfdsdfsd', 'Adssdfsfsffsfdsfdsdfsd'),
+(111, 'Floki', 'Franel', 'franel@gmail.com', 'Adssdfsfsffsfdsfdsdfsd', 'Adssdfsfsffsfdsfdsdfsd'),
+(112, 'Floki', 'Franel', 'franel@gmail.com', 'Adssdfsfsffsfdsfdsdfsd', 'Adssdfsfsffsfdsfdsdfsd'),
+(113, 'Floki', 'Franel', 'franel@gmail.com', 'Adssdfsfsffsfdsfdsdfsd', 'Adssdfsfsffsfdsfdsdfsd'),
+(114, 'Floki', 'Franel', 'franel@gmail.com', 'Adssdfsfsffsfdsfdsdfsd', 'Adssdfsfsffsfdsfdsdfsd'),
+(115, 'Kratos', 'Doe', 'xdsf@live.fr', 'A', 'B');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `temporary_comments`
+-- Structure de la table `user`
 --
 
-CREATE TABLE `temporary_comments` (
-  `id` int(11) NOT NULL,
-  `idArticle` int(11) NOT NULL,
-  `idUser` int(11) NOT NULL,
-  `content` varchar(255) NOT NULL,
-  `date_creation` datetime NOT NULL,
-  `approved` tinyint(1) NOT NULL,
-  `rejected` tinyint(1) NOT NULL,
-  `feedback_administrator` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `users`
---
-
-CREATE TABLE `users` (
+CREATE TABLE `user` (
   `id` int(11) NOT NULL,
   `username` varchar(255) NOT NULL,
-  `profile_image` varchar(255) NOT NULL,
+  `profileImage` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `type` enum('user','admin') NOT NULL DEFAULT 'user'
+  `type` enum('user','admin') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `user`
+--
+
+INSERT INTO `user` (`id`, `username`, `profileImage`, `email`, `password`, `type`) VALUES
+(1, 'Admin', 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/admin.jpg', 'mdembelepro@gmail.com', '$2y$10$OBndb21bE3fLFo1aTfn36.FlVkaHDPtLNsmiBS10eB9xxwK.be.oy', 'admin'),
+(5, 'Test', 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/test.png', 'test@gmail.com', '$2y$10$OshLZmZApr5IZF63B0nNQuxql0g8bsUpv6wOVOEf1HJ0ZWCDWIPuq', 'user'),
+(29, 'Johnt', 'http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/+ChFybElfZzN.jpg', 'johnt@gmail.com', '$2y$10$uZch82fB9fQFsaq5cH3nSeVdAu4/QRd5r9nTcuH.f8oP6rvdSY7dO', 'user');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `visitors_notifications`
+-- Structure de la table `user_notification`
 --
 
-CREATE TABLE `visitors_notifications` (
+CREATE TABLE `user_notification` (
+  `id` int(11) NOT NULL,
+  `idArticle` int(11) NOT NULL,
   `idUser` int(11) NOT NULL,
-  `approved` tinyint(1) NOT NULL,
-  `rejected` tinyint(1) NOT NULL,
-  `feedback_administrator` varchar(255) DEFAULT NULL
+  `status` tinyint(4) DEFAULT NULL,
+  `feedbackAdministrator` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `user_notification`
+--
+
+INSERT INTO `user_notification` (`id`, `idArticle`, `idUser`, `status`, `feedbackAdministrator`) VALUES
+(185, 20, 1, 0, NULL),
+(186, 20, 1, 0, NULL),
+(187, 18, 1, 0, NULL),
+(188, 20, 1, 1, NULL),
+(189, 20, 1, 1, NULL),
+(190, 20, 1, 0, NULL),
+(191, 20, 1, 1, NULL),
+(192, 20, 1, 1, NULL);
 
 --
 -- Index pour les tables déchargées
 --
 
 --
--- Index pour la table `administrators_notifications`
+-- Index pour la table `article`
 --
-ALTER TABLE `administrators_notifications`
-  ADD KEY `fk_administrators_notifications_temporary_comments` (`idUser`);
-
---
--- Index pour la table `articles`
---
-ALTER TABLE `articles`
+ALTER TABLE `article`
   ADD PRIMARY KEY (`id`);
 
 --
--- Index pour la table `comments`
+-- Index pour la table `comment`
 --
-ALTER TABLE `comments`
+ALTER TABLE `comment`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_comments_articles` (`idArticle`),
-  ADD KEY `fk_comments_users` (`idUser`);
-
---
--- Index pour la table `form_messages`
---
-ALTER TABLE `form_messages`
-  ADD PRIMARY KEY (`id`),
+  ADD KEY `idArticle` (`idArticle`),
   ADD KEY `idUser` (`idUser`);
 
 --
--- Index pour la table `temporary_comments`
+-- Index pour la table `form_message`
 --
-ALTER TABLE `temporary_comments`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_temporary_comments_articles` (`idArticle`),
-  ADD KEY `fk_temporary_comments_users` (`idUser`);
-
---
--- Index pour la table `users`
---
-ALTER TABLE `users`
+ALTER TABLE `form_message`
   ADD PRIMARY KEY (`id`);
 
 --
--- Index pour la table `visitors_notifications`
+-- Index pour la table `user`
 --
-ALTER TABLE `visitors_notifications`
+ALTER TABLE `user`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `user_notification`
+--
+ALTER TABLE `user_notification`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idArticle` (`idArticle`),
   ADD KEY `idUser` (`idUser`);
 
 --
@@ -192,70 +205,52 @@ ALTER TABLE `visitors_notifications`
 --
 
 --
--- AUTO_INCREMENT pour la table `articles`
+-- AUTO_INCREMENT pour la table `article`
 --
-ALTER TABLE `articles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+ALTER TABLE `article`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
--- AUTO_INCREMENT pour la table `comments`
+-- AUTO_INCREMENT pour la table `comment`
 --
-ALTER TABLE `comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `comment`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=208;
 
 --
--- AUTO_INCREMENT pour la table `form_messages`
+-- AUTO_INCREMENT pour la table `form_message`
 --
-ALTER TABLE `form_messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `form_message`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=116;
 
 --
--- AUTO_INCREMENT pour la table `temporary_comments`
+-- AUTO_INCREMENT pour la table `user`
 --
-ALTER TABLE `temporary_comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `user`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
--- AUTO_INCREMENT pour la table `users`
+-- AUTO_INCREMENT pour la table `user_notification`
 --
-ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `user_notification`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=193;
 
 --
 -- Contraintes pour les tables déchargées
 --
 
 --
--- Contraintes pour la table `administrators_notifications`
+-- Contraintes pour la table `comment`
 --
-ALTER TABLE `administrators_notifications`
-  ADD CONSTRAINT `fk_administrators_notifications_temporary_comments` FOREIGN KEY (`idUser`) REFERENCES `temporary_comments` (`id`);
+ALTER TABLE `comment`
+  ADD CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`idArticle`) REFERENCES `article` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`idUser`) REFERENCES `user` (`id`);
 
 --
--- Contraintes pour la table `comments`
+-- Contraintes pour la table `user_notification`
 --
-ALTER TABLE `comments`
-  ADD CONSTRAINT `fk_comments_articles` FOREIGN KEY (`idArticle`) REFERENCES `articles` (`id`),
-  ADD CONSTRAINT `fk_comments_users` FOREIGN KEY (`idUser`) REFERENCES `users` (`id`);
-
---
--- Contraintes pour la table `form_messages`
---
-ALTER TABLE `form_messages`
-  ADD CONSTRAINT `fk_form_messages_users` FOREIGN KEY (`idUser`) REFERENCES `users` (`id`);
-
---
--- Contraintes pour la table `temporary_comments`
---
-ALTER TABLE `temporary_comments`
-  ADD CONSTRAINT `fk_temporary_comments_articles` FOREIGN KEY (`idArticle`) REFERENCES `articles` (`id`),
-  ADD CONSTRAINT `fk_temporary_comments_users` FOREIGN KEY (`idUser`) REFERENCES `users` (`id`);
-
---
--- Contraintes pour la table `visitors_notifications`
---
-ALTER TABLE `visitors_notifications`
-  ADD CONSTRAINT `fk_visitors_notifications_users` FOREIGN KEY (`idUser`) REFERENCES `users` (`id`);
+ALTER TABLE `user_notification`
+  ADD CONSTRAINT `user_notification_ibfk_2` FOREIGN KEY (`idUser`) REFERENCES `user` (`id`),
+  ADD CONSTRAINT `user_notification_ibfk_3` FOREIGN KEY (`idArticle`) REFERENCES `article` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

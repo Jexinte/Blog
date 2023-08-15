@@ -26,12 +26,17 @@ header {
 
 .author-box img {
   width: 100px;
-  border-radius: 50%;
+  border-radius: 90%;
+  height: 105px;
+  border: 3px solid black;
 }
 
 .article {
   display: flex;
   flex-direction: column;
+}
+.author-comment{
+  color:var(--black);
 }
 
 .author-box {
@@ -111,6 +116,11 @@ header {
   width: 80%;
 }
 
+ #comments #no-comments {
+  font-weight: var(--700);
+  color: var(--black);
+ }
+
 #comments {
   margin-top: 10em;
   margin-bottom: 5em;
@@ -145,19 +155,34 @@ header {
 form textarea {
   resize: none;
   width: 100%;
-  margin-bottom: 2em;
+  margin-bottom: 1em;
 }
 
-/* Servira plus tard pour la partie commentaire*/
-.disable-comments {
-  display: none;
+#comment-error{
+  margin-bottom: 2em;
+  font-weight: var(--700);
 }
+#user-not-connected{
+  font-weight: var(--700);
+}
+
+#comment-already-sent{
+  font-weight: var(--700);
+}
+
+
 
 #comment .command-box .command {
   width: 100%;
   background-color: var(--black);
   font-weight: var(--700);
   padding: 1em;
+}
+
+#comments .comments {
+  display: flex;
+  flex-direction: column;
+  gap: 3em;
 }
 
 @media (max-width:576px) {
