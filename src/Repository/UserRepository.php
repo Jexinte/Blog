@@ -29,6 +29,10 @@ use Model\UserModel;
  * @license  ISC License
  * @link     https://github.com/Jexinte/P5---Blog-Professionnel---Openclassrooms
  */
+
+ 
+ 
+ 
 class UserRepository
 {
 
@@ -77,7 +81,8 @@ class UserRepository
             $fileSettings["file_name"] = $fileRequirements[0];
             $fileSettings["tmp_name"] = $fileRequirements[1];
             $fileSettings["directory"] = $fileRequirements[2];
-            $filePath = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/user_profile/". $fileSettings["file_name"];
+            $root = str_replace("C:\\xampp\htdocs\\","",realpath(__DIR__."/../../"));
+            $filePath = "http://localhost/$root/public/assets/images/user_profile/". $fileSettings["file_name"];
             $statementToCreateUser = $dbConnect->prepare(
                 "INSERT INTO user 
                 (username,profileImage,email,password,type) 

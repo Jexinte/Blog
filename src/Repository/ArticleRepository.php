@@ -216,7 +216,8 @@ class ArticleRepository
             $fileSettings["file_name"] = $fileRequirements[0];
             $fileSettings["tmp_name"] = $fileRequirements[1];
             $fileSettings["directory"] = $fileRequirements[2];
-            $filePath = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/banner_article/".$fileSettings["file_name"];
+            $root = str_replace("C:\\xampp\htdocs\\","",realpath(__DIR__."/../../"));
+            $filePath = "http://localhost/$root/public/assets/images/banner_article/".$fileSettings["file_name"];
             $statementToCreateArticle = $dbConnect->prepare(
                 "INSERT INTO article 
                 (image,title,chapô,content,tags,author,dateCreation) 
@@ -345,7 +346,8 @@ class ArticleRepository
                 $fileSettings["file_name"] = $fileRequirements[0];
                 $fileSettings["tmp_name"] = $fileRequirements[1];
                 $fileSettings["directory"] = $fileRequirements[2];
-                $filePath = "http://localhost/P5_Créez votre premier blog en PHP - Dembele Mamadou/public/assets/images/banner_article/". $fileSettings["file_name"];
+                $root = str_replace("C:\\xampp\htdocs\\","",realpath(__DIR__."/../../"));
+                $filePath = "http://localhost/$root/public/assets/images/banner_article/". $fileSettings["file_name"];
                 $statementWithUploadedFile = $dbConnect->prepare(
                     "UPDATE article 
                     SET image = :filePath,
