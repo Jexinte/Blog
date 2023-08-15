@@ -42,7 +42,7 @@ class DownloadController
     public function downloadPdfFile():?array
     {
 
-        $this->file = "../public/uploads/test.pdf";
+        $this->file = "../public/uploads/cv.pdf";
 
         if (!file_exists($this->file)) {
             $this->errorCode = 500;

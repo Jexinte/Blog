@@ -41,7 +41,7 @@ class CommentController
      * @param \Repository\CommentRepository $commentRepository commentRepository
      * @param string                        $username          credential STMP
      * @param string                        $password          credential STMP
-     * @param string                        $smtp_address      credential STMP
+     * @param string                        $smtpAddress       credential STMP
      */
     public function __construct(
         private readonly CommentRepository $commentRepository,

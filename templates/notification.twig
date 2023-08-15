@@ -8,7 +8,6 @@
 {% block title %}
 	<title>
 		Notification | Blog professionnel
-
 	</title>
 {% endblock %}
 {% block css_page %}
@@ -38,9 +37,15 @@
 						<p class=" notation">Votre commentaire
 							{{notification.title_article}}
 							a été rejeté !</p>
-						<p class="text-center raison">Raison :
-							<br><span id="feedback">{{notification.feedbackAdministrator is not null ? notification.feedbackAdministrator : 'Non communiquée !'}}
+						
+							
+						<p class="text-center raison">
+								{% if notification.feedbackAdministrator is not empty  %}
+								Raison : <br><span id="feedback">{{notification.feedbackAdministrator}}</span>
 							</span>
+							{% endif %}
+								
+							
 						</p>
 					{% endif %}
 				</div>
