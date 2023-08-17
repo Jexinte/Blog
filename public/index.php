@@ -28,6 +28,8 @@ use Controller\NotificationController;
 use Controller\SessionController;
 
 use Enumeration\UserType;
+use Enumeration\Action;
+use Enumeration\Selection;
 use Repository\ArticleRepository;
 use Repository\CommentRepository;
 use Repository\HomepageFormRepository;
@@ -127,7 +129,7 @@ if ($requestObject->actionSet()) {
     ];
 
     switch ($action) {
-    case "sign_up":
+    case ACTION::SIGN_UP:
         try {
             $template = "sign_up.twig";
             $signUpSucceed = $userController->signUpValidator(
@@ -151,7 +153,7 @@ if ($requestObject->actionSet()) {
             }
         }
         break;
-    case "sign_in":
+    case ACTION::SIGN_IN:
         try {
             $template = "sign_in.twig";
 
@@ -184,7 +186,7 @@ if ($requestObject->actionSet()) {
 
         break;
 
-    case "download_file":
+    case ACTION::DOWNLOAD_FILE:
         $template = "homepage.twig";
         $fileIsDownload = $downloadController->downloadPdfFile();
         if (is_array($fileIsDownload) 
@@ -202,7 +204,7 @@ if ($requestObject->actionSet()) {
         }
         break;
 
-    case "contact":
+    case ACTION::CONTACT:
         try {
             $template = "homepage.twig";
             $paramaters["message"] = $formController->homepageFormValidator(
@@ -222,7 +224,7 @@ if ($requestObject->actionSet()) {
         break;
 
 
-    case "error":
+    case ACTION::ERROR:
         if (isset($requestObject->get()["code"])) {
             $template = "error.twig";
             $paramaters["code"] = $requestObject->get()["code"];
@@ -231,7 +233,7 @@ if ($requestObject->actionSet()) {
 
      
 
-    case "add_article":
+    case ACTION::ADD_ARTICLE:
         try {
 
 
@@ -266,7 +268,7 @@ if ($requestObject->actionSet()) {
         }
         break;
 
-    case "update_article":
+    case ACTION::UPDATE_ARTICLE:
         try {
             if ($session["type_user"] == UserType::ADMIN->value) {
                 $originalData = [];
@@ -316,7 +318,7 @@ if ($requestObject->actionSet()) {
             }
         }
         break;
-    case "delete_article":
+    case ACTION::DELETE_ARTICLE:
         if ($session["type_user"] === UserType::ADMIN->value) {
             $article = $articleController->handleDeleteArticle(
                 $requestObject->get()["id"], 
@@ -332,13 +334,13 @@ if ($requestObject->actionSet()) {
         }
 
         break;
-    case "logout":
+    case ACTION::LOGOUT:
         header("HTTP/1.1 302");
         header("Location:?selection=blog");
         $sessionManager->destroySession();
         break;
 
-    case "add_comment":
+    case ACTION::ADD_COMMENT:
         try {
             if ($session["type_user"] === UserType::ADMIN->value 
                 || $session["type_user"] == UserType::USER->value
@@ -385,7 +387,7 @@ if ($requestObject->actionSet()) {
             }
         }
         break;
-    case "validation":
+    case ACTION::VALIDATION:
 
         try {
             $session = $sessionController->handleGetSessionData();
@@ -458,7 +460,7 @@ if ($requestObject->actionSet()) {
         }
         break;
 
-    case "delete_notification":
+    case ACTION::DELETE_NOTIFICATION:
         $session = $sessionController->handleGetSessionData();
         if ($session["type_user"] === UserType::USER->value) {
             $template = "notification.twig";
@@ -486,17 +488,17 @@ if ($requestObject->actionSet()) {
     $selection = $requestObject->get()['selection'];
     switch ($selection) {
 
-    case "homepage":
+    case SELECTION::HOMEPAGE:
         $template = "homepage.twig";
         $paramaters["session"] = $sessionController->handleGetSessionData();
         break;
-    case "sign_in":
+    case SELECTION::SIGN_IN:
         $template = "sign_in.twig";
         break;
-    case "sign_up":
+    case SELECTION::SIGN_UP:
         $template = "sign_up.twig";
         break;
-    case "blog":
+    case SELECTION::BLOG:
         $session = $sessionController->handleGetSessionData();
         $template = "blog.twig";
         $totalNotifications = $userController->handleNotifications($session);
@@ -506,7 +508,7 @@ if ($requestObject->actionSet()) {
             "total_notifications" => count($totalNotifications)
         ];
         break;
-    case "admin_panel":
+    case SELECTION::ADMIN_PANEL:
 
         $session = $sessionController->handleGetSessionData();
         if ($session["type_user"] == UserType::ADMIN->value) {
@@ -527,7 +529,7 @@ if ($requestObject->actionSet()) {
             header("Location:?action=error&code=403");
         }
         break;
-    case "comment_details":
+    case SELECTION::COMMENT_DETAILS:
         $session = $sessionController->handleGetSessionData();
         if ($session["type_user"] == UserType::ADMIN->value) {
             $template = "admin_validation_commentary.twig";
@@ -544,7 +546,7 @@ if ($requestObject->actionSet()) {
         }
 
         break;
-    case "article":
+    case SELECTION::ARTICLE:
         $article = current(
             $articleController->handleOneArticle(
                 $requestObject->get()["id"]
@@ -587,7 +589,7 @@ if ($requestObject->actionSet()) {
             $paramaters["no_user_connected"] = 1;
         }
         break;
-    case "add_article":
+    case SELECTION::ADD_ARTICLE:
         $session = $sessionController->handleGetSessionData();
         if ($session["type_user"] == UserType::ADMIN->value) {
             $template = "admin_add_article.twig";
@@ -597,7 +599,7 @@ if ($requestObject->actionSet()) {
         }
 
         break;
-    case "view_update_article":
+    case SELECTION::VIEW_UPDATE_ARTICLE:
         $session = $sessionController->handleGetSessionData();
         if ($session["type_user"] == UserType::ADMIN->value) {
             $template = "admin_update_article.twig";
@@ -615,7 +617,7 @@ if ($requestObject->actionSet()) {
 
         break;
 
-    case "notifications":
+    case SELECTION::NOTIFICATIONS:
         $session = $sessionController->handleGetSessionData();
         $notifications = $userController->handleNotifications($session);
         $template = "notification.twig";
