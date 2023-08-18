@@ -381,7 +381,7 @@ if ($requestObject->actionSet()) {
         } catch (ValidationException $e) {
             $errors = $e->getErrors();
             header("HTTP/1.1 400");
-            $paramaters["default"] =  $defaultValues;
+            $paramaters["default"] =  ["data" => $defaultValues ];
             foreach ($errors as $key => $v) {
                 $paramaters[$key] = $v;
             }

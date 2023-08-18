@@ -18,7 +18,6 @@
 	{% include "menu_article.twig" %}
 
 	<div class="container-fluid" id="article">
-	
 			<img class="article-banner" src="{{article.image is defined ? article.image : default.data.image}}" alt="Climbing to the top">
 			<div class="row">
 				<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 article">
@@ -51,10 +50,9 @@
 		{% else %}
 		<h2 class="h2" id="comment-main-title">Ajouter un commentaire</h2>
 
-		<form action="?action=add_comment&amp;id={{article.id is defined ? article.id : default.id}}" method="post">
+		<form action="?action=add_comment&amp;id={{article.id is defined ? article.id : default.data.id}}" method="post">
 			<textarea name="comment" id="feedback" cols="30" rows="10" value="{{default.comment_failed is defined ? default.comment_failed : ''}}"></textarea>
-			<input type="text" name="id_article" value = {{article.id is defined ? article.id : default.id}} hidden>
-			<p class="text-success">{# Afficher un message de confirmation d'envoi#}</p>
+			<input type="text" name="id_article" value = "{{article.id is defined ? article.id : default.id}}" hidden>
 			<p class="text-danger" id="comment-error">{{comment_exception is defined ? comment_exception : ''}}</p>
 			<div class="command-box">
 				<input class="btn btn-dark command" name="submit" type="submit" value="Envoyer">
