@@ -198,7 +198,7 @@ if ($requestObject->actionSet()) {
             header("Pragma: public");
             header("Content-Disposition:attachment;filename=cv.pdf");
             header("HTTP/1.1 200");
-            readfile($fileIsDownload["file_logs"]);
+            readfile($fileIsDownload["file_path"]);
         } else {
             header("Location:?action=error&code=" . $fileIsDownload["code_error"]);
         }
