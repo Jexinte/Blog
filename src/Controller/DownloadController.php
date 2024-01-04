@@ -50,11 +50,9 @@ class DownloadController
         }
 
         $this->fileSize = filesize($this->file);
-<<<<<<< HEAD
-        return [
-=======
+
+
     return [
->>>>>>> 2867c328b5a7567287e5d3bdf6a7f4ecfd6e0f1b
             "file_logs" => $this->fileSize,
             "file_path" => $this->file
         ];
